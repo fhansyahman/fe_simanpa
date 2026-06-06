@@ -306,13 +306,7 @@ export default function DashboardAtasanPage() {
               Informasi Kontak
             </h2>
             <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <Mail size={16} className="text-gray-400" />
-                <div>
-                  <p className="text-xs text-gray-500">Email</p>
-                  <p className="text-sm text-gray-800">{getUserEmail()}</p>
-                </div>
-              </div>
+
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-gray-400" />
                 <div>
@@ -330,36 +324,6 @@ export default function DashboardAtasanPage() {
             </div>
           </div>
 
-          {/* Statistik Singkat */}
-          <div className="p-4 border-b border-gray-100 bg-blue-50/30">
-            <h2 className="font-semibold text-gray-800 text-sm mb-3 flex items-center gap-2">
-              <Award size={16} className="text-yellow-500" />
-              Statistik Singkat
-            </h2>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="text-center">
-                <div className="bg-green-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
-                  <Users size={16} className="text-green-600" />
-                </div>
-                <p className="text-lg font-bold text-gray-800">{stats.totalPegawai || 0}</p>
-                <p className="text-[10px] text-gray-500">Total Pegawai</p>
-              </div>
-              <div className="text-center">
-                <div className="bg-blue-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
-                  <CalendarIcon size={16} className="text-blue-600" />
-                </div>
-                <p className="text-lg font-bold text-gray-800">{stats.hadir || 0}</p>
-                <p className="text-[10px] text-gray-500">Hadir Hari Ini</p>
-              </div>
-              <div className="text-center">
-                <div className="bg-purple-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
-                  <FileText size={16} className="text-purple-600" />
-                </div>
-                <p className="text-lg font-bold text-gray-800">{kinerjaList.length || 0}</p>
-                <p className="text-[10px] text-gray-500">Laporan Bulan Ini</p>
-              </div>
-            </div>
-          </div>
 
           {/* Menu Aplikasi */}
           <div className="p-4">
@@ -394,9 +358,6 @@ export default function DashboardAtasanPage() {
               Logout
             </button>
             
-            <p className="text-center text-[10px] text-gray-400 mt-4">
-              Versi Aplikasi 1.0.0
-            </p>
           </div>
         </div>
       </div>
