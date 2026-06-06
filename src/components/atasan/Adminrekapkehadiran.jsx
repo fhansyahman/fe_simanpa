@@ -35,12 +35,17 @@ import { usePresensiData } from "./hooks/rekapkehadiran/usePresensiData";
 import { useFilters } from "./hooks/rekapkehadiran/useFilters";
 import { useRekapProcessor } from "./hooks/rekapkehadiran/useRekapProcessor";
 import { useAuth } from "@/context/AuthContext";
+import * as XLSX from 'xlsx';
 
 export default function RekapKehadiranBulanan() {
   const { user, loading: authLoading } = useAuth();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [tempFilters, setTempFilters] = useState({});
+  
+  // ✅ DEKLARASIKAN DI SINI - Sebelum digunakan
+  const userWilayah = user?.wilayah_penugasan || user?.wilayah || null;
+  const isAdmin = user?.roles?.includes('admin') || user?.roles?.includes('superadmin') || false;
   
   // Custom hooks
   const { 
@@ -76,10 +81,6 @@ export default function RekapKehadiranBulanan() {
     getDaysInMonth
   } = useRekapProcessor(presensiData, bulanFilter, tahunFilter, wilayahFilter, search);
 
-  // Ambil wilayah user dari data login
-  const userWilayah = user?.wilayah_penugasan || user?.wilayah || null;
-  const isAdmin = user?.roles?.includes('admin') || user?.roles?.includes('superadmin') || false;
-  
   // Filter wilayah berdasarkan user login (kecuali admin)
   useEffect(() => {
     if (!isAdmin && userWilayah) {
@@ -109,32 +110,86 @@ export default function RekapKehadiranBulanan() {
     });
   }, [bulanFilter, tahunFilter, wilayahFilter, search]);
 
-  const handleApplyFilters = () => {
-    if (tempFilters.bulan) setBulanFilter(tempFilters.bulan);
-    if (tempFilters.tahun) setTahunFilter(tempFilters.tahun);
-    if (!isAdmin && userWilayah) {
-      // Jika bukan admin, wilayah tidak bisa diubah
-      setWilayahFilter(userWilayah);
-    } else {
-      if (tempFilters.wilayah !== undefined) setWilayahFilter(tempFilters.wilayah);
+  // Fungsi Export ke Excel
+  const handleExportExcel = () => {
+    if (rekapBulanan.length === 0) {
+      alert("Tidak ada data untuk diexport");
+      return;
     }
-    if (tempFilters.search !== undefined) setSearch(tempFilters.search);
-    setShowFilterModal(false);
-  };
 
-  const handleResetFilters = () => {
-    const today = new Date();
-    setTempFilters({
-      bulan: (today.getMonth() + 1).toString().padStart(2, '0'),
-      tahun: today.getFullYear().toString(),
-      wilayah: isAdmin ? "" : userWilayah,
-      search: ""
+    const daysInMonth = getDaysInMonth(parseInt(tahunFilter), parseInt(bulanFilter));
+    const bulanLabel = getBulanLabel(bulanFilter);
+    const sheetName = `Rekap_${bulanLabel}_${tahunFilter}`;
+
+    // Header baris 1
+    const headerRow1 = ["NAMA", "JABATAN"];
+    for (let i = 1; i <= daysInMonth; i++) {
+      headerRow1.push(`${i}`);
+    }
+    headerRow1.push("HADIR (H)", "TERLAMBAT (T)", "IZIN (I)", "TANPA KET (TK)");
+
+    // Header baris 2 (kosong)
+    const headerRow2 = ["", ""];
+    for (let i = 1; i <= daysInMonth; i++) {
+      headerRow2.push("");
+    }
+    headerRow2.push("", "", "", "");
+
+    // Data per pegawai
+    const excelData = [headerRow1, headerRow2];
+
+    rekapBulanan.forEach((pegawai) => {
+      const row = [
+        pegawai.nama,
+        pegawai.jabatan,
+        ...pegawai.presensiHarian.map(status => status || '-'),
+        pegawai.totalHadir,
+        pegawai.totalTerlambat,
+        pegawai.totalIzin,
+        pegawai.totalTanpaKeterangan
+      ];
+      excelData.push(row);
     });
-    resetFilters();
-    setShowFilterModal(false);
+
+    // Baris Total
+    const totalRow = ["TOTAL", ""];
+    for (let i = 1; i <= daysInMonth; i++) {
+      totalRow.push("");
+    }
+    totalRow.push(
+      statistikBulanan.totalHadir,
+      statistikBulanan.totalTerlambat,
+      statistikBulanan.totalIzin,
+      statistikBulanan.totalTanpaKeterangan
+    );
+    excelData.push(totalRow);
+
+    // Keterangan
+    excelData.push([]);
+    excelData.push(["KETERANGAN:"]);
+    excelData.push(["H", "= Hadir (tepat waktu)"]);
+    excelData.push(["T", "= Terlambat"]);
+    excelData.push(["I", "= Izin"]);
+    excelData.push(["TK", "= Tanpa Keterangan"]);
+
+    // Buat file Excel
+    const ws = XLSX.utils.aoa_to_sheet(excelData);
+    ws['!cols'] = [
+      {wch:25}, // Nama
+      {wch:20}, // Jabatan
+      ...Array(daysInMonth).fill({wch:4}),
+      {wch:8}, {wch:8}, {wch:8}, {wch:8}
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+    const fileName = `rekap_kehadiran_${bulanLabel}_${tahunFilter}${wilayahFilter ? `_${wilayahFilter}` : ''}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    setShowExportModal(false);
   };
 
-  // FUNGSI CETAK - KHUSUS untuk mencetak dengan format tabel lengkap
+  // Fungsi Cetak
   const handlePrintCustom = () => {
     const printWindow = window.open('', '_blank');
     const daysInMonth = getDaysInMonth(parseInt(tahunFilter), parseInt(bulanFilter));
@@ -320,6 +375,30 @@ export default function RekapKehadiranBulanan() {
     }
   };
 
+  const handleApplyFilters = () => {
+    if (tempFilters.bulan) setBulanFilter(tempFilters.bulan);
+    if (tempFilters.tahun) setTahunFilter(tempFilters.tahun);
+    if (!isAdmin && userWilayah) {
+      setWilayahFilter(userWilayah);
+    } else {
+      if (tempFilters.wilayah !== undefined) setWilayahFilter(tempFilters.wilayah);
+    }
+    if (tempFilters.search !== undefined) setSearch(tempFilters.search);
+    setShowFilterModal(false);
+  };
+
+  const handleResetFilters = () => {
+    const today = new Date();
+    setTempFilters({
+      bulan: (today.getMonth() + 1).toString().padStart(2, '0'),
+      tahun: today.getFullYear().toString(),
+      wilayah: isAdmin ? "" : userWilayah,
+      search: ""
+    });
+    resetFilters();
+    setShowFilterModal(false);
+  };
+
   // Opsi wilayah hanya untuk admin
   const wilayahOptions = isAdmin 
     ? ["", "Cermee", "Prajekan", "Botolinggo", "Klabang", "Ijen"]
@@ -336,7 +415,6 @@ export default function RekapKehadiranBulanan() {
     );
   }
 
-  // Jika belum login
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -355,7 +433,7 @@ export default function RekapKehadiranBulanan() {
 
   return (
     <div className="min-h-screen bg-gray-100 pb-16">
-      {/* HEADER - Compact untuk HP */}
+      {/* HEADER */}
       <div className="bg-gradient-to-b from-blue-900 to-blue-800 pt-4 pb-6 rounded-b-2xl">
         <div className="px-4">
           <div className="flex items-center justify-between mb-3">
@@ -458,7 +536,6 @@ export default function RekapKehadiranBulanan() {
                       
                       return (
                         <div key={pegawai.id || idx} className="bg-gray-50 rounded-xl p-3">
-                          {/* Header Pegawai */}
                           <div className="flex justify-between items-start mb-2">
                             <div>
                               <h3 className="font-semibold text-sm text-gray-800">{pegawai.nama}</h3>
@@ -476,7 +553,6 @@ export default function RekapKehadiranBulanan() {
                             </div>
                           </div>
 
-                          {/* Ringkasan Stat */}
                           <div className="grid grid-cols-4 gap-2 mb-3 text-center">
                             <div className="bg-green-50 rounded-lg p-1">
                               <p className="text-xs font-bold text-green-600">{pegawai.totalHadir}</p>
@@ -496,7 +572,6 @@ export default function RekapKehadiranBulanan() {
                             </div>
                           </div>
 
-                          {/* Presensi Harian - Scroll Horizontal */}
                           <div className="overflow-x-auto no-scrollbar">
                             <div className="flex gap-1 min-w-max pb-1">
                               {pegawai.presensiHarian.map((status, dayIdx) => {
@@ -540,34 +615,15 @@ export default function RekapKehadiranBulanan() {
             )}
           </div>
 
-          {/* Footer dengan tombol Export & Print */}
-          {rekapBulanan.length > 0 && (
-            <div className="px-3 py-3 border-t border-gray-100 flex gap-2">
-              <button
-                onClick={() => setShowExportModal(true)}
-                className="flex-1 py-2 bg-green-600 text-white rounded-lg text-xs font-medium flex items-center justify-center gap-1"
-              >
-                <FileSpreadsheet size={14} />
-                Export Excel
-              </button>
-              <button
-                onClick={handlePrintCustom}
-                className="flex-1 py-2 bg-blue-600 text-white rounded-lg text-xs font-medium flex items-center justify-center gap-1"
-              >
-                <Printer size={14} />
-                Cetak
-              </button>
-            </div>
-          )}
 
-          {/* Info Footer */}
+
           <div className="px-3 py-2 border-t border-gray-100 text-[9px] text-gray-400 text-center">
             {rekapBulanan.length} pegawai • {getDaysInMonth(parseInt(tahunFilter), parseInt(bulanFilter))} hari kerja
           </div>
         </div>
       </div>
 
-      {/* FILTER MODAL - Hanya untuk admin */}
+      {/* FILTER MODAL */}
       {showFilterModal && isAdmin && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
           <div className="bg-white w-full rounded-t-xl max-h-[80vh] overflow-y-auto animate-slide-up">
@@ -657,16 +713,13 @@ export default function RekapKehadiranBulanan() {
               </div>
               <div className="space-y-3">
                 <button
-                  onClick={() => {
-                    alert('Fungsi export Excel dapat ditambahkan nanti');
-                    setShowExportModal(false);
-                  }}
+                  onClick={handleExportExcel}
                   className="w-full py-3 bg-green-600 text-white rounded-lg flex items-center justify-center gap-2 text-sm font-medium active:bg-green-700"
                 >
                   <FileSpreadsheet size={18} />
                   Export ke Excel
                 </button>
-                <button
+                {/* <button
                   onClick={() => {
                     handlePrintCustom();
                     setShowExportModal(false);
@@ -675,7 +728,7 @@ export default function RekapKehadiranBulanan() {
                 >
                   <Printer size={18} />
                   Cetak / Print
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

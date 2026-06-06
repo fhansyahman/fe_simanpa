@@ -697,16 +697,7 @@ export default function PersetujuanIzinPage() {
         </div>
       )}
 
-      {/* BOTTOM NAV */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
-        <div className="max-w-7xl mx-auto grid grid-cols-5">
-          <NavItem icon={<Home size={20} />} label="Beranda" href="/atasan/dashboard" active={false} badge={0} />
-          <NavItem icon={<UserCheck size={20} />} label="Kehadiran" href="/atasan/kehadiran" active={false} badge={0} />
-          <NavItem icon={<ClipboardCheck size={20} />} label="Persetujuan" href="/atasan/persetujuan-izin" active={true} badge={statistik.pending} />
-          <NavItem icon={<FileText size={20} />} label="Laporan" href="/atasan/laporan" active={false} badge={0} />
-          <NavItem icon={<User size={20} />} label="Akun" href="/atasan/akun" active={false} badge={0} />
-        </div>
-      </div>
+
     </div>
   );
 }

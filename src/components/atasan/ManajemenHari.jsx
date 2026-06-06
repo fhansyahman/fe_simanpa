@@ -86,14 +86,14 @@ const [showExportMenu, setShowExportMenu] = useState(false);
 
       {/* Tombol aksi di kanan - Dropdown Export */}
       <div className="relative">
-        <button
+        {/* <button
           onClick={() => setShowExportMenu(!showExportMenu)}
           disabled={loading}
           className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition disabled:opacity-50 flex items-center gap-1"
         >
           <Download size={18} />
           <ChevronDown size={14} />
-        </button>
+        </button> */}
         
         {showExportMenu && (
           <>
@@ -295,16 +295,7 @@ const [showExportMenu, setShowExportMenu] = useState(false);
         </div>
       </div>
 
-      {/* BOTTOM NAV - Compact untuk HP */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
-        <div className="flex justify-around py-1.5">
-          <NavItemCompact icon={<Home size={18} />} label="Beranda" href="/" />
-          <NavItemCompact icon={<Users size={18} />} label="Kehadiran" href="/presensi" />
-          <NavItemCompact icon={<ClipboardCheck size={18} />} label="Setuju" href="/approval" badge={6} />
-          <NavItemCompact icon={<BarChart3 size={18} />} label="Grafik" href="/kinerja" active />
-          <NavItemCompact icon={<User size={18} />} label="Akun" href="/profile" />
-        </div>
-      </div>
+
 
       <style jsx>{`
         .no-scrollbar::-webkit-scrollbar {

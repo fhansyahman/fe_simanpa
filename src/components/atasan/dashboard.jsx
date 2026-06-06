@@ -287,7 +287,7 @@ export default function DashboardAtasanPage() {
     <div className="min-h-screen bg-gray-100 pb-16">
 
       {/* HEADER - Compact untuk HP dengan menu logout */}
-      <div className="bg-gradient-to-b from-blue-900 to-blue-800 text-white px-4 pt-4 pb-16 rounded-b-2xl">
+      <div className="bg-gradient-to-b from-blue-900 to-blue-800 text-white px-4 pt-4 pb-16 ">
         <div className="flex justify-between items-start mb-3">
           <div className="flex gap-3 items-center">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
@@ -314,7 +314,7 @@ export default function DashboardAtasanPage() {
   title="Logout"
 >
   <LogOut size={18} />
-  <span>Logout</span>
+
 </button>
         </div>
 

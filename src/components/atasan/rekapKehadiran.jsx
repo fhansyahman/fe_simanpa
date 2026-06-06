@@ -204,13 +204,7 @@ export default function PresensiPage() {
         >
           <BarChart3 size={18} />
         </button>
-        <button
-          onClick={handleExportData}
-          disabled={loading || rekapPerPegawai.length === 0}
-          className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition disabled:opacity-50"
-        >
-          <Download size={18} />
-        </button>
+
       </div>
     </div>
   </div>
@@ -641,16 +635,7 @@ export default function PresensiPage() {
         </div>
       </div>
 
-      {/* BOTTOM NAV - Compact untuk HP */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
-        <div className="flex justify-around py-1.5">
-          <NavItem icon={<Home size={18} />} label="Beranda" href="/" />
-          <NavItem icon={<Users size={18} />} label="Kehadiran" href="/presensi" active />
-          <NavItem icon={<ClipboardCheck size={18} />} label="Setuju" href="/approval" badge={6} />
-          <NavItem icon={<BarChart3 size={18} />} label="Grafik" href="/kinerja" />
-          <NavItem icon={<User size={18} />} label="Akun" href="/profile" />
-        </div>
-      </div>
+
 
       {/* FILTER MODAL - Optimized untuk HP */}
       {showFilterModal && (

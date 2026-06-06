@@ -28,7 +28,7 @@ export function TabelPegawaiKinerja({ chartData, onExport }) {
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Pegawai</th>
-              <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Wilayah</th>
+              {/* <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Wilayah</th> */}
               <th className="py-3 px-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Total KR</th>
               <th className="py-3 px-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Total KN</th>
               <th className="py-3 px-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Target KR</th>
@@ -46,9 +46,7 @@ export function TabelPegawaiKinerja({ chartData, onExport }) {
                   <td className="py-3 px-4">
                     <p className="font-medium text-gray-900">{label}</p>
                   </td>
-                  <td className="py-3 px-4">
-                    <p className="text-sm text-gray-600">{pegawaiData?.data?.wilayah_penugasan || '-'}</p>
-                  </td>
+
                   <td className="py-3 px-4 text-right">
                     <span className="font-semibold text-emerald-600">
                       {formatNumber(chartData.totalKR[index] || 0)}

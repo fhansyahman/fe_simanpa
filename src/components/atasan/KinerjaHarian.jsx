@@ -607,16 +607,7 @@ export default function LaporanKerjaPegawai() {
         formatDateShort={formatDateShort}
       />
 
-      {/* BOTTOM NAV */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-        <div className="grid grid-cols-5 max-w-7xl mx-auto">
-          <NavItem icon={<Home />} label="Beranda" />
-          <NavItem icon={<UserCheck />} label="Kehadiran" />
-          <NavItem icon={<ClipboardCheck />} label="Persetujuan" />
-          <NavItem active icon={<FileText />} label="Laporan" />
-          <NavItem icon={<User />} label="Akun" />
-        </div>
-      </div>
+
     </div>
   );
 }

@@ -66,6 +66,75 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
     tanpaKeterangan: 0
   });
 
+  // Fungsi untuk membuka Google Maps langsung ke aplikasi
+  const openGoogleMaps = (lat, lng) => {
+    if (!lat || !lng) return;
+    
+    // Deteksi user agent
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    const isAndroid = /Android/.test(userAgent);
+    
+    // URL koordinat
+    const coordinates = `${lat},${lng}`;
+    
+    if (isIOS) {
+      // iOS: Coba buka Google Maps app dulu, fallback ke Apple Maps
+      const googleMapsApp = `comgooglemaps://?q=${coordinates}&center=${coordinates}&zoom=15`;
+      const appleMaps = `http://maps.apple.com/?q=${coordinates}`;
+      const webMaps = `https://www.google.com/maps?q=${coordinates}`;
+      
+      // Coba buka Google Maps app
+      window.location.href = googleMapsApp;
+      
+      // Set timeout untuk fallback jika Google Maps tidak terinstall
+      setTimeout(() => {
+        // Cek apakah masih di halaman yang sama (berarti Google Maps app tidak terbuka)
+        if (document.hasFocus()) {
+          window.location.href = appleMaps;
+        }
+      }, 500);
+      
+      // Fallback kedua setelah Apple Maps
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          window.location.href = webMaps;
+        }
+      }, 1000);
+      
+    } else if (isAndroid) {
+      // Android: Gunakan intent URL untuk langsung buka Google Maps app
+      const intentUrl = `intent://maps.google.com/maps?q=${coordinates}&api=1#Intent;scheme=https;package=com.google.android.apps.maps;end`;
+      const webMaps = `https://www.google.com/maps?q=${coordinates}`;
+      
+      // Coba buka dengan intent
+      window.location.href = intentUrl;
+      
+      // Fallback ke web jika intent gagal
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          window.location.href = webMaps;
+        }
+      }, 500);
+      
+    } else {
+      // Desktop: Buka di browser
+      window.open(`https://www.google.com/maps?q=${coordinates}`, '_blank');
+    }
+  };
+
+  // Fungsi alternatif yang lebih sederhana (coba ini jika yang di atas tidak bekerja)
+  const openGoogleMapsSimple = (lat, lng) => {
+    // URL dengan parameter api=1 akan otomatis membuka app jika terinstall
+    window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+  };
+
+  const getShortName = (nama) => {
+    if (!nama) return '?';
+    if (nama.length <= 3) return nama.toUpperCase();
+    return nama.substring(0, 3).toUpperCase();
+  };
+
   // Load Leaflet
   useEffect(() => {
     const loadLeaflet = async () => {
@@ -270,16 +339,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
     };
   }, [isMapReady, mapCenter, mapZoom]);
 
-  const getGoogleMapsLink = (lat, lng) => {
-    return `https://www.google.com/maps?q=${lat},${lng}`;
-  };
-
-  const getShortName = (nama) => {
-    if (!nama) return '?';
-    if (nama.length <= 3) return nama.toUpperCase();
-    return nama.substring(0, 3).toUpperCase();
-  };
-
   // Update markers
   useEffect(() => {
     const map = mapInstanceRef.current;
@@ -332,7 +391,8 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
         .on('click', () => {
           setSelectedPresensi({
             ...item,
-            googleMapsLink: getGoogleMapsLink(item.lat, item.lng)
+            lat: item.lat,
+            lng: item.lng
           });
           setShowSidebar(true);
         });
@@ -394,7 +454,7 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
   const wilayahInfo = userWilayah ? `Wilayah: ${userWilayah}` : 'Semua Wilayah';
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 text-black">
       {/* Filter Bar - Compact untuk HP */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
         {/* Baris 1: Tanggal */}
@@ -527,15 +587,14 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
                   <p><span className="text-gray-500">Tipe:</span> {selectedPresensi.jenis === 'masuk' ? 'Check In' : 'Check Out'}</p>
                 </div>
                 <div className="pt-2 mt-2 border-t border-gray-100 flex gap-3">
-                  <a
-                    href={selectedPresensi.googleMapsLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  {/* Tombol Google Maps - LANGSUNG BUKA APLIKASI */}
+                  <button
+                    onClick={() => openGoogleMaps(selectedPresensi.lat, selectedPresensi.lng)}
                     className="flex-1 inline-flex items-center justify-center gap-1 text-blue-600 text-xs font-medium py-1.5 bg-blue-50 rounded-lg"
                   >
                     <MapPin size={12} />
                     Google Maps
-                  </a>
+                  </button>
                   <button
                     onClick={() => {
                       const presensiFull = allPresensiData.find(p => p.id == selectedPresensi.presensi_id);
@@ -677,7 +736,7 @@ export default function MonitoringKehadiran() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 pb-16">
+    <div className="min-h-screen bg-gray-100 pb-16 text-black">
       {/* HEADER - Compact untuk HP */}
       <div className="bg-gradient-to-b from-blue-900 to-blue-700 pt-4 pb-8">
         <div className="px-4">
