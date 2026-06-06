@@ -29,6 +29,8 @@ import {
   UserX,
   AlertCircle,
   ExternalLink,
+  Copy,
+  Check,
 } from "lucide-react";
 import { usePresensiData } from "./hooks/presensi/usePresensiData";
 import { useFilters } from "./hooks/presensi/useFilters";
@@ -50,6 +52,7 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
   const [mapCenter] = useState([-7.919021, 113.820801]);
   const [mapZoom] = useState(11);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [copiedId, setCopiedId] = useState(null);
   
   const mapRef = useRef(null);
   const markerLayerRef = useRef(null);
@@ -66,67 +69,43 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
     tanpaKeterangan: 0
   });
 
-  // Fungsi untuk membuka Google Maps langsung ke aplikasi
-  const openGoogleMaps = (lat, lng) => {
+  // Fungsi untuk copy link Google Maps
+  const copyGoogleMapsLink = async (lat, lng, presensiId) => {
     if (!lat || !lng) return;
     
-    // Deteksi user agent
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-    const isAndroid = /Android/.test(userAgent);
+    const googleMapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
     
-    // URL koordinat
-    const coordinates = `${lat},${lng}`;
-    
-    if (isIOS) {
-      // iOS: Coba buka Google Maps app dulu, fallback ke Apple Maps
-      const googleMapsApp = `comgooglemaps://?q=${coordinates}&center=${coordinates}&zoom=15`;
-      const appleMaps = `http://maps.apple.com/?q=${coordinates}`;
-      const webMaps = `https://www.google.com/maps?q=${coordinates}`;
+    try {
+      await navigator.clipboard.writeText(googleMapsLink);
+      setCopiedId(presensiId);
       
-      // Coba buka Google Maps app
-      window.location.href = googleMapsApp;
+      // Tampilkan notifikasi sukses
+      Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: 'Link Google Maps telah disalin ke clipboard',
+        timer: 1500,
+        showConfirmButton: false,
+        position: 'top-end',
+        toast: true,
+      });
       
-      // Set timeout untuk fallback jika Google Maps tidak terinstall
+      // Reset copied state setelah 2 detik
       setTimeout(() => {
-        // Cek apakah masih di halaman yang sama (berarti Google Maps app tidak terbuka)
-        if (document.hasFocus()) {
-          window.location.href = appleMaps;
-        }
-      }, 500);
-      
-      // Fallback kedua setelah Apple Maps
-      setTimeout(() => {
-        if (document.hasFocus()) {
-          window.location.href = webMaps;
-        }
-      }, 1000);
-      
-    } else if (isAndroid) {
-      // Android: Gunakan intent URL untuk langsung buka Google Maps app
-      const intentUrl = `intent://maps.google.com/maps?q=${coordinates}&api=1#Intent;scheme=https;package=com.google.android.apps.maps;end`;
-      const webMaps = `https://www.google.com/maps?q=${coordinates}`;
-      
-      // Coba buka dengan intent
-      window.location.href = intentUrl;
-      
-      // Fallback ke web jika intent gagal
-      setTimeout(() => {
-        if (document.hasFocus()) {
-          window.location.href = webMaps;
-        }
-      }, 500);
-      
-    } else {
-      // Desktop: Buka di browser
-      window.open(`https://www.google.com/maps?q=${coordinates}`, '_blank');
+        setCopiedId(null);
+      }, 2000);
+    } catch (err) {
+      console.error('Gagal copy link:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: 'Gagal menyalin link Google Maps',
+        timer: 1500,
+        showConfirmButton: false,
+        position: 'top-end',
+        toast: true,
+      });
     }
-  };
-
-  // Fungsi alternatif yang lebih sederhana (coba ini jika yang di atas tidak bekerja)
-  const openGoogleMapsSimple = (lat, lng) => {
-    // URL dengan parameter api=1 akan otomatis membuka app jika terinstall
-    window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
   };
 
   const getShortName = (nama) => {
@@ -454,7 +433,7 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
   const wilayahInfo = userWilayah ? `Wilayah: ${userWilayah}` : 'Semua Wilayah';
 
   return (
-    <div className="space-y-3 text-black">
+    <div className="space-y-3">
       {/* Filter Bar - Compact untuk HP */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
         {/* Baris 1: Tanggal */}
@@ -587,13 +566,22 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
                   <p><span className="text-gray-500">Tipe:</span> {selectedPresensi.jenis === 'masuk' ? 'Check In' : 'Check Out'}</p>
                 </div>
                 <div className="pt-2 mt-2 border-t border-gray-100 flex gap-3">
-                  {/* Tombol Google Maps - LANGSUNG BUKA APLIKASI */}
+                  {/* Tombol Copy Link Google Maps */}
                   <button
-                    onClick={() => openGoogleMaps(selectedPresensi.lat, selectedPresensi.lng)}
+                    onClick={() => copyGoogleMapsLink(selectedPresensi.lat, selectedPresensi.lng, selectedPresensi.id)}
                     className="flex-1 inline-flex items-center justify-center gap-1 text-blue-600 text-xs font-medium py-1.5 bg-blue-50 rounded-lg"
                   >
-                    <MapPin size={12} />
-                    Google Maps
+                    {copiedId === selectedPresensi.id ? (
+                      <>
+                        <Check size={12} />
+                        Tersalin!
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={12} />
+                        Copy Link Maps
+                      </>
+                    )}
                   </button>
                   <button
                     onClick={() => {
@@ -696,6 +684,7 @@ export default function MonitoringKehadiran() {
 
   const [showFilterSidebar, setShowFilterSidebar] = useState(false);
   const [searchInput, setSearchInput] = useState(filters.search);
+  const [copiedId, setCopiedId] = useState(null);
 
   const formatJam = (jam) => {
     if (!jam) return "-";
@@ -722,6 +711,43 @@ export default function MonitoringKehadiran() {
 
   const handleSearchSubmit = () => {
     updateFilter("search", searchInput);
+  };
+
+  // Fungsi copy link untuk daftar pegawai
+  const copyLocationLink = async (lat, lng, id) => {
+    if (!lat || !lng) return;
+    
+    const googleMapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+    
+    try {
+      await navigator.clipboard.writeText(googleMapsLink);
+      setCopiedId(id);
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: 'Link lokasi telah disalin',
+        timer: 1500,
+        showConfirmButton: false,
+        position: 'top-end',
+        toast: true,
+      });
+      
+      setTimeout(() => {
+        setCopiedId(null);
+      }, 2000);
+    } catch (err) {
+      console.error('Gagal copy link:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: 'Gagal menyalin link lokasi',
+        timer: 1500,
+        showConfirmButton: false,
+        position: 'top-end',
+        toast: true,
+      });
+    }
   };
 
   if (loading) {
@@ -857,6 +883,32 @@ export default function MonitoringKehadiran() {
                       <p className="text-base font-bold">{formatJam(presensi.jam_pulang)}</p>
                     </div>
                   </div>
+
+                  {/* Lokasi button untuk copy link
+                  {(presensi.latitude_masuk || presensi.latitude_pulang) && (
+                    <div className="mb-2">
+                      <button
+                        onClick={() => {
+                          const lat = presensi.latitude_masuk || presensi.latitude_pulang;
+                          const lng = presensi.longitude_masuk || presensi.longitude_pulang;
+                          copyLocationLink(lat, lng, presensi.id);
+                        }}
+                        className="w-full py-1.5 bg-blue-50 rounded-lg text-[10px] text-blue-600 flex items-center justify-center gap-1"
+                      >
+                        {copiedId === presensi.id ? (
+                          <>
+                            <Check size={10} />
+                            Link Tersalin!
+                          </>
+                        ) : (
+                          <>
+                            <Copy size={10} />
+                            Salin Link Lokasi
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )} */}
 
                   {/* Action Buttons */}
                   <div className="flex gap-2 mt-2 pt-2 border-t border-gray-100">
@@ -995,6 +1047,33 @@ export default function MonitoringKehadiran() {
                   <p className="font-bold text-xl text-gray-900">{formatJam(selectedPresensi.jam_pulang)}</p>
                 </div>
               </div>
+
+              {/* Tombol copy link di detail modal */}
+              {(selectedPresensi.latitude_masuk || selectedPresensi.latitude_pulang) && (
+                <div className="mb-4">
+                  {/* <button
+                    onClick={() => {
+                      const lat = selectedPresensi.latitude_masuk || selectedPresensi.latitude_pulang;
+                      const lng = selectedPresensi.longitude_masuk || selectedPresensi.longitude_pulang;
+                      const link = `https://www.google.com/maps?q=${lat},${lng}`;
+                      navigator.clipboard.writeText(link);
+                      Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Link lokasi telah disalin',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        position: 'top-end',
+                        toast: true,
+                      });
+                    }}
+                    className="w-full py-2 bg-blue-50 text-blue-600 rounded-lg text-sm flex items-center justify-center gap-2"
+                  >
+                    <Copy size={14} />
+                    Salin Link Lokasi
+                  </button> */}
+                </div>
+              )}
 
               {(selectedPresensi.foto_masuk || selectedPresensi.foto_pulang) && (
                 <div className="border-t border-gray-100 pt-4">

@@ -31,7 +31,17 @@ import {
   LogOut,
   Settings,
   HelpCircle,
-  ChevronDown
+  ChevronDown,
+  LayoutDashboard,
+  History,
+  FileCheck,
+  PieChart,
+  Mail,
+  Phone,
+  MapPin,
+  Award,
+  Clock as ClockIcon,
+  Calendar as CalendarIcon
 } from "lucide-react";
 import { useMonitoringData } from "./hooks/dashboard/useMonitoringData";
 import { useKinerjaData } from "./hooks/dashboards/useKinerjaData";
@@ -44,7 +54,6 @@ export default function DashboardAtasanPage() {
   const [showAllIzin, setShowAllIzin] = useState(false);
   const [showAllSakit, setShowAllSakit] = useState(false);
   const [showAllCuti, setShowAllCuti] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   
@@ -137,47 +146,29 @@ export default function DashboardAtasanPage() {
     return name.charAt(0).toUpperCase();
   };
 
+  // Ambil email user
+  const getUserEmail = () => {
+    if (!user) return "email@example.com";
+    return user.email || user.username || "user@example.com";
+  };
+
+  // Ambil wilayah user
+  const getUserWilayah = () => {
+    if (filteredByWilayah && userWilayah) return userWilayah;
+    return user?.wilayah_penugasan || "Semua Wilayah";
+  };
+
   // Fungsi Logout
   const handleLogout = async () => {
     setIsLoggingOut(true);
     
     try {
-      // 1. Panggil API logout
-      const token = localStorage.getItem('token');
-      await fetch("/api/logout", { 
-        method: "POST",
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      // 2. Hapus semua data dari localStorage
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('refreshToken');
-      localStorage.clear();
-      
-      // 3. Hapus cookie
-      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      
-      // 4. Hapus sessionStorage
-      sessionStorage.clear();
-      
-      console.log("✅ Logout berhasil, semua data client telah dihapus");
-      
-      // 5. Redirect ke login
+      await logout();
       router.push("/login");
-      
     } catch (error) {
       console.error("❌ Error saat logout:", error);
-      // Tetap hapus data client meskipun request ke backend gagal
       localStorage.clear();
       sessionStorage.clear();
-      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       router.push("/login");
     } finally {
       setIsLoggingOut(false);
@@ -261,11 +252,6 @@ export default function DashboardAtasanPage() {
         <div className="text-center px-4">
           <Loader2 className="w-10 h-10 animate-spin text-blue-600 mx-auto mb-3" />
           <p className="text-gray-600 text-sm">Memuat data dashboard...</p>
-          {filteredByWilayah && (
-            <p className="text-xs text-gray-500 mt-2">
-              Menampilkan data untuk wilayah: {userWilayah}
-            </p>
-          )}
         </div>
       </div>
     );
@@ -283,148 +269,201 @@ export default function DashboardAtasanPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-100 pb-16">
+  // Konten untuk tab Akun
+  const renderAkunContent = () => (
+    <div className="min-h-screen bg-gray-100 pb-20">
+      {/* Header Profil */}
+      <div className="bg-gradient-to-b from-blue-900 to-blue-800 text-white px-4 pt-8 pb-12">
+        <div className="text-center">
+          {/* Avatar besar */}
+          <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg mx-auto mb-4 border-4 border-white/30">
+            <span className="text-white text-3xl font-bold">
+              {getUserInitial()}
+            </span>
+          </div>
+          
+          <h1 className="text-xl font-bold text-white">
+            {getUserName()}
+          </h1>
+          <p className="text-blue-100 text-sm mt-1">
+            {getUserRole()}
+          </p>
+          {filteredByWilayah && userWilayah && (
+            <p className="text-blue-200 text-xs mt-1">
+              Wilayah: {userWilayah}
+            </p>
+          )}
+        </div>
+      </div>
 
-      {/* HEADER - Compact untuk HP dengan menu logout */}
-      <div className="bg-gradient-to-b from-blue-900 to-blue-800 text-white px-4 pt-4 pb-16 ">
-        <div className="flex justify-between items-start mb-3">
-          <div className="flex gap-3 items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white text-lg font-bold">
-                {getUserInitial()}
-              </span>
+      {/* Informasi Detail Profil */}
+      <div className="px-4 -mt-6">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          {/* Informasi Kontak */}
+          <div className="p-4 border-b border-gray-100">
+            <h2 className="font-semibold text-gray-800 text-sm mb-3 flex items-center gap-2">
+              <Mail size={16} className="text-blue-500" />
+              Informasi Kontak
+            </h2>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Mail size={16} className="text-gray-400" />
+                <div>
+                  <p className="text-xs text-gray-500">Email</p>
+                  <p className="text-sm text-gray-800">{getUserEmail()}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Phone size={16} className="text-gray-400" />
+                <div>
+                  <p className="text-xs text-gray-500">No. Telepon</p>
+                  <p className="text-sm text-gray-800">{user?.no_telepon || user?.phone || "-"}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <MapPin size={16} className="text-gray-400" />
+                <div>
+                  <p className="text-xs text-gray-500">Wilayah Penugasan</p>
+                  <p className="text-sm text-gray-800">{getUserWilayah()}</p>
+                </div>
+              </div>
             </div>
+          </div>
 
-            <div>
-              <p className="text-white text-xs opacity-90">Selamat datang,</p>
-              <h1 className="text-base font-bold text-white">
-                {getUserName()}
-              </h1>
-              <p className="text-blue-100 text-[10px]">
-                {getUserRole()}
-              </p>
+          {/* Statistik Singkat */}
+          <div className="p-4 border-b border-gray-100 bg-blue-50/30">
+            <h2 className="font-semibold text-gray-800 text-sm mb-3 flex items-center gap-2">
+              <Award size={16} className="text-yellow-500" />
+              Statistik Singkat
+            </h2>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="text-center">
+                <div className="bg-green-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
+                  <Users size={16} className="text-green-600" />
+                </div>
+                <p className="text-lg font-bold text-gray-800">{stats.totalPegawai || 0}</p>
+                <p className="text-[10px] text-gray-500">Total Pegawai</p>
+              </div>
+              <div className="text-center">
+                <div className="bg-blue-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
+                  <CalendarIcon size={16} className="text-blue-600" />
+                </div>
+                <p className="text-lg font-bold text-gray-800">{stats.hadir || 0}</p>
+                <p className="text-[10px] text-gray-500">Hadir Hari Ini</p>
+              </div>
+              <div className="text-center">
+                <div className="bg-purple-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
+                  <FileText size={16} className="text-purple-600" />
+                </div>
+                <p className="text-lg font-bold text-gray-800">{kinerjaList.length || 0}</p>
+                <p className="text-[10px] text-gray-500">Laporan Bulan Ini</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Menu Aplikasi */}
+          <div className="p-4">
+            <h2 className="font-semibold text-gray-800 text-sm mb-3 flex items-center gap-2">
+              <LayoutDashboard size={16} className="text-gray-500" />
+              Menu Aplikasi
+            </h2>
+            <div className="space-y-1">
+              {menuUtama.slice(0, 4).map((item, index) => (
+                <Link href={item.href} key={index}>
+                  <div className="flex items-center justify-between py-2.5 px-2 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-lg ${item.color} flex items-center justify-center`}>
+                        <item.icon size={14} className="text-white" />
+                      </div>
+                      <span className="text-sm text-gray-700">{item.title}</span>
+                    </div>
+                    <ChevronRight size={16} className="text-gray-400" />
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
 
           {/* Tombol Logout */}
-<button
-  onClick={() => setShowLogoutModal(true)}
-  className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center gap-2 text-white font-medium"
-  title="Logout"
->
-  <LogOut size={18} />
-
-</button>
-        </div>
-
-        <div className="flex justify-between items-center mt-2">
-          <div className="flex items-center gap-1.5">
-            <Calendar size={14} className="text-white" />
-            <span className="text-white text-xs">{formatDate(selectedDate)}</span>
-          </div>
-
-          <div className="flex gap-1.5">
-            <button 
-              onClick={refreshData}
-              className="border border-white/30 px-2.5 py-1 rounded-lg text-[10px] text-white active:bg-white/10"
-              disabled={monitoringLoading.data}
+          <div className="p-4 pt-0 pb-6">
+            <button
+              onClick={() => setShowLogoutModal(true)}
+              className="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition-colors"
             >
-              {monitoringLoading.data ? "..." : "Refresh"}
+              <LogOut size={18} />
+              Logout
             </button>
-            <button 
-              onClick={() => handleDateChange({ target: { value: new Date().toISOString().split('T')[0] } })}
-              className="border border-white/30 px-2.5 py-1 rounded-lg text-[10px] text-white active:bg-white/10"
-            >
-              Hari Ini
-            </button>
+            
+            <p className="text-center text-[10px] text-gray-400 mt-4">
+              Versi Aplikasi 1.0.0
+            </p>
           </div>
         </div>
       </div>
+    </div>
+  );
 
+  // Konten untuk tab Beranda
+  const renderBerandaContent = () => (
+    <>
       {/* RINGKASAN - Compact untuk HP */}
-<div className="px-4 -mt-12 relative z-10">
-  <div className="bg-white rounded-xl shadow-md p-4">
+      <div className="px-4 -mt-12 relative z-10">
+        <div className="bg-white rounded-xl shadow-md p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold text-sm text-gray-800">
+              Ringkasan Kehadiran Hari Ini
+            </h2>
+            {monitoringLoading.stats && <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />}
+          </div>
 
-    <div className="flex items-center justify-between mb-3">
-      <h2 className="font-semibold text-sm text-gray-800">
-        Ringkasan Kehadiran Hari Ini
-      </h2>
-      {monitoringLoading.stats && <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />}
-    </div>
+          <div className="grid grid-cols-4 gap-2">
+            <div className="text-center bg-green-50 rounded-lg py-2 px-1">
+              <Users size={18} className="mx-auto text-green-600 mb-1" />
+              <p className="text-xl font-bold text-green-600">{stats.hadir || 0}</p>
+              <p className="text-[10px] font-medium text-green-700">Hadir</p>
+            </div>
 
-    <div className="grid grid-cols-4 gap-2">
-      {/* Hadir */}
-      <div className="text-center bg-green-50 rounded-lg py-2 px-1">
-        <Users size={18} className="mx-auto text-green-600 mb-1" />
-        <p className="text-xl font-bold text-green-600">
-          {stats.hadir || 0}
-        </p>
-        <p className="text-[10px] font-medium text-green-700">Hadir</p>
+            <div className="text-center bg-purple-50 rounded-lg py-2 px-1">
+              <User size={18} className="mx-auto text-purple-600 mb-1" />
+              <p className="text-xl font-bold text-purple-600">{stats.izin || 0}</p>
+              <p className="text-[10px] font-medium text-purple-700">Izin</p>
+            </div>
+
+            <div className="text-center bg-yellow-50 rounded-lg py-2 px-1">
+              <LogIn size={18} className="mx-auto text-yellow-600 mb-1" />
+              <p className="text-xl font-bold text-yellow-600">{stats.belumAbsen || 0}</p>
+              <p className="text-[10px] font-medium text-yellow-700">Belum Absen</p>
+            </div>
+
+            <div className="text-center bg-red-50 rounded-lg py-2 px-1">
+              <CircleX size={18} className="mx-auto text-red-600 mb-1" />
+              <p className="text-xl font-bold text-red-600">{stats.belumLapor || 0}</p>
+              <p className="text-[10px] font-medium text-red-700">Belum Lapor</p>
+            </div>
+          </div>
+
+          <div className="mt-3 pt-2 border-t border-gray-100 text-center">
+            <p className="text-[11px] text-gray-500">
+              Total Pegawai: <span className="font-semibold text-gray-800">{stats.totalPegawai || 0}</span>
+              {stats.tanpaKeterangan > 0 && (
+                <span className="ml-2 text-red-500">⚠️ Tanpa Ket: {stats.tanpaKeterangan}</span>
+              )}
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Izin */}
-      <div className="text-center bg-purple-50 rounded-lg py-2 px-1">
-        <User size={18} className="mx-auto text-purple-600 mb-1" />
-        <p className="text-xl font-bold text-purple-600">
-          {stats.izin || 0}
-        </p>
-        <p className="text-[10px] font-medium text-purple-700">Izin</p>
-      </div>
-
-      {/* Belum Absen */}
-      <div className="text-center bg-yellow-50 rounded-lg py-2 px-1">
-        <LogIn size={18} className="mx-auto text-yellow-600 mb-1" />
-        <p className="text-xl font-bold text-yellow-600">
-          {stats.belumAbsen || 0}
-        </p>
-        <p className="text-[10px] font-medium text-yellow-700">Belum Absen</p>
-      </div>
-
-      {/* Belum Lapor */}
-      <div className="text-center bg-red-50 rounded-lg py-2 px-1">
-        <CircleX size={18} className="mx-auto text-red-600 mb-1" />
-        <p className="text-xl font-bold text-red-600">
-          {stats.belumLapor || 0}
-        </p>
-        <p className="text-[10px] font-medium text-red-700">Belum Lapor</p>
-      </div>
-    </div>
-
-    {/* Total Pegawai */}
-    <div className="mt-3 pt-2 border-t border-gray-100 text-center">
-      <p className="text-[11px] text-gray-500">
-        Total Pegawai: <span className="font-semibold text-gray-800">{stats.totalPegawai || 0}</span>
-        {stats.tanpaKeterangan > 0 && (
-          <span className="ml-2 text-red-500">
-            ⚠️ Tanpa Ket: {stats.tanpaKeterangan}
-          </span>
-        )}
-      </p>
-    </div>
-  </div>
-</div>
-
-      {/* MENU UTAMA - Compact untuk HP dengan Link */}
+      {/* MENU UTAMA */}
       <div className="px-4 mt-4">
         <div className="grid grid-cols-2 gap-3">
           {menuUtama.map((item, index) => (
             <Link href={item.href} key={index}>
               <div className="bg-white rounded-xl p-3 shadow-sm active:scale-[0.98] transition-all cursor-pointer">
-                <div
-                  className={`w-10 h-10 rounded-lg ${item.color} flex items-center justify-center mb-2`}
-                >
+                <div className={`w-10 h-10 rounded-lg ${item.color} flex items-center justify-center mb-2`}>
                   <item.icon className="text-white w-5 h-5" />
                 </div>
-
-                <h3 className="font-bold text-xs text-gray-800">
-                  {item.title}
-                </h3>
-
-                <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">
-                  {item.desc}
-                </p>
-
+                <h3 className="font-bold text-xs text-gray-800">{item.title}</h3>
+                <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">{item.desc}</p>
                 <div className="flex justify-end mt-2">
                   <ChevronRight size={14} className="text-gray-400" />
                 </div>
@@ -434,137 +473,41 @@ export default function DashboardAtasanPage() {
         </div>
       </div>
 
-      {/* DAFTAR PEGAWAI BELUM ABSEN - Compact */}
+      {/* DAFTAR PEGAWAI BELUM ABSEN */}
       {dataBelumAbsen.length > 0 && (
         <div className="px-4 mt-4">
           <div className="bg-white rounded-xl shadow-sm p-3">
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-1.5">
                 <AlertCircle size={14} className="text-orange-500" />
-                <h2 className="font-bold text-sm text-gray-800">
-                  Belum Absen ({dataBelumAbsen.length})
-                </h2>
+                <h2 className="font-bold text-sm text-gray-800">Belum Absen ({dataBelumAbsen.length})</h2>
               </div>
               {dataBelumAbsen.length > 3 && (
-                <button 
-                  onClick={() => setShowAllBelumAbsen(!showAllBelumAbsen)}
-                  className="text-blue-600 text-[10px] font-medium"
-                >
-                  {showAllBelumAbsen ? "Sembunyikan" : `Lihat Semua`}
+                <button onClick={() => setShowAllBelumAbsen(!showAllBelumAbsen)} className="text-blue-600 text-[10px] font-medium">
+                  {showAllBelumAbsen ? "Sembunyikan" : "Lihat Semua"}
                 </button>
               )}
             </div>
-
             <div className="space-y-2">
               {displayedBelumAbsen.map((pegawai, index) => (
-                <div
-                  key={pegawai.id || index}
-                  className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
-                >
+                <div key={pegawai.id || index} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
                   <div className="flex gap-2 flex-1">
                     <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
                       <User size={14} className="text-orange-500" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-xs text-gray-800 truncate">
-                        {pegawai.nama || "Pegawai"}
-                      </h4>
+                      <h4 className="font-semibold text-xs text-gray-800 truncate">{pegawai.nama || "Pegawai"}</h4>
                       <div className="flex items-center gap-1 mt-0.5 flex-wrap">
-                        <span className="text-[9px] text-gray-500 truncate max-w-[100px]">
-                          {pegawai.jabatan || "-"}
-                        </span>
+                        <span className="text-[9px] text-gray-500 truncate max-w-[100px]">{pegawai.jabatan || "-"}</span>
                         {pegawai.wilayah_penugasan && (
-                          <span className="text-[8px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
-                            {pegawai.wilayah_penugasan}
-                          </span>
+                          <span className="text-[8px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{pegawai.wilayah_penugasan}</span>
                         )}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
-                      Belum Absen
-                    </span>
-                    <Link href="/atasan/riwayatkehadiran">
-                      <ChevronRight size={14} className="text-blue-500" />
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {dataBelumAbsen.length > 0 && (
-              <div className="mt-3 pt-2 border-t border-gray-100">
-                <Link href="/atasan/riwayatkehadiran">
-                  <div className="w-full bg-blue-50 text-blue-600 py-1.5 rounded-lg text-[10px] font-medium active:bg-blue-100 text-center">
-                    Lihat Semua Kehadiran
-                  </div>
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* DAFTAR PEGAWAI IZIN - Compact */}
-      {dataIzin.length > 0 && (
-        <div className="px-4 mt-4">
-          <div className="bg-white rounded-xl shadow-sm p-3">
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center gap-1.5">
-                <User size={14} className="text-purple-500" />
-                <h2 className="font-bold text-sm text-gray-800">
-                  Izin ({dataIzin.length})
-                </h2>
-              </div>
-              {dataIzin.length > 3 && (
-                <button 
-                  onClick={() => setShowAllIzin(!showAllIzin)}
-                  className="text-blue-600 text-[10px] font-medium"
-                >
-                  {showAllIzin ? "Sembunyikan" : `Lihat Semua`}
-                </button>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              {displayedIzin.map((pegawai, index) => (
-                <div
-                  key={pegawai.id || index}
-                  className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
-                >
-                  <div className="flex gap-2 flex-1">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <User size={14} className="text-purple-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-xs text-gray-800 truncate">
-                        {pegawai.nama || "Pegawai"}
-                      </h4>
-                      <div className="flex items-center gap-1 mt-0.5 flex-wrap">
-                        <span className="text-[9px] text-gray-500 truncate max-w-[100px]">
-                          {pegawai.jabatan || "-"}
-                        </span>
-                        {pegawai.wilayah_penugasan && (
-                          <span className="text-[8px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
-                            {pegawai.wilayah_penugasan}
-                          </span>
-                        )}
-                      </div>
-                      {pegawai.keterangan && (
-                        <p className="text-[9px] text-gray-500 mt-0.5 truncate">
-                          {pegawai.keterangan}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
-                      Izin
-                    </span>
-                    <Link href="/atasan/persetujuan">
-                      <ChevronRight size={14} className="text-blue-500" />
-                    </Link>
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">Belum Absen</span>
+                    <Link href="/atasan/riwayatkehadiran"><ChevronRight size={14} className="text-blue-500" /></Link>
                   </div>
                 </div>
               ))}
@@ -573,156 +516,16 @@ export default function DashboardAtasanPage() {
         </div>
       )}
 
-      {/* DAFTAR PEGAWAI SAKIT - Compact */}
-      {dataSakit.length > 0 && (
-        <div className="px-4 mt-4">
-          <div className="bg-white rounded-xl shadow-sm p-3">
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center gap-1.5">
-                <Stethoscope size={14} className="text-red-500" />
-                <h2 className="font-bold text-sm text-gray-800">
-                  Sakit ({dataSakit.length})
-                </h2>
-              </div>
-              {dataSakit.length > 3 && (
-                <button 
-                  onClick={() => setShowAllSakit(!showAllSakit)}
-                  className="text-blue-600 text-[10px] font-medium"
-                >
-                  {showAllSakit ? "Sembunyikan" : `Lihat Semua`}
-                </button>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              {displayedSakit.map((pegawai, index) => (
-                <div
-                  key={pegawai.id || index}
-                  className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
-                >
-                  <div className="flex gap-2 flex-1">
-                    <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Stethoscope size={14} className="text-red-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-xs text-gray-800 truncate">
-                        {pegawai.nama || "Pegawai"}
-                      </h4>
-                      <div className="flex items-center gap-1 mt-0.5 flex-wrap">
-                        <span className="text-[9px] text-gray-500 truncate max-w-[100px]">
-                          {pegawai.jabatan || "-"}
-                        </span>
-                        {pegawai.wilayah_penugasan && (
-                          <span className="text-[8px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
-                            {pegawai.wilayah_penugasan}
-                          </span>
-                        )}
-                      </div>
-                      {pegawai.keterangan && (
-                        <p className="text-[9px] text-gray-500 mt-0.5 truncate">
-                          {pegawai.keterangan}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-red-100 text-red-700">
-                      Sakit
-                    </span>
-                    <Link href="/atasan/persetujuan">
-                      <ChevronRight size={14} className="text-blue-500" />
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* DAFTAR PEGAWAI CUTI - Compact */}
-      {dataCuti.length > 0 && (
-        <div className="px-4 mt-4">
-          <div className="bg-white rounded-xl shadow-sm p-3">
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center gap-1.5">
-                <Umbrella size={14} className="text-teal-500" />
-                <h2 className="font-bold text-sm text-gray-800">
-                  Cuti ({dataCuti.length})
-                </h2>
-              </div>
-              {dataCuti.length > 3 && (
-                <button 
-                  onClick={() => setShowAllCuti(!showAllCuti)}
-                  className="text-blue-600 text-[10px] font-medium"
-                >
-                  {showAllCuti ? "Sembunyikan" : `Lihat Semua`}
-                </button>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              {displayedCuti.map((pegawai, index) => (
-                <div
-                  key={pegawai.id || index}
-                  className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
-                >
-                  <div className="flex gap-2 flex-1">
-                    <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Umbrella size={14} className="text-teal-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-xs text-gray-800 truncate">
-                        {pegawai.nama || "Pegawai"}
-                      </h4>
-                      <div className="flex items-center gap-1 mt-0.5 flex-wrap">
-                        <span className="text-[9px] text-gray-500 truncate max-w-[100px]">
-                          {pegawai.jabatan || "-"}
-                        </span>
-                        {pegawai.wilayah_penugasan && (
-                          <span className="text-[8px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
-                            {pegawai.wilayah_penugasan}
-                          </span>
-                        )}
-                      </div>
-                      {pegawai.keterangan && (
-                        <p className="text-[9px] text-gray-500 mt-0.5 truncate">
-                          {pegawai.keterangan}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-teal-100 text-teal-700">
-                      Cuti
-                    </span>
-                    <Link href="/atasan/persetujuan">
-                      <ChevronRight size={14} className="text-blue-500" />
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* LAPORAN TERBARU - Compact */}
+      {/* LAPORAN TERBARU */}
       <div className="px-4 mt-4 mb-4">
         <div className="bg-white rounded-xl shadow-sm p-3">
-
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-1.5">
               <FileText size={14} className="text-green-500" />
-              <h2 className="font-bold text-sm text-gray-800">
-                Laporan Terbaru
-              </h2>
+              <h2 className="font-bold text-sm text-gray-800">Laporan Terbaru</h2>
             </div>
-
-            <Link href="/atasan/laporan-kerja">
-              <span className="text-blue-600 text-[10px] font-medium">
-                Lihat Semua
-              </span>
+            <Link href="/atasan/riwayathasilkerja">
+              <span className="text-blue-600 text-[10px] font-medium">Lihat Semua</span>
             </Link>
           </div>
 
@@ -734,50 +537,25 @@ export default function DashboardAtasanPage() {
           ) : laporanTerbaru.length > 0 ? (
             <div className="space-y-2">
               {laporanTerbaru.map((item, index) => (
-                <Link href="/atasan/laporan-kerja" key={item.id || index}>
-                  <div className={`flex justify-between items-center py-2 ${
-                    index !== laporanTerbaru.length - 1 ? "border-b border-gray-100" : ""
-                  }`}>
+                <Link href="/atasan/riwayathasilkerja" key={item.id || index}>
+                  <div className={`flex justify-between items-center py-2 ${index !== laporanTerbaru.length - 1 ? "border-b border-gray-100" : ""}`}>
                     <div className="flex gap-2 flex-1 min-w-0">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                         <FileText size={14} className="text-green-500" />
                       </div>
-
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1 flex-wrap">
-                          <h4 className="font-semibold text-xs text-gray-800 truncate">
-                            {item.nama}
-                          </h4>
-                          {item.waktu && (
-                            <span className="text-[9px] text-gray-500">
-                              {item.waktu}
-                            </span>
-                          )}
+                          <h4 className="font-semibold text-xs text-gray-800 truncate">{item.nama}</h4>
+                          {item.waktu && <span className="text-[9px] text-gray-500">{item.waktu}</span>}
                         </div>
-                        
-                        <p className="text-[10px] text-gray-500">
-                          Laporan - {item.tanggal}
-                        </p>
-                        
-                        {item.kegiatan !== "-" && (
-                          <p className="text-[9px] text-gray-500 mt-0.5 truncate">
-                            {item.kegiatan}
-                          </p>
-                        )}
+                        <p className="text-[10px] text-gray-500">Laporan - {item.tanggal}</p>
+                        {item.kegiatan !== "-" && <p className="text-[9px] text-gray-500 mt-0.5 truncate">{item.kegiatan}</p>}
                       </div>
                     </div>
-
                     <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-                      <span
-                        className={`text-[9px] px-2 py-0.5 rounded-full font-medium ${
-                          item.status === "Sudah Dikirim"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-yellow-100 text-yellow-700"
-                        }`}
-                      >
+                      <span className={`text-[9px] px-2 py-0.5 rounded-full font-medium ${item.status === "Sudah Dikirim" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
                         {item.status === "Sudah Dikirim" ? "Dikirim" : "Review"}
                       </span>
-
                       <ChevronRight size={14} className="text-gray-400" />
                     </div>
                   </div>
@@ -790,21 +568,94 @@ export default function DashboardAtasanPage() {
               <p className="text-[10px] text-gray-500">Belum ada laporan</p>
             </div>
           )}
-          
-          {/* Informasi jumlah laporan */}
-          {kinerjaList.length > 3 && (
-            <div className="mt-2 pt-1.5 text-center border-t border-gray-100">
-              <p className="text-[9px] text-gray-500">
-                + {kinerjaList.length - 3} laporan lainnya
-              </p>
-            </div>
-          )}
         </div>
       </div>
+    </>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* HEADER - Hanya tampil di tab Beranda */}
+      {activeTab === "beranda" && (
+        <div className="bg-gradient-to-b from-blue-900 to-blue-800 text-white px-4 pt-4 pb-16">
+          <div className="flex justify-between items-start mb-3">
+            <div className="flex gap-3 items-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white text-lg font-bold">
+                  {getUserInitial()}
+                </span>
+              </div>
+
+              <div>
+                <p className="text-white text-xs opacity-90">Selamat datang,</p>
+                <h1 className="text-base font-bold text-white">
+                  {getUserName()}
+                </h1>
+                <p className="text-blue-100 text-[10px]">
+                  {getUserRole()}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center mt-2">
+            <div className="flex items-center gap-1.5">
+              <Calendar size={14} className="text-white" />
+              <span className="text-white text-xs">{formatDate(selectedDate)}</span>
+            </div>
+
+            <div className="flex gap-1.5">
+              <button 
+                onClick={refreshData}
+                className="border border-white/30 px-2.5 py-1 rounded-lg text-[10px] text-white active:bg-white/10"
+                disabled={monitoringLoading.data}
+              >
+                {monitoringLoading.data ? "..." : "Refresh"}
+              </button>
+              <button 
+                onClick={() => handleDateChange({ target: { value: new Date().toISOString().split('T')[0] } })}
+                className="border border-white/30 px-2.5 py-1 rounded-lg text-[10px] text-white active:bg-white/10"
+              >
+                Hari Ini
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Konten Utama */}
+      {activeTab === "beranda" ? renderBerandaContent() : renderAkunContent()}
+
+      {/* BOTTOM NAVIGATION - Hanya 2 menu: Beranda dan Akun */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+        <div className="flex justify-around items-center px-4 py-2">
+          {/* Beranda */}
+          <button
+            onClick={() => setActiveTab("beranda")}
+            className={`flex flex-col items-center py-2 px-6 rounded-lg transition-colors flex-1 ${
+              activeTab === "beranda" ? "text-blue-600 bg-blue-50" : "text-gray-500"
+            }`}
+          >
+            <Home size={22} />
+            <span className="text-[11px] mt-1 font-medium">Beranda</span>
+          </button>
+
+          {/* Akun */}
+          <button
+            onClick={() => setActiveTab("akun")}
+            className={`flex flex-col items-center py-2 px-6 rounded-lg transition-colors flex-1 ${
+              activeTab === "akun" ? "text-blue-600 bg-blue-50" : "text-gray-500"
+            }`}
+          >
+            <User size={22} />
+            <span className="text-[11px] mt-1 font-medium">Akun</span>
+          </button>
+        </div>
+      </nav>
 
       {/* LOGOUT CONFIRMATION MODAL */}
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl max-w-sm w-full animate-slide-up">
             <div className="p-5">
               <div className="flex items-center justify-center mb-4">
@@ -864,7 +715,7 @@ export default function DashboardAtasanPage() {
           }
         }
         .animate-slide-up {
-          animation: slide-up 0.3s ease-out;
+          animation: slide-up 0.2s ease-out;
         }
       `}</style>
     </div>
