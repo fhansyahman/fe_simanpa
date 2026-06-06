@@ -702,7 +702,7 @@ export default function RekapKehadiranBulanan() {
 
       {/* EXPORT MODAL */}
       {showExportModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 text-black">
           <div className="bg-white rounded-xl max-w-sm w-full animate-slide-up">
             <div className="p-5">
               <div className="flex items-center justify-between mb-4">

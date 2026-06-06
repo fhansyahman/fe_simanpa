@@ -34,52 +34,9 @@ export default function GrafikKinerjaPage() {
 
             {/* Tombol aksi di kanan - Dropdown Export */}
             <div className="relative">
-              <button
-                onClick={() => setShowExportMenu(!showExportMenu)}
-                className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition flex items-center gap-1"
-              >
-                <Download size={18} />
-              </button>
+
               
-              {showExportMenu && (
-                <>
-                  <div 
-                    className="fixed inset-0 z-10" 
-                    onClick={() => setShowExportMenu(false)}
-                  />
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-20 py-1">
-                    <button
-                      onClick={() => {
-                        // Export functionality will be handled inside KpiMobilityDashboard
-                        setShowExportMenu(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                    >
-                      <Users size={14} />
-                      Export Data Pegawai
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowExportMenu(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                    >
-                      <Building2 size={14} />
-                      Export Statistik Wilayah
-                    </button>
-                    <hr className="my-1" />
-                    <button
-                      onClick={() => {
-                        setShowExportMenu(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                    >
-                      <FileText size={14} />
-                      Export Semua Data
-                    </button>
-                  </div>
-                </>
-              )}
+          
             </div>
           </div>
         </div>

@@ -179,7 +179,7 @@ export default function PresensiPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-100 pb-16">
+    <div className="min-h-screen bg-slate-100 pb-16 text-black">
       {/* HEADER - Optimized untuk HP */}
 <div className="bg-gradient-to-b from-blue-900 to-blue-800 pt-4 pb-16">
   <div className="px-4">
@@ -191,7 +191,7 @@ export default function PresensiPage() {
         </Link>
         <div>
           <h1 className="text-xl font-bold text-white">Rekap Kehadiran</h1>
-          <p className="text-green-100 text-xs mt-1">Monitoring kehadiran pegawai</p>
+          <p className="text-white text-xs mt-1">Monitoring kehadiran pegawai</p>
         </div>
       </div>
 
