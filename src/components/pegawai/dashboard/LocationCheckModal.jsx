@@ -228,7 +228,7 @@ export const LocationCheckModal = ({
       if (distance !== null) {
         return `✓ Anda berada dalam radius ${distance}m dari lokasi penugasan`;
       }
-      return '✓ Lokasi Anda valid untuk melakukan absen';
+      return ' Lokasi Anda valid untuk melakukan absen';
     }
     if (distance !== null) {
       return `✗ Anda berada di luar radius! Jarak: ${distance}m dari lokasi (maksimal ${penugasan?.radius || 100}m)`;

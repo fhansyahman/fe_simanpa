@@ -109,28 +109,7 @@ export function IzinCard({ izin, userInfo, onEdit, onRefresh }) {
           </p>
         </div>
         
-        {/* Dokumen
-        {izin.dokumen_pendukung && (
-          <div>
-            <div className="text-sm font-medium text-gray-600 mb-2">Dokumen Pendukung:</div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => handleViewDocument(izin.dokumen_pendukung)}
-                className="inline-flex items-center space-x-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-blue-100 transition-colors duration-200"
-              >
-                <Eye className="w-4 h-4" />
-                <span>Lihat</span>
-              </button>
-              <button
-                onClick={() => handleViewDocument(izin.dokumen_pendukung)}
-                className="inline-flex items-center space-x-2 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm hover:bg-green-100 transition-colors duration-200"
-              >
-                <Download className="w-4 h-4" />
-                <span>Download</span>
-              </button>
-            </div>
-          </div>
-        )} */}
+   
         
         {/* Footer */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">

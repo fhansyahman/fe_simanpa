@@ -580,7 +580,7 @@ export default function PresenceCamera({
         <>
           <div className="text-center mb-3">
             <div className="text-sm text-slate-600 bg-blue-50 inline-block px-3 py-1 rounded-full">
-              📱 Foto Selfie dengan Peta Satelit
+              Foto Selfie
             </div>
           </div>
 

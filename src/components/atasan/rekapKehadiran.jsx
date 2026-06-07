@@ -254,7 +254,7 @@ export default function PresensiPage() {
             </button>
             <button
               onClick={goToCurrentMonth}
-              className="flex-1 py-2 rounded-lg bg-green-600 text-white text-sm font-medium active:bg-green-700"
+              className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium active:bg-green-700"
             >
               Bulan Ini
             </button>

@@ -288,11 +288,7 @@ export default function DashboardAtasanPage() {
           <p className="text-blue-100 text-sm mt-1">
             {getUserRole()}
           </p>
-          {filteredByWilayah && userWilayah && (
-            <p className="text-blue-200 text-xs mt-1">
-              Wilayah: {userWilayah}
-            </p>
-          )}
+
         </div>
       </div>
 

@@ -29,7 +29,8 @@ import {
   Printer,
   FileSpreadsheet,
   BarChart3,
-  ChevronDown
+  ChevronDown,
+  Check
 } from "lucide-react";
 import { usePresensiData } from "./hooks/rekapkehadiran/usePresensiData";
 import { useFilters } from "./hooks/rekapkehadiran/useFilters";
@@ -37,13 +38,16 @@ import { useRekapProcessor } from "./hooks/rekapkehadiran/useRekapProcessor";
 import { useAuth } from "@/context/AuthContext";
 import * as XLSX from 'xlsx';
 
+// Daftar wilayah
+const WILAYAH_LIST = ["Cermee", "Prajekan", "Botolinggo", "Klabang", "Ijen"];
+
 export default function RekapKehadiranBulanan() {
   const { user, loading: authLoading } = useAuth();
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showWilayahModal, setShowWilayahModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [tempFilters, setTempFilters] = useState({});
   
-  // ✅ DEKLARASIKAN DI SINI - Sebelum digunakan
   const userWilayah = user?.wilayah_penugasan || user?.wilayah || null;
   const isAdmin = user?.roles?.includes('admin') || user?.roles?.includes('superadmin') || false;
   
@@ -109,6 +113,35 @@ export default function RekapKehadiranBulanan() {
       search: search
     });
   }, [bulanFilter, tahunFilter, wilayahFilter, search]);
+
+  const handleApplyFilters = () => {
+    if (tempFilters.bulan) setBulanFilter(tempFilters.bulan);
+    if (tempFilters.tahun) setTahunFilter(tempFilters.tahun);
+    if (!isAdmin && userWilayah) {
+      setWilayahFilter(userWilayah);
+    } else {
+      if (tempFilters.wilayah !== undefined) setWilayahFilter(tempFilters.wilayah);
+    }
+    if (tempFilters.search !== undefined) setSearch(tempFilters.search);
+    setShowFilterModal(false);
+  };
+
+  const handleResetFilters = () => {
+    const today = new Date();
+    setTempFilters({
+      bulan: (today.getMonth() + 1).toString().padStart(2, '0'),
+      tahun: today.getFullYear().toString(),
+      wilayah: isAdmin ? "" : userWilayah,
+      search: ""
+    });
+    resetFilters();
+    setShowFilterModal(false);
+  };
+
+  const getWilayahLabel = (wilayah) => {
+    if (!wilayah || wilayah === "") return "Semua Wilayah";
+    return wilayah;
+  };
 
   // Fungsi Export ke Excel
   const handleExportExcel = () => {
@@ -375,35 +408,6 @@ export default function RekapKehadiranBulanan() {
     }
   };
 
-  const handleApplyFilters = () => {
-    if (tempFilters.bulan) setBulanFilter(tempFilters.bulan);
-    if (tempFilters.tahun) setTahunFilter(tempFilters.tahun);
-    if (!isAdmin && userWilayah) {
-      setWilayahFilter(userWilayah);
-    } else {
-      if (tempFilters.wilayah !== undefined) setWilayahFilter(tempFilters.wilayah);
-    }
-    if (tempFilters.search !== undefined) setSearch(tempFilters.search);
-    setShowFilterModal(false);
-  };
-
-  const handleResetFilters = () => {
-    const today = new Date();
-    setTempFilters({
-      bulan: (today.getMonth() + 1).toString().padStart(2, '0'),
-      tahun: today.getFullYear().toString(),
-      wilayah: isAdmin ? "" : userWilayah,
-      search: ""
-    });
-    resetFilters();
-    setShowFilterModal(false);
-  };
-
-  // Opsi wilayah hanya untuk admin
-  const wilayahOptions = isAdmin 
-    ? ["", "Cermee", "Prajekan", "Botolinggo", "Klabang", "Ijen"]
-    : [userWilayah].filter(Boolean);
-
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -434,76 +438,173 @@ export default function RekapKehadiranBulanan() {
   return (
     <div className="min-h-screen bg-gray-100 pb-16">
       {/* HEADER */}
-      <div className="bg-gradient-to-b from-blue-900 to-blue-800 pt-4 pb-6 rounded-b-2xl">
+      <div className="bg-gradient-to-b from-blue-900 to-blue-800 pt-4 pb-16">
         <div className="px-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Link href="/atasan/dashboard" className="p-1 -ml-1">
-                <ArrowLeft size={20} className="text-white" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 flex-1">
+              <Link href="/atasan/dashboard" className="hover:opacity-80 transition-opacity">
+                <ArrowLeft size={24} className="text-white" />
               </Link>
               <div>
-                <h1 className="text-base font-bold text-white">Rekap Kehadiran</h1>
-                <p className="text-blue-100 text-[10px]">Rekap kehadiran bulanan pegawai</p>
+                <h1 className="text-xl font-bold text-white">Rekap Kehadiran</h1>
+                <p className="text-white text-xs mt-1">Rekap kehadiran bulanan pegawai</p>
               </div>
             </div>
             
-            <div className="flex gap-1">
+            <div className="flex gap-2">
               <button
                 onClick={() => setShowExportModal(true)}
-                className="p-1.5 bg-white/10 rounded-lg active:bg-white/20"
                 disabled={rekapBulanan.length === 0}
+                className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition disabled:opacity-50"
               >
-                <Download size={16} className="text-white" />
+                <Download size={18} className="text-white" />
               </button>
-              {isAdmin && (
-                <button
-                  onClick={() => setShowFilterModal(true)}
-                  className="p-1.5 bg-white/10 rounded-lg active:bg-white/20 relative"
-                >
-                  <Filter size={16} className="text-white" />
-                  {activeFilterCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[8px] text-white flex items-center justify-center">
-                      {activeFilterCount}
-                    </span>
-                  )}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Info Ringkasan */}
-          <div className="bg-white/10 rounded-xl p-3 mt-2">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-[10px] text-blue-200">Periode</p>
-                <p className="text-sm font-semibold text-white">
-                  {getBulanLabel(bulanFilter)} {tahunFilter}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-[10px] text-blue-200">Total Pegawai</p>
-                <p className="text-sm font-semibold text-white">{statistikBulanan.totalPegawai}</p>
-              </div>
-              {!isAdmin && userWilayah && (
-                <div className="text-right">
-                  <p className="text-[10px] text-blue-200">Wilayah</p>
-                  <p className="text-xs font-semibold text-white">{userWilayah}</p>
-                </div>
-              )}
-              {isAdmin && wilayahFilter && (
-                <div className="text-right">
-                  <p className="text-[10px] text-blue-200">Wilayah</p>
-                  <p className="text-xs font-semibold text-white">{wilayahFilter}</p>
-                </div>
-              )}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="px-4 -mt-2">
+      <div className="px-4 -mt-12 text-black">
+        {/* FILTER SECTION */}
+        <div className="bg-white rounded-xl shadow-lg p-3 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-1.5 text-xs">
+              <Calendar size={14} className="text-gray-400" />
+              <span className="font-medium text-gray-700">
+                {getBulanLabel(bulanFilter)} {tahunFilter}
+              </span>
+            </div>
+            
+            <div className="flex gap-2">
+              {isAdmin && (
+                <button
+                  onClick={() => {
+                    setTempFilters({ bulan: bulanFilter, tahun: tahunFilter, wilayah: wilayahFilter, search: search });
+                    setShowFilterModal(true);
+                  }}
+                  className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 rounded-lg text-blue-600 text-xs font-medium"
+                >
+                  <Filter size={12} />
+                  Filter
+                </button>
+              )}
+              
+              {isAdmin && (
+                <button
+                  onClick={() => setShowWilayahModal(true)}
+                  className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 rounded-lg text-gray-700 text-xs font-medium"
+                >
+                  <MapPin size={12} />
+                  <span className="max-w-[100px] truncate">{getWilayahLabel(wilayahFilter)}</span>
+                </button>
+              )}
+
+              {!isAdmin && userWilayah && (
+                <div className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 rounded-lg text-gray-700 text-xs">
+                  <MapPin size={12} />
+                  <span>{userWilayah}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Navigasi Bulan */}
+          <div className="flex items-center justify-between gap-2">
+            <button
+              onClick={() => {
+                let currentBulan = parseInt(bulanFilter);
+                let currentTahun = parseInt(tahunFilter);
+                
+                if (currentBulan === 1) {
+                  setBulanFilter('12');
+                  setTahunFilter((currentTahun - 1).toString());
+                } else {
+                  setBulanFilter((currentBulan - 1).toString().padStart(2, '0'));
+                }
+              }}
+              className="flex-1 py-2 rounded-lg bg-gray-100 active:bg-gray-200 text-sm font-medium flex items-center justify-center gap-1"
+            >
+              <ChevronLeft size={16} />
+              <span>Prev</span>
+            </button>
+            
+            <button
+              onClick={() => {
+                const today = new Date();
+                setBulanFilter((today.getMonth() + 1).toString().padStart(2, '0'));
+                setTahunFilter(today.getFullYear().toString());
+              }}
+              className="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium active:bg-blue-700"
+            >
+              Bulan Ini
+            </button>
+            
+            <button
+              onClick={() => {
+                let currentBulan = parseInt(bulanFilter);
+                let currentTahun = parseInt(tahunFilter);
+                
+                if (currentBulan === 12) {
+                  setBulanFilter('01');
+                  setTahunFilter((currentTahun + 1).toString());
+                } else {
+                  setBulanFilter((currentBulan + 1).toString().padStart(2, '0'));
+                }
+              }}
+              className="flex-1 py-2 rounded-lg bg-gray-100 active:bg-gray-200 text-sm font-medium flex items-center justify-center gap-1"
+            >
+              <span>Next</span>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* INFO WILAYAH FILTER */}
+        {isAdmin && wilayahFilter && wilayahFilter !== "" && (
+          <div className="mb-4">
+            <div className="bg-blue-50 rounded-lg p-2.5 flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <MapPin size={14} className="text-blue-600" />
+                <span className="text-xs text-blue-800">
+                  Menampilkan data untuk: <strong className="text-sm">{wilayahFilter}</strong>
+                </span>
+              </div>
+              <button
+                onClick={() => setWilayahFilter("")}
+                className="text-xs text-blue-600 font-medium px-2 py-1 bg-blue-100 rounded-md"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STATISTIK CARD */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-4">
+          <div className="p-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-green-50 rounded-lg p-2 text-center">
+                <p className="text-[10px] text-gray-500">Hadir</p>
+                <p className="text-lg font-bold text-green-600">{statistikBulanan.totalHadir}</p>
+              </div>
+              <div className="bg-amber-50 rounded-lg p-2 text-center">
+                <p className="text-[10px] text-gray-500">Terlambat</p>
+                <p className="text-lg font-bold text-amber-600">{statistikBulanan.totalTerlambat}</p>
+              </div>
+              <div className="bg-purple-50 rounded-lg p-2 text-center">
+                <p className="text-[10px] text-gray-500">Izin</p>
+                <p className="text-lg font-bold text-purple-600">{statistikBulanan.totalIzin}</p>
+              </div>
+              <div className="bg-red-50 rounded-lg p-2 text-center">
+                <p className="text-[10px] text-gray-500">Tanpa Ket</p>
+                <p className="text-lg font-bold text-red-600">{statistikBulanan.totalTanpaKeterangan}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* REKAP KEHADIRAN */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden mt-2">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="p-3">
             {processing ? (
               <div className="text-center py-8">
@@ -516,11 +617,6 @@ export default function RekapKehadiranBulanan() {
                   <div className="text-center py-8">
                     <FileText size={32} className="text-gray-300 mx-auto mb-2" />
                     <p className="text-gray-500 text-sm">Tidak ada data rekap</p>
-                    {!isAdmin && userWilayah && (
-                      <p className="text-xs text-gray-400 mt-1">
-                        Untuk wilayah: {userWilayah}
-                      </p>
-                    )}
                     <button
                       onClick={refreshData}
                       className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-xs"
@@ -537,7 +633,7 @@ export default function RekapKehadiranBulanan() {
                       return (
                         <div key={pegawai.id || idx} className="bg-gray-50 rounded-xl p-3">
                           <div className="flex justify-between items-start mb-2">
-                            <div>
+                            <div className="flex-1">
                               <h3 className="font-semibold text-sm text-gray-800">{pegawai.nama}</h3>
                               <p className="text-[10px] text-gray-500">{pegawai.jabatan}</p>
                               {pegawai.wilayah && (
@@ -615,8 +711,6 @@ export default function RekapKehadiranBulanan() {
             )}
           </div>
 
-
-
           <div className="px-3 py-2 border-t border-gray-100 text-[9px] text-gray-400 text-center">
             {rekapBulanan.length} pegawai • {getDaysInMonth(parseInt(tahunFilter), parseInt(bulanFilter))} hari kerja
           </div>
@@ -635,7 +729,7 @@ export default function RekapKehadiranBulanan() {
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Bulan</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Bulan</label>
                 <select
                   value={tempFilters.bulan || bulanFilter}
                   onChange={(e) => setTempFilters({ ...tempFilters, bulan: e.target.value })}
@@ -647,7 +741,7 @@ export default function RekapKehadiranBulanan() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Tahun</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tahun</label>
                 <select
                   value={tempFilters.tahun || tahunFilter}
                   onChange={(e) => setTempFilters({ ...tempFilters, tahun: e.target.value })}
@@ -659,20 +753,20 @@ export default function RekapKehadiranBulanan() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Wilayah</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Wilayah</label>
                 <select
                   value={tempFilters.wilayah}
                   onChange={(e) => setTempFilters({ ...tempFilters, wilayah: e.target.value })}
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
                 >
                   <option value="">Semua Wilayah</option>
-                  {wilayahOptions.filter(w => w).map(wilayah => (
+                  {WILAYAH_LIST.map(wilayah => (
                     <option key={wilayah} value={wilayah}>{wilayah}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Cari Pegawai</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Cari Pegawai</label>
                 <input
                   type="text"
                   placeholder="Nama pegawai..."
@@ -700,13 +794,78 @@ export default function RekapKehadiranBulanan() {
         </div>
       )}
 
+      {/* WILAYAH SELECTOR MODAL */}
+      {showWilayahModal && isAdmin && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
+          <div className="bg-white w-full rounded-t-xl max-h-[80vh] overflow-y-auto animate-slide-up">
+            <div className="sticky top-0 bg-white border-b border-gray-100 p-4 flex justify-between items-center">
+              <h3 className="font-semibold text-base flex items-center gap-2">
+                <MapPin size={16} />
+                Pilih Wilayah
+              </h3>
+              <button onClick={() => setShowWilayahModal(false)} className="p-1">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-2">
+              <button
+                onClick={() => {
+                  setWilayahFilter("");
+                  setShowWilayahModal(false);
+                }}
+                className={`w-full text-left p-3 rounded-lg flex items-center justify-between ${
+                  !wilayahFilter ? "bg-blue-50" : "active:bg-gray-50"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                    <Building2 size={14} className="text-gray-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm text-gray-800">Semua Wilayah</p>
+                    <p className="text-[10px] text-gray-400">Tampilkan semua data</p>
+                  </div>
+                </div>
+                {!wilayahFilter && <Check size={16} className="text-blue-600" />}
+              </button>
+
+              <div className="h-px bg-gray-100 my-2" />
+
+              {WILAYAH_LIST.map((wilayah) => (
+                <button
+                  key={wilayah}
+                  onClick={() => {
+                    setWilayahFilter(wilayah);
+                    setShowWilayahModal(false);
+                  }}
+                  className={`w-full text-left p-3 rounded-lg flex items-center justify-between ${
+                    wilayahFilter === wilayah ? "bg-blue-50" : "active:bg-gray-50"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                      <MapPin size={14} className="text-gray-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm text-gray-800">{wilayah}</p>
+                      <p className="text-[10px] text-gray-400">Filter data wilayah {wilayah}</p>
+                    </div>
+                  </div>
+                  {wilayahFilter === wilayah && <Check size={16} className="text-blue-600" />}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* EXPORT MODAL */}
       {showExportModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 text-black">
-          <div className="bg-white rounded-xl max-w-sm w-full animate-slide-up">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-sm w-full">
             <div className="p-5">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-base">Export Data</h3>
+                <h3 className="font-semibold text-base text-black">Export Data</h3>
                 <button onClick={() => setShowExportModal(false)} className="p-1">
                   <X size={18} />
                 </button>
@@ -719,16 +878,6 @@ export default function RekapKehadiranBulanan() {
                   <FileSpreadsheet size={18} />
                   Export ke Excel
                 </button>
-                {/* <button
-                  onClick={() => {
-                    handlePrintCustom();
-                    setShowExportModal(false);
-                  }}
-                  className="w-full py-3 bg-blue-600 text-white rounded-lg flex items-center justify-center gap-2 text-sm font-medium active:bg-blue-700"
-                >
-                  <Printer size={18} />
-                  Cetak / Print
-                </button> */}
               </div>
             </div>
           </div>

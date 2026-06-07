@@ -212,7 +212,6 @@ export function KpiMobilityDashboard() {
       <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-5 shadow-sm">
   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
     <div>
-      <h3 className="text-lg font-semibold text-gray-900">Grafik Kinerja Pekerja Lapangan Non-ASN</h3>
       <p className="text-sm text-gray-600">Pilih periode dan wilayah untuk analisis kinerja</p>
     </div>
     
@@ -278,18 +277,7 @@ export function KpiMobilityDashboard() {
       </button>
     </div>
   </div>
-  
-  {/* Info periode yang dipilih */}
-  <div className="mt-4 pt-3 border-t border-gray-100">
-    <div className="flex items-center gap-2 text-sm text-gray-500">
-      <span className="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
-      <span>
-        Menampilkan data periode: <strong>{getNamaBulan(selectedMonth)} {selectedYear}</strong>
-        {selectedWilayah !== 'all' && ` · Wilayah: ${selectedWilayah}`}
-        {kpiData.hariKerja > 0 && ` · Target per pegawai: ${formatNumber(kpiData.targetPerPegawai)} m (50m × ${kpiData.hariKerja} hari)`}
-      </span>
-    </div>
-  </div>
+
 </div>
 
       {/* Summary Cards - Filtered */}
@@ -350,7 +338,7 @@ export function KpiMobilityDashboard() {
       {/* Progress Bar */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <div className="flex justify-between text-sm text-gray-600 mb-2">
-          <span>📈 Progress Capaian Tim</span>
+          <span> Progress Capaian Tim</span>
           <span>{chartStats.rataPencapaian.toFixed(1)}%</span>
         </div>
         <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
@@ -388,7 +376,7 @@ export function KpiMobilityDashboard() {
       {/* Bar Chart - Top 10 Pegawai */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h3 className="font-semibold text-gray-800">🏆 Top 10 Pegawai Terbaik</h3>
+          <h3 className="font-semibold text-gray-800"> Top 10 Pegawai Terbaik</h3>
           <p className="text-sm text-gray-500">Berdasarkan persentase pencapaian target</p>
         </div>
         <div className="p-6">
@@ -425,7 +413,7 @@ export function KpiMobilityDashboard() {
 {/* Pie Chart - Status Distribution */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h3 className="font-semibold text-gray-800">📊 Distribusi Status Pencapaian</h3>
+          <h3 className="font-semibold text-gray-800">Distribusi Status Pencapaian</h3>
           <p className="text-sm text-gray-500">Status pencapaian target per pegawai</p>
         </div>
         <div className="p-6">
@@ -461,7 +449,7 @@ export function KpiMobilityDashboard() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center flex-wrap gap-3">
           <div>
-            <h3 className="font-semibold text-gray-800">📋 Detail Kinerja Pegawai</h3>
+            <h3 className="font-semibold text-gray-800"> Detail Kinerja Pegawai</h3>
             <p className="text-sm text-gray-500">
               {selectedWilayah === 'all' ? 'Semua Wilayah' : `Wilayah: ${selectedWilayah}`} · 
               {filteredPegawai.length} pegawai
@@ -543,7 +531,7 @@ export function KpiMobilityDashboard() {
       {wilayahStats.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
-            <h3 className="font-semibold text-gray-800">🗺️ Statistik per Wilayah</h3>
+            <h3 className="font-semibold text-gray-800">Statistik per Wilayah</h3>
             <p className="text-sm text-gray-500">Perbandingan kinerja antar wilayah kerja</p>
           </div>
                 {/* Bar Chart - Statistik Per Wilayah */}

@@ -16,7 +16,7 @@ export function FilterSection({
   getMonthName
 }) {
   return (
-    <div className="relative">
+    <div className="relative text-black">
       <button
         onClick={onToggleFilter}
         className="w-full sm:w-auto flex items-center justify-center border border-gray-300 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
