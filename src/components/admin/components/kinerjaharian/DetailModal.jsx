@@ -9,8 +9,8 @@ export function DetailModal({
   onDownload,
   onEdit,
   onOpenImage,
-  formatDate = (date) => date || '-', // Default function jika tidak ada
-  formatDateTime = (date) => date || '-', // Default function jika tidak ada
+  formatDate = (date) => date || '-',
+  formatDateTime = (date) => date || '-',
   getImageList
 }) {
   if (!isOpen || !kinerja) return null;
@@ -18,7 +18,6 @@ export function DetailModal({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl">
-        {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between">
           <div className="min-w-0">
             <h2 className="text-lg md:text-xl font-bold text-gray-900 truncate">Detail Laporan Kinerja</h2>
@@ -33,9 +32,7 @@ export function DetailModal({
             </button>
           </div>
         </div>
-
         <div className="p-4 md:p-6">
-          {/* Header Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
             <InfoCard
               items={[
@@ -73,14 +70,10 @@ export function DetailModal({
               ]}
             />
           </div>
-
-          {/* Kegiatan */}
           <div className="bg-gray-50 rounded-xl p-4 mb-6">
             <h4 className="font-semibold text-gray-900 mb-2">Kegiatan</h4>
             <p className="text-gray-800">{kinerja.kegiatan}</p>
           </div>
-
-          {/* Pengukuran */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
             <MeasurementCard
               title="Panjang KR"
@@ -95,20 +88,14 @@ export function DetailModal({
               gradient="from-purple-50 to-violet-50"
             />
           </div>
-
-          {/* Warna Sket */}
           {kinerja.warna_sket && hasWarna(kinerja.warna_sket) && (
             <WarnaSketSection warnaSket={kinerja.warna_sket} />
           )}
-
-          {/* Dokumentasi Gambar */}
           <ImageSection
             kinerja={kinerja}
             onOpenImage={onOpenImage}
             getImageList={getImageList}
           />
-
-          {/* Action Buttons */}
           <ActionButtons
             onClose={onClose}
             onDownload={() => onDownload(kinerja)}
@@ -123,7 +110,6 @@ export function DetailModal({
   );
 }
 
-// Sub-components
 function InfoCard({ items }) {
   return (
     <div className="bg-gray-50 rounded-xl p-4 md:p-5">

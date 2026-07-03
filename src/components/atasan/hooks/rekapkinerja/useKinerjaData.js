@@ -11,7 +11,6 @@ export function useKinerjaData() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [search, setSearch] = useState('');
   
-  // Default statistik yang aman
   const defaultStatistik = {
     total_laporan: 0,
     total_pegawai: 0,
@@ -26,7 +25,6 @@ export function useKinerjaData() {
   const [tanggalInfo, setTanggalInfo] = useState(null);
   const [chartData, setChartData] = useState(null);
 
-  // Format tanggal
   const formatDate = useCallback((dateString) => {
     if (!dateString) return '-';
     try {
@@ -54,7 +52,6 @@ export function useKinerjaData() {
     }
   }, []);
 
-  // Load data kinerja per tanggal
   const loadKinerjaData = useCallback(async () => {
     try {
       setLoading(true);
@@ -79,7 +76,6 @@ export function useKinerjaData() {
         const data = response.data.data;
         setKinerjaList(data.kinerja || []);
         
-        // Set statistik dengan nilai default yang aman
         const safeStatistik = {
           total_laporan: data.statistik?.total_laporan || 0,
           total_pegawai: data.statistik?.total_pegawai || 0,
@@ -113,19 +109,16 @@ export function useKinerjaData() {
     }
   }, [selectedWilayah, selectedDate, search, formatDate]);
 
-  // Load data saat filter berubah
   useEffect(() => {
     loadKinerjaData();
   }, [loadKinerjaData]);
 
-  // Reset filter
   const handleResetFilters = useCallback(() => {
     setSelectedWilayah('');
     setSelectedDate(new Date().toISOString().split('T')[0]);
     setSearch('');
   }, []);
 
-  // Navigasi tanggal
   const goToPreviousDate = useCallback(() => {
     const prevDate = new Date(selectedDate);
     prevDate.setDate(prevDate.getDate() - 1);
@@ -142,7 +135,6 @@ export function useKinerjaData() {
     setSelectedDate(new Date().toISOString().split('T')[0]);
   }, []);
 
-  // Group data by wilayah for rekap view
   const groupedByWilayah = useMemo(() => {
     if (!kinerjaList || kinerjaList.length === 0) return {};
     
@@ -156,7 +148,6 @@ export function useKinerjaData() {
     }, {});
   }, [kinerjaList]);
 
-  // Format panjang
   const formatPanjang = useCallback((value) => {
     const num = parseFloat(value) || 0;
     if (num === 0) return '0 meter';

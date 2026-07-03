@@ -1,4 +1,3 @@
-// app/admin/rekapterja/components/SummaryStats.jsx
 "use client";
 
 import { TrendingUp, Target, Award, Calendar, Download, BarChart3 } from "lucide-react";
@@ -15,7 +14,7 @@ export function SummaryStats({
   const daysInMonth = bulanFilter && tahunFilter ? 
     getDaysInMonth(parseInt(tahunFilter), parseInt(bulanFilter)) : 0;
   
-  const targetPerHari = 50; // Target 50 meter per hari
+  const targetPerHari = 50;
   const targetBulanan = daysInMonth * targetPerHari;
   const pencapaian = statistik.totalPanjang || 0;
   const persenPencapaian = targetBulanan > 0 ? (pencapaian / targetBulanan) * 100 : 0;
@@ -41,9 +40,7 @@ export function SummaryStats({
           <p className="text-xs text-slate-500">Ringkasan statistik dan target</p>
         </div>
       </div>
-      
       <div className="space-y-4">
-        {/* Kehadiran Card */}
         <div className={`p-4 rounded-xl bg-${status.color}-50 border border-${status.color}-100`}>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -67,8 +64,6 @@ export function SummaryStats({
             />
           </div>
         </div>
-        
-        {/* Target Pencapaian */}
         <div className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
           <div className="flex items-center gap-2 mb-3">
             <Target size={16} className="text-indigo-600" />
@@ -101,8 +96,6 @@ export function SummaryStats({
             </div>
           </div>
         </div>
-        
-        {/* Export Button */}
         <button
           onClick={onExport}
           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 text-sm font-medium shadow-md"

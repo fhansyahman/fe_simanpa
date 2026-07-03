@@ -58,7 +58,6 @@ export function PasswordModal({ isOpen, onClose, user, passwordData, setPassword
               />
             </div>
 
-            {/* Password strength indicator */}
             {passwordData.password && (
               <div className="mt-2">
                 <div className="flex items-center gap-2">

@@ -27,7 +27,6 @@ export function useKinerjaData(search = "") {
     }
   });
 
-  // Hitung statistik dari data
   const calculateStatistikFromData = useCallback((data) => {
     if (!data || data.length === 0) {
       return {
@@ -48,15 +47,12 @@ export function useKinerjaData(search = "") {
     const totalLaporan = data.length;
     const uniquePegawai = [...new Set(data.map(item => item.user_id || item.nama))].length;
     
-    // Hitung total panjang
     const totalPanjangKR = data.reduce((sum, item) => sum + (parseFloat(item.panjang_kr) || 0), 0);
     const totalPanjangKN = data.reduce((sum, item) => sum + (parseFloat(item.panjang_kn) || 0), 0);
     
-    // Hitung rata-rata
     const avgPanjangKR = totalLaporan > 0 ? totalPanjangKR / totalLaporan : 0;
     const avgPanjangKN = totalLaporan > 0 ? totalPanjangKN / totalLaporan : 0;
     
-    // Statistik per wilayah
     const wilayahStatistik = {};
     data.forEach(item => {
       const wilayah = item.wilayah_penugasan || 'Unknown';
@@ -78,7 +74,6 @@ export function useKinerjaData(search = "") {
       wilayahStatistik[wilayah].total_pegawai.add(item.user_id || item.nama);
     });
     
-    // Hitung rata-rata per wilayah
     Object.keys(wilayahStatistik).forEach(wilayah => {
       const w = wilayahStatistik[wilayah];
       w.avg_kr = w.total > 0 ? w.total_kr / w.total : 0;
@@ -106,7 +101,6 @@ export function useKinerjaData(search = "") {
     };
   }, []);
 
-  // Load data per tanggal
   const loadKinerjaData = useCallback(async (params = {}) => {
     try {
       setLoading(true);
@@ -118,7 +112,6 @@ export function useKinerjaData(search = "") {
         search: params.search || search
       };
       
-      // Remove empty params
       Object.keys(requestParams).forEach(key => {
         if (!requestParams[key]) delete requestParams[key];
       });
@@ -134,7 +127,6 @@ export function useKinerjaData(search = "") {
         
         setKinerjaList(kinerjaData);
         
-        // Hitung statistik dari data yang diterima
         const calculatedStats = calculateStatistikFromData(kinerjaData);
         setStatistik(calculatedStats);
         
@@ -159,20 +151,16 @@ export function useKinerjaData(search = "") {
     }
   }, [selectedDate, selectedWilayah, search, calculateStatistikFromData]);
 
-  // Initial load
   useEffect(() => {
     loadKinerjaData();
   }, []);
 
-  // Reload when date or wilayah changes
   useEffect(() => {
     loadKinerjaData();
   }, [selectedDate, selectedWilayah]);
 
-  // Filtered data
   const filteredKinerja = kinerjaList;
 
-  // Delete single item
   const handleDelete = useCallback(async (id) => {
     const result = await Swal.fire({
       title: 'Hapus Data Kinerja?',
@@ -211,7 +199,6 @@ export function useKinerjaData(search = "") {
     }
   }, [loadKinerjaData]);
 
-  // Bulk delete
   const handleBulkDelete = useCallback(async () => {
     if (selectedItems.length === 0) return;
 

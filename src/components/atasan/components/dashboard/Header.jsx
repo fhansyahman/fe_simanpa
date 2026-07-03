@@ -35,7 +35,7 @@ export function Header({ activeTab, setActiveTab, sidebarOpen, setSidebarOpen })
     { id: 'monitoring', label: 'Monitoring Harian', icon: AlertCircle },
     { id: 'presensi', label: 'Grafik Kehadiran', icon: Clock },
 
-    { id: 'kpi', label: 'Grafik Kinerja', icon: BarChart3 }, // TAB BARU
+    { id: 'kpi', label: 'Grafik Kinerja', icon: BarChart3 },
   ];
 
   const getIcon = (iconComponent) => {
@@ -67,7 +67,6 @@ export function Header({ activeTab, setActiveTab, sidebarOpen, setSidebarOpen })
         </button>
       </div>
 
-      {/* Tabs */}
       <div className="border-b border-gray-200 bg-white">
         <div className="flex space-x-2 px-4 overflow-x-auto">
           {tabs.map(tab => (

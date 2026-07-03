@@ -10,7 +10,6 @@ export function useFilters() {
     tanggal: ""
   });
 
-  // Set default tanggal ke hari ini
   useEffect(() => {
     if (!filters.tanggal) {
       const today = new Date().toISOString().split('T')[0];
@@ -29,7 +28,6 @@ export function useFilters() {
     });
   }, []);
 
-  // Hitung active filters
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (filters.search && filters.search.trim() !== '') count++;
@@ -43,7 +41,6 @@ export function useFilters() {
     return count;
   }, [filters]);
 
-  // Update filter
   const updateFilter = useCallback((key, value) => {
     console.log(`🎯 Update filter ${key}:`, value);
     setFilters(prev => {

@@ -20,7 +20,6 @@ import { useFilters } from "./hooks/kinerjaharian/useFilters";
 import { useModals } from "./hooks/kinerjaharian/useModals";
 import { Database, TrendingUp } from "lucide-react";
 
-// Fungsi helper untuk format tanggal
 const formatDate = (dateString) => {
   if (!dateString) return '-';
   try {
@@ -54,10 +53,8 @@ export default function AdminKinerjaHarian() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('data');
   
-  // Filters state
   const [search, setSearch] = useState("");
   
-  // Custom hooks
   const {
     kinerjaList,
     filteredKinerja,
@@ -112,17 +109,14 @@ export default function AdminKinerjaHarian() {
     getImageList
   } = useModals();
 
-  // Sync selectedDate from filter to hook
   const handleDateChange = (newDate) => {
     setFilterDate(newDate);
     setSelectedDate(newDate);
   };
 
-  // Handle edit submit
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Implementasi edit
       closeEditModal();
       loadKinerjaData();
     } catch (error) {
@@ -130,7 +124,6 @@ export default function AdminKinerjaHarian() {
     }
   };
 
-  // Handle reset all filters
   const handleResetAllFilters = () => {
     setSearch("");
     handleResetFilters();
@@ -149,7 +142,6 @@ export default function AdminKinerjaHarian() {
         setSidebarOpen={setSidebarOpen} 
       />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         <Header 
           sidebarOpen={sidebarOpen}
@@ -157,14 +149,12 @@ export default function AdminKinerjaHarian() {
         />
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
-          {/* Stats Cards */}
           <StatsCards 
             statistik={statistik}
             selectedDate={selectedDate}
             tanggalInfo={tanggalInfo}
           />
 
-          {/* Action Bar */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-5 mb-6 shadow-sm">
             <div className="flex flex-col gap-4">
               <SearchBar 
@@ -201,7 +191,6 @@ export default function AdminKinerjaHarian() {
             </div>
           </div>
 
-          {/* Tab Navigation */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm mb-6">
             <div className="flex border-b border-gray-200 overflow-x-auto">
               <TabButton
@@ -262,7 +251,6 @@ export default function AdminKinerjaHarian() {
         </main>
       </div>
 
-      {/* Modals */}
       <DetailModal
         isOpen={showDetailModal}
         onClose={closeDetailModal}
@@ -308,7 +296,6 @@ export default function AdminKinerjaHarian() {
   );
 }
 
-// Helper Components
 function TabButton({ active, onClick, icon, label }) {
   return (
     <button

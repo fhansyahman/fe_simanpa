@@ -111,7 +111,6 @@ export default function CameraUploader({
         )}
       </div>
 
-      {/* Camera Modal */}
       <CameraCapture
         isOpen={isCameraOpen}
         onCapture={handleCameraCapture}
@@ -123,7 +122,6 @@ export default function CameraUploader({
         locationData={locationData}
       />
       
-      {/* Preview dengan tombol Download Hijau */}
       {tempPhoto && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl w-72 max-w-md">

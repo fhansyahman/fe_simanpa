@@ -6,7 +6,7 @@ export const usePenugasanForm = (wilayahList, usersList, onSuccess) => {
   const [showFormModal, setShowFormModal] = useState(false);
   const [selectedPenugasan, setSelectedPenugasan] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
-  const [formLoading, setFormLoading] = useState(false); // Ganti dari loading ke formLoading
+  const [formLoading, setFormLoading] = useState(false);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState({
     wilayah: {},
     individu: {}
@@ -133,7 +133,7 @@ export const usePenugasanForm = (wilayahList, usersList, onSuccess) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormLoading(true); // Set loading true
+    setFormLoading(true);
     try {
       if (!formData.nama_penugasan || !formData.jam_masuk || !formData.jam_pulang) {
         Swal.fire({ icon: "warning", title: "Data Tidak Lengkap", text: "Nama penugasan, jam masuk, dan jam pulang wajib diisi", confirmButtonColor: "#F59E0B" });
@@ -199,7 +199,7 @@ export const usePenugasanForm = (wilayahList, usersList, onSuccess) => {
         confirmButtonColor: "#EF4444" 
       });
     } finally {
-      setFormLoading(false); // Set loading false
+      setFormLoading(false);
     }
   };
 
@@ -302,7 +302,7 @@ export const usePenugasanForm = (wilayahList, usersList, onSuccess) => {
     selectedCheckboxes,
     selectAllWilayah,
     selectAllIndividu,
-    formLoading, // Ganti dari loading ke formLoading
+    formLoading,
     handleWilayahCheckboxChange,
     handleSelectAllWilayah,
     handleIndividuCheckboxChange,

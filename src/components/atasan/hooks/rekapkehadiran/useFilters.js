@@ -8,7 +8,6 @@ export function useFilters() {
   const [tahunFilter, setTahunFilter] = useState("");
   const [wilayahFilter, setWilayahFilter] = useState("");
 
-  // Inisialisasi filter default
   useEffect(() => {
     const today = new Date();
     const currentMonth = (today.getMonth() + 1).toString().padStart(2, '0');

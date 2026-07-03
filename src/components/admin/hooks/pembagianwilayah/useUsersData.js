@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react'; // PASTIKAN useEffect DIIMPOR
+import { useState, useEffect, useCallback } from 'react'; 
 import { wilayahAPI } from '@/lib/api';
 import Swal from "sweetalert2";
 

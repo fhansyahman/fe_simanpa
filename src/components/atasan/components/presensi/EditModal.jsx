@@ -25,7 +25,6 @@ export function EditModal({
     foto_pulang: ''
   });
 
-  // ✅ FIX: Safe useEffect dengan null checking
   useEffect(() => {
     if (presensi && isOpen) {
       setFormData({
@@ -43,10 +42,8 @@ export function EditModal({
     }
   }, [presensi, isOpen]);
 
-  // ✅ FIX: Early return jika modal tidak open
   if (!isOpen) return null;
   
-  // ✅ FIX: Tampilkan loading jika presensi null tapi modal open
   if (!presensi) {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -60,7 +57,6 @@ export function EditModal({
     );
   }
 
-  // ✅ FIX: Safe access dengan default values
   const nama = presensi?.nama || '-';
   const tanggal = presensi?.tanggal;
 
@@ -85,7 +81,6 @@ export function EditModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // ✅ FIX: Validasi ID presensi
     if (!presensi?.id) {
       alert('ID presensi tidak ditemukan');
       return;
@@ -101,7 +96,6 @@ export function EditModal({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl">
-        {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Edit Data Presensi</h2>
@@ -117,18 +111,14 @@ export function EditModal({
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
-          {/* Info Note */}
           <div className="mb-4 p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-blue-700">
               <strong>Catatan:</strong> Jika pegawai memiliki izin (izin_id tidak null), status akan otomatis dianggap Izin.
             </p>
           </div>
 
-          {/* Form Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Jam Masuk */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Jam Masuk
@@ -142,7 +132,6 @@ export function EditModal({
               />
             </div>
 
-            {/* Jam Pulang */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Jam Pulang
@@ -156,7 +145,6 @@ export function EditModal({
               />
             </div>
 
-            {/* Status Masuk */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Status Masuk
@@ -182,7 +170,6 @@ export function EditModal({
               </select>
             </div>
 
-            {/* Status Pulang */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Status Pulang
@@ -203,7 +190,6 @@ export function EditModal({
               </select>
             </div>
 
-            {/* Foto Masuk */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Foto Masuk Baru (Opsional)
@@ -225,7 +211,6 @@ export function EditModal({
               )}
             </div>
 
-            {/* Foto Keluar */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Foto Keluar Baru (Opsional)
@@ -247,7 +232,6 @@ export function EditModal({
               )}
             </div>
 
-            {/* Checkbox Lembur */}
             <div className="md:col-span-2">
               <div className="flex items-center gap-3">
                 <input
@@ -264,7 +248,6 @@ export function EditModal({
               </div>
             </div>
 
-            {/* Jam Lembur */}
             {formData.is_lembur && (
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -281,7 +264,6 @@ export function EditModal({
               </div>
             )}
 
-            {/* Keterangan */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Keterangan
@@ -297,7 +279,6 @@ export function EditModal({
             </div>
           </div>
 
-          {/* Form Actions */}
           <div className="mt-8 pt-6 border-t border-gray-200 flex justify-end gap-3">
             <button
               type="button"

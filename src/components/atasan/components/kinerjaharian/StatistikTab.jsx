@@ -10,7 +10,6 @@ export function StatistikTab({
   tanggalInfo,
   onResetFilters
 }) {
-  // Default values dengan safe access
   const safeStatistik = {
     total_laporan: statistik?.total_laporan || 0,
     total_pegawai: statistik?.total_pegawai || 0,
@@ -21,7 +20,6 @@ export function StatistikTab({
     wilayah: statistik?.wilayah || {}
   };
 
-  // Format tanggal untuk display
   const formatDateRange = () => {
     if (tanggalInfo?.tanggal_formatted) {
       return tanggalInfo.tanggal_formatted;
@@ -73,7 +71,6 @@ export function StatistikTab({
 
   return (
     <div className="space-y-6">
-      {/* Informasi Periode */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -96,30 +93,25 @@ export function StatistikTab({
         </div>
       </div>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {summaryCards.map((card, index) => (
           <SummaryCard key={index} {...card} />
         ))}
       </div>
 
-      {/* Detail Statistik */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        {/* Distribusi per Wilayah */}
         <DistribusiWilayah
           statistik={safeStatistik}
           selectedDate={selectedDate}
           tanggalInfo={tanggalInfo}
         />
 
-        {/* Detail per Wilayah */}
         <StatistikWilayah
           statistik={safeStatistik}
           kinerjaList={kinerjaList}
         />
       </div>
 
-      {/* Total Data Info */}
       <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
           <div>
@@ -168,7 +160,6 @@ function SummaryCard({ title, value, icon, bgColor, textColor }) {
 function DistribusiWilayah({ statistik, selectedDate, tanggalInfo }) {
   const hasData = statistik.wilayah && Object.keys(statistik.wilayah).length > 0;
   
-  // Konversi data wilayah ke array untuk ditampilkan
   const wilayahList = hasData 
     ? Object.entries(statistik.wilayah).map(([nama, data]) => ({
         nama,

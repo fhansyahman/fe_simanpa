@@ -1,4 +1,3 @@
-// hooks/rekapkerja/useRekapProcessor.js
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
@@ -26,16 +25,13 @@ export function useRekapProcessor(rekapData, bulanFilter, tahunFilter, wilayahFi
     setProcessing(true);
     
     try {
-      // Jika rekapData sudah ada dari API, gunakan langsung
       if (rekapData && rekapData.rekap && Array.isArray(rekapData.rekap)) {
         let filteredRekap = [...rekapData.rekap];
         
-        // Filter berdasarkan wilayah
         if (wilayahFilter && wilayahFilter !== '') {
           filteredRekap = filteredRekap.filter(item => item.wilayah === wilayahFilter);
         }
         
-        // Filter berdasarkan search (nama atau jabatan)
         if (search && search !== '') {
           const searchLower = search.toLowerCase();
           filteredRekap = filteredRekap.filter(item => 
@@ -44,10 +40,8 @@ export function useRekapProcessor(rekapData, bulanFilter, tahunFilter, wilayahFi
           );
         }
         
-        // Gunakan statistik dari API
         let apiStatistik = rekapData.summary || {};
         
-        // Hitung ulang statistik berdasarkan filter
         let totalLaporan = 0;
         let totalKR = 0;
         let totalKN = 0;
@@ -83,7 +77,6 @@ export function useRekapProcessor(rekapData, bulanFilter, tahunFilter, wilayahFi
         setDates(rekapData.dates || []);
         setPeriode(rekapData.periode || null);
       } else {
-        // Fallback: data kosong
         setRekapBulanan([]);
         setStatistikBulanan({
           totalPegawai: 0,

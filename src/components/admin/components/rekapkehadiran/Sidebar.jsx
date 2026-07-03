@@ -34,11 +34,11 @@ const sidebarMenu = [
       ],
     },
     {
-      title: "Manajemen Kerja",  // ← NAMA GRUP BARU (ganti dari "Kinerja")
-      icon: <Award size={20} />,  // Icon award/target lebih menggambarkan hasil
+      title: "Manajemen Kerja",
+      icon: <Award size={20} />,
       submenu: [
         { name: "Riwayat Hasil Kerja", icon: <Clipboard size={14} />, href: "/admin/riwayathasilkerja" },
-        { name: "Rekap Hasil Kerja", icon: <Briefcase size={14} />, href: "/admin/rekapkerja" }, // ← route /admin/rekapkerja
+        { name: "Rekap Hasil Kerja", icon: <Briefcase size={14} />, href: "/admin/rekapkerja" },
         { name: "Laporan Hasil Kerja", icon: <ClipboardX size={14} />, href: "/admin/laporanhasilkerja" },
 
       ],
@@ -59,11 +59,9 @@ const sidebarMenu = [
 function SidebarItem({ item, currentPath }) {
   const [open, setOpen] = useState(false);
   
-  // Cek apakah ada submenu yang aktif
   const isSubmenuActive = item.submenu && item.submenu.some(sub => currentPath === sub.href);
   const isActive = (!item.submenu && currentPath === item.href) || isSubmenuActive;
 
-  // Buka submenu secara otomatis jika ada yang aktif
   if (item.submenu && isSubmenuActive && !open) {
     if (open !== true) setOpen(true);
   }

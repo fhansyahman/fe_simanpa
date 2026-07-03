@@ -1,4 +1,3 @@
-// hooks/rekapterja/useFilters.js
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
@@ -9,7 +8,6 @@ export function useFilters() {
   const [tahunFilter, setTahunFilter] = useState("");
   const [wilayahFilter, setWilayahFilter] = useState("");
 
-  // Generate bulan options (1-12)
   const getBulanOptions = useCallback(() => {
     const bulanNames = [
       { value: "1", label: "Januari" },
@@ -28,7 +26,6 @@ export function useFilters() {
     return bulanNames;
   }, []);
 
-  // Generate tahun options (current year - 5 to current year + 1)
   const getTahunOptions = useCallback(() => {
     const currentYear = new Date().getFullYear();
     const years = [];
@@ -38,7 +35,6 @@ export function useFilters() {
     return years;
   }, []);
 
-  // Get bulan label from value
   const getBulanLabel = useCallback((bulanValue) => {
     const bulanNames = {
       "1": "Januari",
@@ -57,7 +53,6 @@ export function useFilters() {
     return bulanNames[bulanValue] || "";
   }, []);
 
-  // Reset all filters
   const resetFilters = useCallback(() => {
     setSearch("");
     setBulanFilter("");
@@ -65,7 +60,6 @@ export function useFilters() {
     setWilayahFilter("");
   }, []);
 
-  // Set to current month and year
   const setToCurrentMonth = useCallback(() => {
     const now = new Date();
     const currentBulan = (now.getMonth() + 1).toString();
@@ -76,7 +70,6 @@ export function useFilters() {
     setSearch("");
   }, []);
 
-  // Count active filters (excluding search)
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (bulanFilter) count++;
@@ -86,12 +79,10 @@ export function useFilters() {
     return count;
   }, [bulanFilter, tahunFilter, wilayahFilter, search]);
 
-  // Check if any filter is active
   const hasActiveFilters = useMemo(() => {
     return activeFilterCount > 0;
   }, [activeFilterCount]);
 
-  // Get filter summary for display
   const getFilterSummary = useCallback(() => {
     const filters = [];
     if (bulanFilter) filters.push(`Bulan: ${getBulanLabel(bulanFilter)}`);
@@ -102,29 +93,24 @@ export function useFilters() {
   }, [bulanFilter, tahunFilter, wilayahFilter, search, getBulanLabel]);
 
   return {
-    // State
     search,
     bulanFilter,
     tahunFilter,
     wilayahFilter,
     
-    // Setters
     setSearch,
     setBulanFilter,
     setTahunFilter,
     setWilayahFilter,
     
-    // Actions
     resetFilters,
     setToCurrentMonth,
     
-    // Helpers
     getBulanOptions,
     getTahunOptions,
     getBulanLabel,
     getFilterSummary,
     
-    // Computed
     activeFilterCount,
     hasActiveFilters
   };

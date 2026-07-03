@@ -37,22 +37,15 @@ export function StatistikTab({ statistik, presensiList, tanggalFilter, onResetDa
 
   return (
     <div className="space-y-6">
-      {/* Info Periode */}
       <PeriodeInfo 
         tanggalFilter={tanggalFilter} 
         onResetDate={onResetDate} 
       />
-
-      {/* Summary Cards */}
       <SummaryCards statistik={statistik} />
-
-      {/* Detail Statistik */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DistribusiChart statistik={statistik} />
         <WilayahStats statistik={statistik} />
       </div>
-
-      {/* Action Buttons */}
       <ActionBar 
         onReset={onResetDate}
         onCopy={handleCopyStats}

@@ -31,7 +31,6 @@ export function usePresensiData() {
   const isProcessing = useRef(false);
   const lastParams = useRef({ bulan: null, tahun: null, wilayah: null });
 
-  // ==================== LOAD DATA ====================
 
   const loadPresensiData = useCallback(async () => {
     const bulan = state.selectedMonth;
@@ -72,13 +71,11 @@ export function usePresensiData() {
         const data = response.data.data;
         
         if (isMounted.current) {
-          // Ambil data dari API
           const rekapPerPegawai = data.rekap_per_pegawai || [];
           const allPresensi = data.all_presensi || [];
           const apiStatistik = data.statistik || {};
           const apiPeriode = data.periode || {};
           
-          // Hitung ulang statistik per wilayah dari rekap per pegawai
           const wilayahStats = {};
           WILAYAH_LIST.forEach(wil => {
             wilayahStats[wil] = {
@@ -101,7 +98,6 @@ export function usePresensiData() {
           let totalTanpaKeteranganOverall = 0;
           let totalPegawaiOverall = 0;
           
-          // Hitung dari rekap per pegawai
           rekapPerPegawai.forEach(pegawai => {
             const wilayah = pegawai.wilayah || 'Unknown';
             if (wilayahStats[wilayah]) {
@@ -120,7 +116,6 @@ export function usePresensiData() {
             }
           });
           
-          // Hitung persentase per wilayah
           Object.keys(wilayahStats).forEach(wilayah => {
             const stats = wilayahStats[wilayah];
             const totalPresensiWilayah = stats.totalPresensi;
@@ -132,7 +127,6 @@ export function usePresensiData() {
             }
           });
           
-          // Hitung persentase overall
           const totalPresensiOverall = totalHadirOverall + totalTerlambatOverall + totalIzinOverall + totalTanpaKeteranganOverall;
           const overallStats = {
             totalPegawai: totalPegawaiOverall,
@@ -146,7 +140,6 @@ export function usePresensiData() {
             persenTanpaKeterangan: totalPresensiOverall > 0 ? Math.round((totalTanpaKeteranganOverall / totalPresensiOverall) * 100) : 0
           };
           
-          // Buat chart data untuk dashboard (per wilayah)
           const wilayahWithData = Object.keys(wilayahStats).filter(wilayah => {
             const stats = wilayahStats[wilayah];
             return stats.totalPresensi > 0;
@@ -232,7 +225,6 @@ export function usePresensiData() {
     }
   }, [state.selectedMonth, state.selectedYear, state.selectedWilayah, state.rekapPerPegawai.length]);
 
-  // ==================== HANDLE CHANGE ====================
 
   const handleMonthChange = useCallback((month) => {
     setState(prev => ({ 
@@ -258,7 +250,6 @@ export function usePresensiData() {
     }));
   }, []);
 
-  // ==================== NAVIGASI BULAN ====================
 
   const goToPreviousMonth = useCallback(() => {
     let newMonth = state.selectedMonth - 1;
@@ -306,7 +297,6 @@ export function usePresensiData() {
     }));
   }, []);
 
-  // ==================== EXPORT FUNCTIONS ====================
 
   const handleExportChart = () => {
     if (!state.chartData) {
@@ -359,7 +349,6 @@ export function usePresensiData() {
     const bulanLabel = BULAN_OPTIONS.find(b => b.value === selectedMonth.toString().padStart(2, '0'))?.label || selectedMonth;
     const tanggalExport = new Date().toLocaleDateString('id-ID');
     
-    // Header CSV untuk statistik per wilayah
     const headers = [
       `Laporan Presensi ${bulanLabel} ${selectedYear}`,
       `Total Hari Kerja: ${periodeInfo?.total_hari_kerja || '-'}`,
@@ -375,7 +364,6 @@ export function usePresensiData() {
       'Status'
     ];
     
-    // Data per wilayah
     const csvData = Object.keys(wilayahStatistik)
       .filter(wilayah => {
         const stats = wilayahStatistik[wilayah];
@@ -399,7 +387,6 @@ export function usePresensiData() {
         ];
       });
 
-    // Baris total
     const totalPresensi = statistik.totalHadir + statistik.totalTerlambat + statistik.totalIzin + statistik.totalTanpaKeterangan;
     const tingkatKehadiranOverall = statistik.persenHadir || 0;
     const statusOverall = tingkatKehadiranOverall >= 80 ? 'Baik' : tingkatKehadiranOverall >= 60 ? 'Cukup' : 'Perlu Perhatian';
@@ -415,10 +402,8 @@ export function usePresensiData() {
       statusOverall
     ]);
 
-    // Buat konten CSV
     const csvContent = headers.join('\n') + '\n' + csvData.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
 
-    // Download file
     const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -442,7 +427,6 @@ export function usePresensiData() {
     });
   };
 
-  // ==================== GET STATISTIK ====================
 
   const getStatistikDetail = useCallback(() => {
     const { statistik } = state;
@@ -466,7 +450,6 @@ export function usePresensiData() {
     return bulan ? bulan.label : month;
   }, []);
 
-  // ==================== EFFECT ====================
 
   useEffect(() => {
     isMounted.current = true;
@@ -480,10 +463,8 @@ export function usePresensiData() {
     loadPresensiData();
   }, [loadPresensiData]);
 
-  // ==================== RETURN ====================
 
   return {
-    // State
     selectedMonth: state.selectedMonth,
     selectedYear: state.selectedYear,
     selectedWilayah: state.selectedWilayah,
@@ -495,7 +476,6 @@ export function usePresensiData() {
     statistik: state.statistik,
     wilayahStatistik: state.wilayahStatistik,
     
-    // Functions
     loadPresensiData,
     handleMonthChange,
     handleYearChange,
@@ -509,7 +489,6 @@ export function usePresensiData() {
     getPersentase,
     getBulanLabel,
     
-    // Options
     bulanOptions: BULAN_OPTIONS,
     tahunOptions: getTahunOptions(),
     wilayahOptions: [{ value: 'all', label: 'Semua Wilayah' }, ...WILAYAH_LIST.map(w => ({ value: w, label: w }))]

@@ -45,7 +45,6 @@ export function EditModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validasi
     if (!formData.ruas_jalan || !formData.kegiatan || !formData.panjang_kr || !formData.panjang_kn) {
       Swal.fire({
         icon: "warning",
@@ -88,7 +87,6 @@ export function EditModal({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl">
-        {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between">
           <div className="min-w-0">
             <h2 className="text-lg md:text-xl font-bold text-gray-900 truncate">Edit Data Kinerja</h2>
@@ -112,7 +110,6 @@ export function EditModal({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            {/* Ruas Jalan */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Ruas Jalan *
@@ -127,7 +124,6 @@ export function EditModal({
               />
             </div>
 
-            {/* Kegiatan */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Kegiatan *
@@ -142,7 +138,6 @@ export function EditModal({
               />
             </div>
 
-            {/* Panjang KR & KN */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Panjang KR *
@@ -171,7 +166,6 @@ export function EditModal({
               />
             </div>
 
-            {/* Warna Sket */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                 <PaintBucket size={16} />
@@ -196,7 +190,6 @@ export function EditModal({
               </div>
             </div>
 
-            {/* Upload Gambar */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                 <Image size={16} />
@@ -237,7 +230,6 @@ export function EditModal({
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-200 flex flex-wrap justify-end gap-2 md:gap-3">
             <button
               type="button"
@@ -270,7 +262,6 @@ export function EditModal({
   );
 }
 
-// Sub-components
 function WarnaInput({ label, value, onChange }) {
   return (
     <div>

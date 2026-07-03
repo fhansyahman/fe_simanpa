@@ -1,36 +1,29 @@
 import { WILAYAH_COLORS, STATUS_COLORS, KINERJA_STATUS } from './constants';
 
-// Get wilayah color
 export const getWilayahColor = (wilayah) => {
   return WILAYAH_COLORS[wilayah] || 'rgba(156, 163, 175, 0.8)';
 };
 
-// Get status color
 export const getStatusColor = (status) => {
   return STATUS_COLORS[status] || 'rgba(156, 163, 175, 0.8)';
 };
 
-// Get kinerja status label
 export const getKinerjaStatusLabel = (status) => {
   return KINERJA_STATUS[status]?.label || status;
 };
 
-// Get kinerja status color
 export const getKinerjaStatusColor = (status) => {
   return KINERJA_STATUS[status]?.color || 'bg-gray-100 text-gray-800 border-gray-200';
 };
 
-// Get kinerja status icon
 export const getKinerjaStatusIcon = (status) => {
   return KINERJA_STATUS[status]?.icon || 'FileQuestion';
 };
 
-// Get kinerja status bg color
 export const getKinerjaStatusBgColor = (status) => {
   return KINERJA_STATUS[status]?.bgColor || 'rgba(156, 163, 175, 0.8)';
 };
 
-// Chart options for presensi
 export const getPresensiChartOptions = (title, yAxisLabel = 'Jumlah Presensi') => {
   return {
     responsive: true,
@@ -85,7 +78,6 @@ export const getPresensiChartOptions = (title, yAxisLabel = 'Jumlah Presensi') =
   };
 };
 
-// Chart options for kinerja
 export const getKinerjaChartOptions = (title, yAxisLabel = 'Panjang (meter)', isPercentage = false) => {
   const options = {
     responsive: true,

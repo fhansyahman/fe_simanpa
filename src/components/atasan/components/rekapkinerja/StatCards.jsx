@@ -3,7 +3,6 @@
 import { Users, FileText, Ruler } from "lucide-react";
 
 export function StatCards({ statistik, selectedWilayah, selectedDate, formatDateShort, loading }) {
-  // Default values yang aman
   const safeStatistik = statistik || {
     total_pegawai: 0,
     total_laporan: 0,
@@ -11,7 +10,6 @@ export function StatCards({ statistik, selectedWilayah, selectedDate, formatDate
     total_panjang_kn: 0,
     avg_panjang_kr: 0,
     avg_panjang_kn: 0,
-    // Untuk kompatibilitas dengan kedua format
     totalPekerja: 0,
     totalLaporan: 0,
     totalKR: 0,
@@ -20,7 +18,6 @@ export function StatCards({ statistik, selectedWilayah, selectedDate, formatDate
     rataKN: 0
   };
 
-  // Mendukung kedua format properti (snake_case dari API dan camelCase dari hook lama)
   const totalPekerja = safeStatistik.total_pegawai || safeStatistik.totalPekerja || 0;
   const totalLaporan = safeStatistik.total_laporan || safeStatistik.totalLaporan || 0;
   const totalKR = safeStatistik.total_panjang_kr || safeStatistik.totalKR || 0;

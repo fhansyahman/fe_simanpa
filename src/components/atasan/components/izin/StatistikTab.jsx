@@ -9,7 +9,6 @@ import Swal from "sweetalert2";
 export function StatistikTab({ statistik, izinList, tanggalFilter, onResetToToday }) {
   const total = statistik.total_pengajuan || 0;
 
-  // Hitung ulang statistik untuk jenis yang baru
   const sakitCount = izinList.filter(i => i.jenis === 'Sakit').length;
   const izinCount = izinList.filter(i => i.jenis === 'Izin').length;
   const dinasLuarCount = izinList.filter(i => i.jenis === 'Dinas Luar').length;
@@ -252,7 +251,6 @@ function SummaryCard({ title, value, percentage, icon, bgColor, textColor = "tex
 }
 
 function StatusProgress({ label, value, percentage, color }) {
-  // Mapping warna untuk Tailwind
   const colorMap = {
     emerald: {
       bg: "bg-emerald-500",
@@ -298,7 +296,6 @@ function StatusProgress({ label, value, percentage, color }) {
 function JenisItem({ icon, label, value, total, color }) {
   const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
   
-  // Mapping warna untuk Tailwind
   const colorMap = {
     orange: "orange",
     purple: "purple",

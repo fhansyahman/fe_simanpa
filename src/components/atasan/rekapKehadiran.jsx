@@ -49,7 +49,6 @@ const COLORS = {
 
 const PIE_COLORS = [COLORS.hadir, COLORS.terlambat, COLORS.izin, COLORS.tanpaKeterangan];
 
-// Daftar wilayah sesuai data
 const WILAYAH_LIST = [
   "Cermee",
   "Botolinggo",
@@ -101,7 +100,6 @@ export default function PresensiPage() {
 
   const statistikDetail = getStatistikDetail();
 
-  // Filter data berdasarkan wilayah yang dipilih
   const filteredRekapPerPegawai = useMemo(() => {
     if (selectedWilayah === "all") return rekapPerPegawai;
     return rekapPerPegawai.filter(
@@ -131,7 +129,6 @@ export default function PresensiPage() {
     return data;
   }, [filteredWilayahStatistik]);
 
-  // Filter chart data berdasarkan wilayah
   const filteredChartData = useMemo(() => {
     if (!chartData || selectedWilayah === "all") return chartData;
     
@@ -168,7 +165,6 @@ export default function PresensiPage() {
     return "bg-red-100 text-red-700";
   };
 
-  // Trend data dummy
   const trendData = [
     { bulan: "Jan", hadir: 85, terlambat: 8, izin: 5, tanpaKeterangan: 2 },
     { bulan: "Feb", hadir: 82, terlambat: 10, izin: 6, tanpaKeterangan: 2 },
@@ -180,11 +176,9 @@ export default function PresensiPage() {
 
   return (
     <div className="min-h-screen bg-slate-100 pb-16 text-black">
-      {/* HEADER - Optimized untuk HP */}
 <div className="bg-gradient-to-b from-blue-900 to-blue-800 pt-4 pb-16">
   <div className="px-4">
     <div className="flex items-center text-white mb-4">
-      {/* Bagian kiri: Arrow + Judul */}
       <div className="flex items-center gap-x-2 flex-1">
         <Link href="/atasan/dashboard" className="hover:opacity-80 transition-opacity">
           <ArrowLeft size={24} />
@@ -195,7 +189,6 @@ export default function PresensiPage() {
         </div>
       </div>
 
-      {/* Tombol aksi di kanan */}
       <div className="flex gap-2">
         <button
           onClick={handleExportChart}
@@ -211,7 +204,6 @@ export default function PresensiPage() {
 </div>
 
       <div className="px-4 -mt-12">
-        {/* FILTER SECTION - Compact untuk HP */}
         <div className="bg-white rounded-xl shadow-lg p-3 mb-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5 text-xs">
@@ -243,7 +235,6 @@ export default function PresensiPage() {
             </div>
           </div>
 
-          {/* Navigasi Bulan - Compact */}
           <div className="flex items-center justify-between gap-2">
             <button
               onClick={goToPreviousMonth}
@@ -274,7 +265,6 @@ export default function PresensiPage() {
           )}
         </div>
 
-        {/* STATISTIK CARDS - Scroll Horizontal dengan ukuran lebih kecil */}
         <div className="mb-4 overflow-x-auto no-scrollbar -mx-1 px-1">
           <div className="flex gap-2">
             {statistikDetail.map((item) => (
@@ -296,7 +286,6 @@ export default function PresensiPage() {
           </div>
         </div>
 
-        {/* INFO WILAYAH */}
         {selectedWilayah !== "all" && (
           <div className="mb-4">
             <div className="bg-green-50 rounded-lg p-2.5 flex items-center justify-between">
@@ -316,7 +305,6 @@ export default function PresensiPage() {
           </div>
         )}
 
-        {/* TAB NAVIGATION */}
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="flex overflow-x-auto no-scrollbar border-b border-gray-100">
             {[
@@ -340,7 +328,6 @@ export default function PresensiPage() {
             ))}
           </div>
 
-          {/* CONTENT AREA */}
           <div className="p-3">
             {loading ? (
               <div className="flex items-center justify-center py-12">
@@ -348,10 +335,8 @@ export default function PresensiPage() {
               </div>
             ) : (
               <>
-                {/* TAB 1: RINGKASAN */}
                 {activeTab === "overview" && (
                   <div className="space-y-3">
-                    {/* Bar Chart */}
                     <div className="bg-gray-50 rounded-lg p-2.5">
                       <div className="flex justify-between items-center mb-2">
                         <h3 className="font-semibold text-gray-700 text-xs flex items-center gap-1">
@@ -392,7 +377,6 @@ export default function PresensiPage() {
                       </div>
                     </div>
 
-                    {/* Pie Chart */}
                     <div className="bg-gray-50 rounded-lg p-2.5">
                       <h3 className="font-semibold text-gray-700 text-xs mb-2 flex items-center gap-1">
                         Komposisi Kehadiran
@@ -437,7 +421,6 @@ export default function PresensiPage() {
                       </div>
                     </div>
 
-                    {/* Ringkasan */}
                     <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3">
                       <h3 className="font-semibold text-gray-700 text-xs mb-2">📊 Ringkasan</h3>
                       <div className="grid grid-cols-2 gap-2">
@@ -468,7 +451,6 @@ export default function PresensiPage() {
                   </div>
                 )}
 
-                {/* TAB 2: PER WILAYAH */}
                 {activeTab === "wilayah" && (
                   <div className="space-y-2">
                     {wilayahTableData.length > 0 ? (
@@ -529,7 +511,6 @@ export default function PresensiPage() {
                   </div>
                 )}
 
-                {/* TAB 3: DETAIL PEGAWAI */}
                 {activeTab === "detail" && (
                   <div className="space-y-2">
                     {filteredRekapPerPegawai.length > 0 ? (
@@ -593,7 +574,6 @@ export default function PresensiPage() {
                   </div>
                 )}
 
-                {/* TAB 4: TREND */}
                 {activeTab === "trend" && (
                   <div className="space-y-3">
                     <div className="bg-gray-50 rounded-lg p-2.5">
@@ -628,16 +608,12 @@ export default function PresensiPage() {
             )}
           </div>
 
-          {/* Footer */}
           <div className="px-3 py-2 border-t border-gray-100 text-[9px] text-gray-400 text-center">
             Update: {new Date().toLocaleDateString("id-ID")}
           </div>
         </div>
       </div>
 
-
-
-      {/* FILTER MODAL - Optimized untuk HP */}
       {showFilterModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
           <div className="bg-white w-full rounded-t-xl max-h-[80vh] overflow-y-auto animate-slide-up">
@@ -683,7 +659,6 @@ export default function PresensiPage() {
         </div>
       )}
 
-      {/* WILAYAH SELECTOR MODAL */}
       {showWilayahModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
           <div className="bg-white w-full rounded-t-xl max-h-[80vh] overflow-y-auto animate-slide-up">
@@ -777,7 +752,6 @@ export default function PresensiPage() {
   );
 }
 
-// KOMPONEN PENDUKUNG
 function NavItem({ icon, label, href, active, badge }) {
   return (
     <Link

@@ -1,4 +1,3 @@
-// app/admin/rekapkerja/components/TableHeader.jsx
 "use client";
 
 export function TableHeader({ daysInMonth, dates }) {

@@ -26,7 +26,6 @@ export function useHariData() {
   
   const router = useRouter();
 
-  // Form data
   const [hariKerjaForm, setHariKerjaForm] = useState({
     tanggal: '',
     is_hari_kerja: true,
@@ -47,7 +46,6 @@ export function useHariData() {
     keterangan: ''
   });
 
-  // Load data berdasarkan tab
   useEffect(() => {
     if (activeTab === 'kalender') {
       loadKalender();
@@ -445,7 +443,6 @@ export function useHariData() {
     };
   }, []);
 
-  // Filter data
   const filteredHariKerja = useMemo(() => 
     hariKerjaList.filter((hari) =>
       hari.tanggal.includes(search) ||
@@ -460,7 +457,6 @@ export function useHariData() {
     ), [hariLiburList, search]
   );
 
-  // Generate tahun options
   const tahunOptions = useMemo(() => {
     const options = [];
     const currentYear = new Date().getFullYear();
@@ -470,7 +466,6 @@ export function useHariData() {
     return options;
   }, []);
 
-  // Pagination
   const getCurrentData = useCallback(() => {
     if (activeTab === 'hari-kerja') {
       const startIndex = (currentPage - 1) * itemsPerPage;
@@ -492,7 +487,6 @@ export function useHariData() {
   }, [activeTab, filteredHariKerja.length, filteredHariLibur.length, itemsPerPage]);
 
   return {
-    // States
     activeTab,
     setActiveTab,
     tahunFilter,
@@ -515,7 +509,6 @@ export function useHariData() {
     totalPages,
     getCurrentData,
     
-    // Modal states
     showHariKerjaModal,
     setShowHariKerjaModal,
     showHariLiburModal,
@@ -525,7 +518,6 @@ export function useHariData() {
     isEdit,
     selectedHari,
     
-    // Form states
     hariKerjaForm,
     setHariKerjaForm,
     hariLiburForm,
@@ -533,7 +525,6 @@ export function useHariData() {
     bulkForm,
     setBulkForm,
     
-    // Handlers
     handleEditHariKerja,
     handleEditHariLibur,
     handleDeleteHariKerja,
@@ -548,7 +539,6 @@ export function useHariData() {
     getHariStatus,
     formatDate,
     
-    // Options
     tahunOptions,
   };
 }

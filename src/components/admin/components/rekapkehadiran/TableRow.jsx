@@ -23,7 +23,6 @@ export const TableRow = memo(function TableRow({ pegawai, index, daysInMonth }) 
     }
   };
 
-  // Validasi dan default values
   const safePegawai = pegawai || {};
   const presensiHarian = Array.isArray(safePegawai.presensiHarian) ? safePegawai.presensiHarian : [];
   const totalHadir = safePegawai.totalHadir || 0;
@@ -33,28 +32,21 @@ export const TableRow = memo(function TableRow({ pegawai, index, daysInMonth }) 
   const nama = safePegawai.nama || '-';
   const jabatan = safePegawai.jabatan || '-';
 
-  // Validasi daysInMonth
   const safeDaysInMonth = daysInMonth && !isNaN(daysInMonth) && daysInMonth > 0 ? daysInMonth : 31;
   const daysArray = Array.from({ length: safeDaysInMonth }, (_, i) => i);
 
   return (
     <tr className="hover:bg-gray-50 transition-colors duration-150">
-      {/* Nomor Urut */}
       <td className="border border-gray-300 p-2 text-center font-medium bg-white">
         {index + 1}
       </td>
-      
-      {/* Nama Pegawai */}
       <td className="border border-gray-300 p-2 text-sm md:text-base font-medium text-gray-800 bg-white sticky left-0 bg-white">
         {nama}
       </td>
-      
-      {/* Jabatan */}
       <td className="border border-gray-300 p-2 text-sm md:text-base text-gray-600">
         {jabatan}
       </td>
       
-      {/* Data Harian per Tanggal */}
       {daysArray.map((_, dayIndex) => {
         const status = presensiHarian[dayIndex];
         const hasStatus = status && status !== '';
@@ -81,29 +73,21 @@ export const TableRow = memo(function TableRow({ pegawai, index, daysInMonth }) 
               </span>
             ) : (
               <span className="inline-block w-6 h-6 md:w-7 md:h-7 rounded-full text-xs">
-                {/* Empty cell - bisa dikosongkan atau ditambahkan titik */}
               </span>
             )}
           </td>
         );
       })}
       
-      {/* Total Hadir (H) */}
       <td className="border border-gray-300 p-2 text-center font-bold bg-green-50 text-green-700">
         {totalHadir}
       </td>
-      
-      {/* Total Terlambat (T) */}
       <td className="border border-gray-300 p-2 text-center font-bold bg-amber-50 text-amber-700">
         {totalTerlambat}
       </td>
-      
-      {/* Total Izin (I) */}
       <td className="border border-gray-300 p-2 text-center font-bold bg-purple-50 text-purple-700">
         {totalIzin}
       </td>
-      
-      {/* Total Tanpa Keterangan (TK) */}
       <td className="border border-gray-300 p-2 text-center font-bold bg-red-50 text-red-700">
         {totalTanpaKeterangan}
       </td>
@@ -111,5 +95,4 @@ export const TableRow = memo(function TableRow({ pegawai, index, daysInMonth }) 
   );
 });
 
-// Display name untuk debugging
 TableRow.displayName = 'TableRow';

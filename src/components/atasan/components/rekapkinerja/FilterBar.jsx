@@ -68,7 +68,6 @@ export function FilterBar({
         </div>
       </div>
 
-      {/* Filter Active Info */}
       {hasActiveFilter && (
         <div className="flex flex-wrap gap-2 mt-4">
           <span className="text-xs text-gray-500">Filter aktif:</span>

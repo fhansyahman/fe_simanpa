@@ -6,7 +6,6 @@ export function TableFooter({ daysInMonth, statistik }) {
       <td colSpan={3} className="border border-gray-300 p-2 text-right">
         TOTAL
       </td>
-      {/* Kosong untuk kolom tanggal */}
       {Array.from({length: daysInMonth}, (_, i) => (
         <td key={i} className="border border-gray-300 p-1"></td>
       ))}

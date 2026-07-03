@@ -53,7 +53,6 @@ export default function AdminPresensiManagement() {
     confirmData
   } = useModal();
 
-  // Log ketika filter berubah
   useEffect(() => {
     console.log('🔍 Filter aktif:', filters);
   }, [filters]);
@@ -64,10 +63,7 @@ export default function AdminPresensiManagement() {
 
   return (
     <Layout>
-      {/* Header Stats */}
       <StatsCards statistik={statistik} tanggalFilter={filters.tanggal} />
-
-      {/* Filter Bar */}
       <FilterBar
         filters={filters}
         onFilterChange={setFilters}
@@ -78,12 +74,9 @@ export default function AdminPresensiManagement() {
         activeTab={activeTab}
       />
 
-      {/* Error Alert */}
       {error && <ErrorAlert error={error} onRetry={loadPresensiData} />}
 
-      {/* Tab Navigation */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-        {/* ✅ FIX: Kirim presensiList ke TabNavigation */}
         <TabNavigation 
           activeTab={activeTab} 
           onTabChange={setActiveTab}
@@ -91,7 +84,6 @@ export default function AdminPresensiManagement() {
         />
 
         <div className="p-6">
-          {/* Data Presensi Tab */}
           {activeTab === 'data' && (
             <PresensiTable
               data={filteredPresensi}
@@ -110,7 +102,6 @@ export default function AdminPresensiManagement() {
             />
           )}
 
-          {/* Statistik Tab */}
           {activeTab === 'statistik' && (
             <StatistikTab
               statistik={statistik}
@@ -125,7 +116,6 @@ export default function AdminPresensiManagement() {
         </div>
       </div>
 
-      {/* Modals */}
       <DetailModal
         isOpen={modalState.detail}
         onClose={closeDetailModal}
@@ -171,7 +161,6 @@ export default function AdminPresensiManagement() {
   );
 }
 
-// ✅ FIX: TabNavigation dengan parameter totalData
 function TabNavigation({ activeTab, onTabChange, totalData }) {
   return (
     <div className="flex border-b border-gray-200">

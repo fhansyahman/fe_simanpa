@@ -15,7 +15,6 @@ export function RekapTab({
   onRefresh,
   getDaysInMonth
 }) {
-  // Pastikan rekapBulanan adalah array
   const safeRekapBulanan = Array.isArray(rekapBulanan) ? rekapBulanan : [];
   const safeStatistik = statistikBulanan || {
     totalPegawai: 0,

@@ -18,21 +18,18 @@ export function usePresensiData(filters) {
       setLoading(true);
       setError(null);
 
-      // ✅ Default ke hari ini jika tidak ada tanggal
       const today = new Date().toISOString().split("T")[0];
 
       const params = {
         tanggal: filters.tanggal || today,
       };
 
-      // Optional filter status
       if (filters.status && filters.status !== "") {
         params.status_masuk = filters.status;
       }
 
       console.log("🔍 Loading presensi:", params);
 
-      // ✅ PAKAI getAll (BUKAN getHariIni)
       const response = await adminPresensiAPI.getAll(params);
       const data = response.data?.data || [];
 
@@ -42,14 +39,12 @@ export function usePresensiData(filters) {
 
       let filteredData = [...data];
 
-      // 🔧 FILTER WILAYAH (manual)
       if (filters.wilayah && filters.wilayah !== "") {
         filteredData = filteredData.filter(
           (item) => item.wilayah_penugasan === filters.wilayah
         );
       }
 
-      // 🔧 FILTER STATUS (manual biar konsisten)
       if (filters.status && filters.status !== "") {
         filteredData = filteredData.filter((item) => {
           let status = "Tanpa Keterangan";
@@ -79,7 +74,6 @@ export function usePresensiData(filters) {
     loadPresensiData();
   }, [loadPresensiData]);
 
-  // 🔍 SEARCH FILTER
   const filteredPresensi = useMemo(() => {
     let data = presensiList;
 
@@ -97,7 +91,6 @@ export function usePresensiData(filters) {
     return data;
   }, [presensiList, filters.search]);
 
-  // ✅ FIX: generateHariIni (bukan generatePresensiOtomatis)
   const handleGenerateHariIni = async () => {
     const result = await Swal.fire({
       title: "Generate Presensi Hari Ini?",

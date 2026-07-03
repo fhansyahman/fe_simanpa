@@ -1,4 +1,3 @@
-// app/login/page.js
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -10,7 +9,7 @@ import Image from 'next/image';
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true); // State untuk cek autentikasi awal
+  const [checkingAuth, setCheckingAuth] = useState(true); 
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,7 +20,6 @@ export default function LoginPage() {
   const { login, user } = useAuth();
   const router = useRouter();
 
-  // 🔧 CEK APAKAH SUDAH LOGIN SEBELUM MENAMPILKAN HALAMAN LOGIN
   useEffect(() => {
     const checkAlreadyLoggedIn = async () => {
       const token = localStorage.getItem('token');
@@ -32,17 +30,14 @@ export default function LoginPage() {
       }
 
       try {
-        // Verifikasi token ke backend
         const response = await authAPI.getProfile();
         
         if (response.data.success) {
-          // Jika token valid, langsung redirect ke dashboard sesuai role
           const role = response.data.data.roles;
           redirectToDashboard(role);
           return;
         }
       } catch (error) {
-        // Token tidak valid, hapus data localStorage
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       } finally {
@@ -53,7 +48,6 @@ export default function LoginPage() {
     checkAlreadyLoggedIn();
   }, []);
 
-  // Fungsi redirect berdasarkan role
   const redirectToDashboard = (role) => {
     setRedirecting(true);
     setTimeout(() => {
@@ -73,7 +67,6 @@ export default function LoginPage() {
     }, 500);
   };
 
-  // Tampilkan loading sambil mengecek autentikasi
   if (checkingAuth) {
     return (
       <div className="login-container relative">
@@ -175,7 +168,6 @@ export default function LoginPage() {
 
   return (
     <div className="login-container relative">
-      {/* Overlay Loading Saat Redirect */}
       {redirecting && (
         <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center z-50 backdrop-blur-sm">
           <Loader2 className="animate-spin text-green-600" size={48} />

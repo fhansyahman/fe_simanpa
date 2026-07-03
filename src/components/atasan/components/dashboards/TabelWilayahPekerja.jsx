@@ -16,7 +16,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
     }));
   };
 
-  // Filter data berdasarkan pencarian dan wilayah
   const filteredData = dataWilayah.filter(item => {
     const matchesSearch = item.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.nip?.includes(searchTerm) ||
@@ -27,7 +26,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
     return matchesSearch && matchesWilayah;
   });
 
-  // Group by wilayah
   const groupedByWilayah = filteredData.reduce((acc, item) => {
     const wilayah = item.wilayah_penugasan || 'Tanpa Wilayah';
     if (!acc[wilayah]) {
@@ -39,7 +37,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
 
   const wilayahList = Object.keys(groupedByWilayah).sort();
 
-  // Hitung statistik per wilayah
   const getWilayahStats = (wilayah) => {
     const pegawai = groupedByWilayah[wilayah];
     const total = pegawai.length;

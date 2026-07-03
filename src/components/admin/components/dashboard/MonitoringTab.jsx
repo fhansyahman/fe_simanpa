@@ -37,7 +37,6 @@ export function MonitoringTab(props) {
     setSelectedEmployee(null);
   };
 
-  // Gabungkan izin, sakit, cuti untuk ditampilkan di satu list
   const semuaIzin = [...dataIzin, ...dataSakit, ...dataCuti];
 
   return (

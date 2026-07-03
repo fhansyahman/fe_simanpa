@@ -22,7 +22,6 @@ export function DownloadModal({ isOpen, onClose, kinerja }) {
         response = await adminKinerjaAPI.downloadExcel(kinerja.id);
       }
 
-      // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -58,7 +57,6 @@ export function DownloadModal({ isOpen, onClose, kinerja }) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-md w-full border border-gray-200 shadow-2xl">
-        {/* Header */}
         <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">Download Laporan</h2>
           <button
@@ -70,7 +68,6 @@ export function DownloadModal({ isOpen, onClose, kinerja }) {
         </div>
 
         <div className="p-6">
-          {/* Info Ringkas */}
           <div className="mb-6 p-4 bg-blue-50 rounded-lg">
             <h3 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
               <FileText size={16} />
@@ -95,8 +92,6 @@ export function DownloadModal({ isOpen, onClose, kinerja }) {
               </div>
             </div>
           </div>
-
-          {/* Pilih Format */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-3">
               Pilih Format File
@@ -124,8 +119,6 @@ export function DownloadModal({ isOpen, onClose, kinerja }) {
               </p>
             )}
           </div>
-
-          {/* Action Buttons */}
           <div className="flex gap-3">
             <button
               onClick={onClose}

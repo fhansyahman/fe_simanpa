@@ -227,11 +227,9 @@ export function useUsers() {
     }
   }, [userToDelete, loadUsers]);
 
-  // 🔥 PERBAIKAN: Handle Password Change dengan Debug
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     
-    // Validasi
     if (!passwordData.password || !passwordData.confirmPassword) {
       Swal.fire({
         icon: "error",
@@ -272,7 +270,6 @@ export function useUsers() {
       return;
     }
 
-    // Tampilkan loading
     Swal.fire({
       title: "Memproses...",
       text: "Mohon tunggu sebentar",
@@ -287,7 +284,6 @@ export function useUsers() {
       console.log("📤 Data yang dikirim:", { password: passwordData.password });
       console.log("🔗 Endpoint yang dipanggil:", `/users/${selectedUser.id}/password`);
       
-      // Panggil API
       const response = await usersAPI.updatePassword(selectedUser.id, passwordData.password);
       
       console.log("✅ Response sukses:", response);
@@ -318,7 +314,6 @@ export function useUsers() {
       
       Swal.close();
       
-      // Handle 404 - Route not found
       if (error.response?.status === 404) {
         Swal.fire({
           icon: "error",
@@ -339,7 +334,6 @@ export function useUsers() {
           confirmButtonColor: "#3B82F6",
         });
       } 
-      // Handle 400 - Bad request
       else if (error.response?.status === 400) {
         Swal.fire({
           icon: "error",
@@ -348,7 +342,6 @@ export function useUsers() {
           confirmButtonColor: "#EF4444",
         });
       }
-      // Handle 401/403 - Unauthorized
       else if (error.response?.status === 401 || error.response?.status === 403) {
         Swal.fire({
           icon: "error",
@@ -357,7 +350,6 @@ export function useUsers() {
           confirmButtonColor: "#EF4444",
         });
       }
-      // Handle lainnya
       else {
         Swal.fire({
           icon: "error",

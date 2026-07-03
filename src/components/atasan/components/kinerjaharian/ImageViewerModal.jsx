@@ -22,7 +22,6 @@ export function ImageViewerModal({
     if (index === 1 && kinerja.foto_50 === imageList[1]) return 'Foto 50%';
     if (index === 2 && kinerja.foto_100 === imageList[2]) return 'Foto 100%';
     
-    // Fallback berdasarkan posisi
     const positions = ['Sket', 'Foto 0%', 'Foto 50%', 'Foto 100%'];
     return positions[index] || `Gambar ${index + 1}`;
   };
@@ -30,7 +29,6 @@ export function ImageViewerModal({
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
       <div className="relative w-full max-w-4xl max-h-[90vh]">
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
@@ -38,7 +36,6 @@ export function ImageViewerModal({
           <X size={24} />
         </button>
         
-        {/* Download Button */}
         <button
           onClick={() => onDownload(selectedImage)}
           className="absolute top-16 right-4 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
@@ -47,7 +44,6 @@ export function ImageViewerModal({
           <Download size={20} />
         </button>
         
-        {/* Navigation Buttons */}
         {imageList.length > 1 && (
           <>
             <button
@@ -65,21 +61,18 @@ export function ImageViewerModal({
           </>
         )}
         
-        {/* Image Counter */}
         {imageList.length > 1 && (
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 px-3 py-1 bg-black/50 text-white rounded-full text-sm">
             {currentImageIndex + 1} / {imageList.length}
           </div>
         )}
         
-        {/* Main Image */}
         <img 
           src={selectedImage} 
           alt="Preview" 
           className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
         />
         
-        {/* Image Info */}
         <div className="absolute bottom-4 left-4 z-10">
           <p className="text-white text-sm bg-black/50 px-3 py-1 rounded-full">
             {getImageLabel(currentImageIndex)}

@@ -29,7 +29,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
     halaman2: true
   });
 
-  // Format tanggal
   const formatDate = (dateString) => {
     if (!dateString) return '06 Januari 2025';
     try {
@@ -57,7 +56,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
     }
   };
 
-  // Fungsi untuk memotong data per halaman (3 baris per halaman)
   const chunkDataForPages = (dataArray, rowsPerPage = 4) => {
     const pages = [];
     for (let i = 0; i < dataArray.length; i += rowsPerPage) {
@@ -66,12 +64,9 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
     return pages;
   };
 
-  // Generate konten untuk Halaman 1 (Tabel Rekap) - LANDSCAPE dengan SKET SANGAT BESAR
-  // dengan 3 baris data per halaman dan keterangan "Panjang" di atas KR & KN
   const generatePage1Content = (pageData, pageIndex, totalPages) => {
     if (!pageData || pageData.length === 0) return '';
     const isLastPage = pageIndex === totalPages - 1;
-    // Hitung total untuk halaman ini
     const pageTotalKR = pageData.reduce((sum, item) => sum + (parseFloat(item.panjang_kr) || 0), 0);
     const pageTotalKN = pageData.reduce((sum, item) => sum + (parseFloat(item.panjang_kn) || 0), 0);
 
@@ -407,7 +402,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
     `;
   };
 
-  // Generate konten untuk Halaman Foto (PER PEKERJA - SATU ORANG SATU LEMBAR) - mengikuti style LaporanGenerator
   const generateWorkerPhotoPage = (item, workerIndex) => {
     return `
       <!DOCTYPE html>
@@ -699,7 +693,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
 
   const renderToCanvas = async (htmlContent, pageNumber, isLandscape = false) => {
     try {
-      // Create temporary container
       const container = document.createElement('div');
       container.style.position = 'fixed';
       container.style.left = '-9999px';
@@ -711,17 +704,14 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
       container.style.color = '#000000';
       container.innerHTML = htmlContent;
       
-      // Append to body temporarily
       document.body.appendChild(container);
 
-      // Force black color for all elements
       const allElements = container.querySelectorAll('*');
       allElements.forEach(el => {
         el.style.color = '#000000';
         el.style.setProperty('color', '#000000', 'important');
       });
 
-      // Generate canvas dengan konfigurasi untuk teks hitam
       const canvas = await html2canvas(container, {
         scale: 2,
         useCORS: true,
@@ -730,33 +720,27 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         logging: false,
         imageTimeout: 30000,
         onclone: (clonedDoc) => {
-          // Force semua teks menjadi hitam
           const allClonedElements = clonedDoc.querySelectorAll('*');
           allClonedElements.forEach(el => {
             const computedStyle = window.getComputedStyle(el);
             const color = computedStyle.color;
             
-            // Jika warna bukan hitam, ubah ke hitam
             if (color !== 'rgb(0, 0, 0)' && !el.tagName.includes('IMG')) {
               el.style.color = '#000000';
               el.style.setProperty('color', '#000000', 'important');
             }
             
-            // Force text color untuk semua element
             el.style.webkitPrintColorAdjust = 'exact';
             el.style.printColorAdjust = 'exact';
             el.style.colorAdjust = 'exact';
           });
 
-          // Handle images dengan lebih baik
           const images = clonedDoc.querySelectorAll('img');
           images.forEach(img => {
-            // Pastikan gambar dimuat dengan CORS
             img.crossOrigin = 'anonymous';
             
             if (!img.complete) {
               img.onload = () => {
-                // Gambar berhasil dimuat
               };
               img.onerror = () => {
                 img.style.display = 'none';
@@ -777,7 +761,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         }
       });
 
-      // Remove container
       document.body.removeChild(container);
 
       return canvas;
@@ -795,7 +778,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
     setError(null);
 
     try {
-      // Bagi data menjadi beberapa halaman (4 baris per halaman)
       const dataPages = chunkDataForPages(data, 4);
       const totalPages = dataPages.length;
       
@@ -806,7 +788,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         compress: true
       });
 
-      // Render setiap halaman
       for (let i = 0; i < dataPages.length; i++) {
         const pageData = dataPages[i];
         const htmlContent = generatePage1Content(pageData, i, totalPages);
@@ -821,7 +802,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         
         pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
         
-        // Update progress
         setDownloadProgress(Math.round(((i + 1) / dataPages.length) * 100));
       }
       
@@ -863,7 +843,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         compress: true
       });
 
-      // Filter hanya data yang memiliki foto
       const dataWithPhotos = data.filter(item => 
         item.foto_0 || item.foto_50 || item.foto_100 || item.sket_image
       );
@@ -874,7 +853,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         return;
       }
 
-      // Render setiap pekerja sebagai halaman terpisah
       for (let i = 0; i < dataWithPhotos.length; i++) {
         const item = dataWithPhotos[i];
         const htmlContent = generateWorkerPhotoPage(item, i);
@@ -889,7 +867,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         
         pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
         
-        // Update progress
         setDownloadProgress(Math.round(((i + 1) / dataWithPhotos.length) * 100));
       }
       
@@ -978,7 +955,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
     );
   }
 
-  // Hitung statistik untuk ditampilkan di UI saja
   const totalKR = data.reduce((sum, item) => sum + (parseFloat(item.panjang_kr) || 0), 0);
   const totalKN = data.reduce((sum, item) => sum + (parseFloat(item.panjang_kn) || 0), 0);
   const uniquePegawai = [...new Set(data.map(item => item.nama))].length;

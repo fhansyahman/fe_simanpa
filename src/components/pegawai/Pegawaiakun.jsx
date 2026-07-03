@@ -22,7 +22,6 @@ export default function AkunPage() {
   const { userData, loadingUser } = useUserData();
 
   const handleLogout = () => {
-    // Hapus token dari localStorage dan cookie
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -32,7 +31,6 @@ export default function AkunPage() {
     router.push("/login");
   };
 
-  // Tampilkan loading jika user masih diambil
   if (loadingUser) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -46,24 +44,15 @@ export default function AkunPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 pb-24">
-      {/* Header dengan foto profil */}
       <UserHeader userData={userData} />
-
-      {/* Info Card */}
       <InfoCard userData={userData} />
-
-      {/* Menu Card */}
       <MenuCard 
         onPasswordClick={() => setShowPasswordModal(true)}
         onTermsClick={() => setShowTermsModal(true)}
         onPrivacyClick={() => setShowPrivacyModal(true)}
         onLogoutClick={() => setShowLogoutModal(true)}
       />
-
-      {/* Bottom Navigation */}
       <BottomNav />
-
-      {/* Modals */}
       <PasswordModal 
         isOpen={showPasswordModal} 
         onClose={() => setShowPasswordModal(false)} 

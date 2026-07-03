@@ -45,9 +45,7 @@ export function KinerjaCard({ item, onEdit, onDelete, onImageClick, formatDate }
               </div>
             </div>
 
-            {/* Gambar Preview */}
             <div className="flex justify-between items-center mt-3">
-              {/* Denah Jalan */}
               {item.sket_image && (
                 <ImagePreview
                   src={item.sket_image}
@@ -56,7 +54,6 @@ export function KinerjaCard({ item, onEdit, onDelete, onImageClick, formatDate }
                 />
               )}
 
-              {/* Foto Progress */}
               <div className="flex space-x-3">
                 <ProgressImages
                   images={[

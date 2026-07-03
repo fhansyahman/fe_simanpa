@@ -60,7 +60,6 @@ export function PresensiTable({
         </table>
       </div>
 
-      {/* Info filter */}
       {data.length < totalData && (
         <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
           Menampilkan {data.length} dari {totalData} data yang sesuai dengan filter

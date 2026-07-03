@@ -140,7 +140,6 @@ export const LocationRadiusChecker = ({
 
   return (
     <div className="space-y-4">
-      {/* Status Card */}
       <div className={`rounded-lg p-4 border ${isInRadius === null ? 'bg-gray-50 border-gray-200' : isInRadius ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
         <div className="flex items-center gap-3">
           <div className={getStatusColor()}>
@@ -159,7 +158,6 @@ export const LocationRadiusChecker = ({
         </div>
       </div>
 
-      {/* Map View */}
       <div className="relative">
         <div style={{ height: '350px' }} className="rounded-lg overflow-hidden border border-gray-200">
           {typeof window !== 'undefined' && L && defaultIcon && (
@@ -174,7 +172,6 @@ export const LocationRadiusChecker = ({
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               
-              {/* Lingkaran radius */}
               <LeafletCircle
                 center={center}
                 radius={radiusInMeters}
@@ -186,7 +183,6 @@ export const LocationRadiusChecker = ({
                 }}
               />
               
-              {/* Marker lokasi penugasan */}
               <Marker
                 position={center}
                 icon={defaultIcon}
@@ -206,7 +202,6 @@ export const LocationRadiusChecker = ({
                 </Popup>
               </Marker>
 
-              {/* Marker lokasi user */}
               {userLocation && (
                 <Marker
                   position={[userLocation.lat, userLocation.lon]}
@@ -234,7 +229,6 @@ export const LocationRadiusChecker = ({
         </div>
       </div>
 
-      {/* Informasi detail */}
       <div className="bg-gray-50 rounded-lg p-4 space-y-2">
         <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
           <MapPin size={16} className="text-red-500" />

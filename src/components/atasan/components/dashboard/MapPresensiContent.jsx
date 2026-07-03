@@ -19,7 +19,7 @@ export function MapPresensiContent() {
   const [filterTanggal, setFilterTanggal] = useState("");
   const [wilayahList, setWilayahList] = useState([]);
   const [isMapReady, setIsMapReady] = useState(false);
-  const [mapCenter] = useState([-7.919021, 113.820801]); // Default Prajekan
+  const [mapCenter] = useState([-7.919021, 113.820801]);
   const [mapZoom] = useState(11);
   
   const mapRef = useRef(null);
@@ -37,7 +37,6 @@ export function MapPresensiContent() {
     tanpaKeterangan: 0
   });
 
-  // Load Leaflet
   useEffect(() => {
     const loadLeaflet = async () => {
       try {
@@ -46,7 +45,6 @@ export function MapPresensiContent() {
         
         leafletRef.current = L;
         
-        // Fix untuk icon Leaflet
         delete L.Icon.Default.prototype._getIconUrl;
         L.Icon.Default.mergeOptions({
           iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -63,13 +61,11 @@ export function MapPresensiContent() {
     loadLeaflet();
   }, []);
 
-  // Set default tanggal
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
     setFilterTanggal(today);
   }, []);
 
-  // Fetch data presensi
   const fetchPresensiData = useCallback(async (tanggal) => {
     try {
       setLoading(true);
@@ -83,7 +79,6 @@ export function MapPresensiContent() {
         const allData = response.data.data || [];
         setAllPresensiData(allData);
         
-        // Filter data yang memiliki koordinat
         const dataWithLocation = allData.filter(item => {
           const hasLatMasuk = item.latitude_masuk && item.latitude_masuk !== 0;
           const hasLngMasuk = item.longitude_masuk && item.longitude_masuk !== 0;
@@ -93,7 +88,6 @@ export function MapPresensiContent() {
           return (hasLatMasuk && hasLngMasuk) || (hasLatPulang && hasLngPulang);
         });
 
-        // Format data untuk peta
         const formattedData = [];
         const lokasiYangDigunakan = new Set();
         
@@ -147,7 +141,6 @@ export function MapPresensiContent() {
 
         setPresensiList(formattedData);
         
-        // Hitung statistik
         const hadir = allData.filter(p => p.status_masuk === 'Tepat Waktu').length;
         const terlambat = allData.filter(p => p.status_masuk === 'Terlambat').length;
         const izin = allData.filter(p => p.izin_id !== null).length;
@@ -163,7 +156,6 @@ export function MapPresensiContent() {
           p.latitude_pulang && p.longitude_pulang
         ).length;
 
-        // Extract wilayah unik
         const uniqueWilayah = [...new Set(allData.map(p => p.wilayah_penugasan))].filter(Boolean);
         setWilayahList(uniqueWilayah);
 
@@ -188,14 +180,12 @@ export function MapPresensiContent() {
     }
   }, []);
 
-  // Fetch data ketika tanggal berubah
   useEffect(() => {
     if (filterTanggal) {
       fetchPresensiData(filterTanggal);
     }
   }, [filterTanggal, fetchPresensiData]);
 
-  // Inisialisasi map
   useEffect(() => {
     if (!isMapReady || !mapRef.current || mapInstanceRef.current || !leafletRef.current) return;
 
@@ -218,7 +208,6 @@ export function MapPresensiContent() {
     };
   }, [isMapReady, mapCenter, mapZoom]);
 
-  // Update markers
   useEffect(() => {
     const map = mapInstanceRef.current;
     const L = leafletRef.current;
@@ -227,7 +216,6 @@ export function MapPresensiContent() {
 
     markerLayerRef.current.clearLayers();
 
-    // Filter data
     const filteredData = presensiList.filter(item => {
       const matchesSearch = searchTerm === '' || 
         item.nama?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -238,7 +226,6 @@ export function MapPresensiContent() {
     });
 
     if (filteredData.length === 0) {
-      // Default marker
       const defaultIcon = L.divIcon({
         className: 'custom-marker',
         html: `<div class="marker-pin bg-gray-400"><span class="marker-text">📍</span></div>`,
@@ -254,7 +241,6 @@ export function MapPresensiContent() {
       return;
     }
 
-    // Buat marker
     filteredData.forEach(item => {
       if (!item.lat || !item.lng) return;
 
@@ -291,7 +277,6 @@ export function MapPresensiContent() {
 
   }, [presensiList, searchTerm, filterWilayah, isMapReady]);
 
-  // Helper functions
   const getMarkerColor = (item) => {
     if (item.jenis === 'masuk') {
       return item.status === 'Terlambat' ? 'bg-yellow-500' : 'bg-blue-500';
@@ -369,7 +354,6 @@ export function MapPresensiContent() {
 
   return (
     <div className="space-y-4">
-      {/* Filter Bar */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
@@ -433,7 +417,6 @@ export function MapPresensiContent() {
           </div>
         </div>
 
-        {/* Statistik */}
         <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-gray-100">
           <span className="text-sm text-gray-600 flex items-center gap-1">
             <Users size={14} /> Total: {stats.total}
@@ -455,7 +438,6 @@ export function MapPresensiContent() {
           </span>
         </div>
 
-        {/* Filter Wilayah */}
         {wilayahList.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-4">
             <span className="text-xs text-gray-500">Filter Wilayah:</span>
@@ -486,14 +468,12 @@ export function MapPresensiContent() {
         )}
       </div>
 
-      {/* Error Message */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <p className="text-red-700 text-sm">{error}</p>
         </div>
       )}
 
-      {/* Map Container */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {!isMapReady ? (
           <div className="h-[600px] flex items-center justify-center">
@@ -503,14 +483,12 @@ export function MapPresensiContent() {
           <div className="relative h-[600px]">
             <div ref={mapRef} className="w-full h-full" />
 
-            {/* Info Panel */}
             <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-3">
               <p className="text-sm font-medium">
                 {filteredPresensi.length} Lokasi Ditampilkan
               </p>
             </div>
 
-            {/* Legend */}
             <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3">
               <div className="flex flex-wrap gap-3 text-xs">
                 <div className="flex items-center gap-1">
@@ -532,7 +510,6 @@ export function MapPresensiContent() {
               </div>
             </div>
 
-            {/* Selected Info */}
             {selectedPresensi && (
               <div className="absolute bottom-4 right-4 bg-white rounded-lg shadow-xl p-4 w-80">
                 <div className="flex items-start justify-between mb-2">
@@ -556,7 +533,6 @@ export function MapPresensiContent() {
         )}
       </div>
 
-      {/* Daftar Pegawai (Mobile) */}
       <div className="lg:hidden bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <h3 className="font-semibold mb-3">Daftar Pegawai</h3>
         <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -587,11 +563,11 @@ export function MapPresensiContent() {
           align-items: center;
           justify-content: center;
         }
-        .marker-pin.bg-blue-500 { background: #3b82f6; }
-        .marker-pin.bg-green-500 { background: #10b981; }
-        .marker-pin.bg-yellow-500 { background: #f59e0b; }
-        .marker-pin.bg-purple-500 { background: #8b5cf6; }
-        .marker-pin.bg-gray-400 { background: #9ca3af; }
+        .marker-pin.bg-blue-500 { background:
+        .marker-pin.bg-green-500 { background:
+        .marker-pin.bg-yellow-500 { background:
+        .marker-pin.bg-purple-500 { background:
+        .marker-pin.bg-gray-400 { background:
         .marker-text {
           transform: rotate(45deg);
           color: white;

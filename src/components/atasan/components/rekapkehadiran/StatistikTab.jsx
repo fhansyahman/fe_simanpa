@@ -44,10 +44,7 @@ export function StatistikTab({
         </div>
       </div>
 
-      {/* Summary Cards */}
       <StatCards statistik={statistikBulanan} />
-
-      {/* Detail Statistik */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <DistributionChart statistik={statistikBulanan} />
         <SummaryStats 

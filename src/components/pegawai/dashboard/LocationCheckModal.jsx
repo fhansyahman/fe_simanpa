@@ -242,7 +242,6 @@ export const LocationCheckModal = ({
       
       <div className="relative min-h-screen flex items-center justify-center p-4">
         <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-          {/* Header */}
           <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -261,7 +260,6 @@ export const LocationCheckModal = ({
           </div>
 
           <div className="p-6 space-y-4">
-            {/* Status Card */}
             <div className={`rounded-xl border-2 p-4 ${getStatusColor()}`}>
               <div className="flex items-center gap-3">
                 {getStatusIcon()}
@@ -282,7 +280,6 @@ export const LocationCheckModal = ({
               </div>
             </div>
 
-            {/* Map View */}
             <div className="rounded-xl overflow-hidden border border-gray-200">
               <div style={{ height: '300px' }} className="relative">
                 {typeof window !== 'undefined' && L && markerIcon && (
@@ -297,7 +294,6 @@ export const LocationCheckModal = ({
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     
-                    {/* Radius Circle */}
                     {hasRadiusRestriction && (
                       <Circle
                         center={[parseFloat(penugasan.latitude), parseFloat(penugasan.longitude)]}
@@ -311,7 +307,6 @@ export const LocationCheckModal = ({
                       />
                     )}
                     
-                    {/* Location Marker */}
                     {hasRadiusRestriction && (
                       <Marker
                         position={[parseFloat(penugasan.latitude), parseFloat(penugasan.longitude)]}
@@ -327,7 +322,6 @@ export const LocationCheckModal = ({
                       </Marker>
                     )}
                     
-                    {/* User Location Marker */}
                     {userLocation && (
                       <Marker
                         position={[userLocation.lat, userLocation.lon]}
@@ -353,7 +347,6 @@ export const LocationCheckModal = ({
               </div>
             </div>
 
-            {/* Info Penugasan */}
             {penugasan && (
               <div className="bg-gray-50 rounded-xl p-4">
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Informasi Penugasan</h4>
@@ -377,7 +370,6 @@ export const LocationCheckModal = ({
 
           </div>
 
-          {/* Footer - Button MANUAL sekarang */}
           <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 flex gap-3">
             <button
               onClick={onClose}

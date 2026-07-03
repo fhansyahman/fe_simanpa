@@ -27,7 +27,6 @@ export function DetailModal({ isOpen, onClose, izin, onUpdateStatus }) {
     });
   };
 
-  // FUNGSI DOWNLOAD DOKUMEN
   const handleDownload = async (filename) => {
   if (!filename) {
     Swal.fire({
@@ -39,10 +38,8 @@ export function DetailModal({ isOpen, onClose, izin, onUpdateStatus }) {
   }
 
   try {
-    // Gunakan cara yang sama seperti pegawai - akses file static
     const fileUrl = `https://sikopnas.web.id/uploads/izin/${filename}`;
     
-    // Buka di tab baru (sama seperti yang digunakan pegawai)
     window.open(fileUrl, '_blank');
     
     Swal.fire({
@@ -66,7 +63,6 @@ export function DetailModal({ isOpen, onClose, izin, onUpdateStatus }) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl">
-        {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Detail Pengajuan Izin</h2>
@@ -81,9 +77,7 @@ export function DetailModal({ isOpen, onClose, izin, onUpdateStatus }) {
         </div>
 
         <div className="p-6">
-          {/* Info Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Left Column */}
             <div className="bg-gray-50 rounded-xl p-5">
               <div className="space-y-4">
                 <InfoItem 
@@ -103,7 +97,6 @@ export function DetailModal({ isOpen, onClose, izin, onUpdateStatus }) {
               </div>
             </div>
 
-            {/* Right Column - Periode Izin */}
             <div className="bg-gray-50 rounded-xl p-5">
               <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <Calendar size={18} />
@@ -119,7 +112,6 @@ export function DetailModal({ isOpen, onClose, izin, onUpdateStatus }) {
             </div>
           </div>
 
-          {/* Jenis dan Keterangan */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-gray-50 rounded-xl p-5">
               <h4 className="font-semibold text-gray-900 mb-3">Jenis Izin</h4>
@@ -136,7 +128,6 @@ export function DetailModal({ isOpen, onClose, izin, onUpdateStatus }) {
             </div>
           </div>
 
-          {/* Dokumen Pendukung - UPDATE TOMBOL DOWNLOAD */}
           {izin.dokumen_pendukung && (
             <div className="bg-gray-50 rounded-xl p-5 mb-8">
               <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -159,7 +150,6 @@ export function DetailModal({ isOpen, onClose, izin, onUpdateStatus }) {
             </div>
           )}
 
-          {/* Informasi Persetujuan */}
           {(izin.Disetujui_by_name || izin.updated_at !== izin.created_at) && (
             <div className="bg-gray-50 rounded-xl p-5 mb-8">
               <h4 className="font-semibold text-gray-900 mb-3">Informasi Persetujuan</h4>
@@ -174,7 +164,6 @@ export function DetailModal({ isOpen, onClose, izin, onUpdateStatus }) {
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
             <button
               onClick={onClose}

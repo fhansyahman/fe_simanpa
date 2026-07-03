@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Sidebar } from "./components/izin/Sidebar";
 import { Header } from "./components/izin/Header";
-import { MobileOverlay } from "./components/izin/MobileOverlay"; // Impor ini
+import { MobileOverlay } from "./components/izin/MobileOverlay";
 import { StatsCards } from "./components/izin/StatsCards";
 import { ActionBar } from "./components/izin/ActionBar";
 import { BulkActionBar } from "./components/izin/BulkActionBar";
@@ -28,7 +28,6 @@ export default function IzinManagement() {
   const [activeTab, setActiveTab] = useState('data');
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // Custom hooks
   const {
     izinList,
     statistik,
@@ -135,36 +134,29 @@ export default function IzinManagement() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
       <Sidebar 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)} 
       />
       
-      {/* Mobile Overlay */}
       <MobileOverlay 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)} 
       />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
         <Header 
           onMenuClick={() => setSidebarOpen(true)}
           title="Manajemen Izin & Cuti"
         />
 
-        {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto bg-gray-50">
           <div className="container mx-auto px-6 py-6">
-            {/* Stats Cards */}
             <StatsCards 
               statistik={statistik}
               tanggalFilter={tanggalFilter}
             />
 
-            {/* Action Bar */}
             <ActionBar
               search={search}
               onSearchChange={setSearch}
@@ -180,7 +172,6 @@ export default function IzinManagement() {
               onCreateClick={() => setShowCreateModal(true)}
             />
 
-            {/* Filter Tags */}
             <FilterTags
               statusFilter={statusFilter}
               jenisFilter={jenisFilter}
@@ -193,7 +184,6 @@ export default function IzinManagement() {
               }}
             />
 
-            {/* Bulk Action Bar */}
             {selectedItems.length > 0 && (
               <BulkActionBar
                 selectedCount={selectedItems.length}
@@ -203,7 +193,6 @@ export default function IzinManagement() {
               />
             )}
 
-            {/* Tab Navigation & Content */}
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm mt-6">
               <TabNavigation 
                 activeTab={activeTab}
@@ -251,7 +240,6 @@ export default function IzinManagement() {
         </main>
       </div>
 
-      {/* Modals */}
       <DetailModal
         isOpen={modalState.isOpen && modalState.type === 'detail'}
         onClose={closeDetailModal}

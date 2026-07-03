@@ -57,10 +57,8 @@ export default function DashboardAtasanPage() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   
-  // Ambil data user dari AuthContext
   const { user, loading: authLoading, logout } = useAuth();
   
-  // Gunakan hooks untuk data riil
   const {
     selectedDate,
     stats,
@@ -80,7 +78,6 @@ export default function DashboardAtasanPage() {
     handleExportData
   } = useMonitoringData();
   
-  // Gunakan hook untuk data kinerja (laporan terbaru)
   const {
     kinerjaList,
     loading: kinerjaLoading,
@@ -88,14 +85,12 @@ export default function DashboardAtasanPage() {
     setSelectedDate: setKinerjaDate
   } = useKinerjaData();
 
-  // Sinkronkan tanggal antara monitoring dan kinerja
   useEffect(() => {
     if (selectedDate !== kinerjaDate) {
       setKinerjaDate(selectedDate);
     }
   }, [selectedDate, kinerjaDate, setKinerjaDate]);
 
-  // Format tanggal manual
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -110,20 +105,17 @@ export default function DashboardAtasanPage() {
     return `${dayName}, ${day} ${month} ${year}`;
   };
 
-  // Format waktu
   const formatTime = (timeString) => {
     if (!timeString) return "";
     const date = new Date(timeString);
     return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Ambil nama user yang login dari context
   const getUserName = () => {
     if (!user) return "User";
     return user.nama_lengkap || user.nama || user.fullName || user.username || "User";
   };
 
-  // Ambil role user yang login
   const getUserRole = () => {
     if (!user) return "";
     
@@ -139,26 +131,22 @@ export default function DashboardAtasanPage() {
     return user.jabatan || user.role || "Pegawai";
   };
 
-  // Ambil inisial untuk avatar
   const getUserInitial = () => {
     const name = getUserName();
     if (name === "User") return "U";
     return name.charAt(0).toUpperCase();
   };
 
-  // Ambil email user
   const getUserEmail = () => {
     if (!user) return "email@example.com";
     return user.email || user.username || "user@example.com";
   };
 
-  // Ambil wilayah user
   const getUserWilayah = () => {
     if (filteredByWilayah && userWilayah) return userWilayah;
     return user?.wilayah_penugasan || "Semua Wilayah";
   };
 
-  // Fungsi Logout
   const handleLogout = async () => {
     setIsLoggingOut(true);
     
@@ -176,7 +164,6 @@ export default function DashboardAtasanPage() {
     }
   };
 
-  // Data untuk menu utama dengan href
   const menuUtama = [
     {
       icon: Eye,
@@ -222,7 +209,6 @@ export default function DashboardAtasanPage() {
     },
   ];
 
-  // Ambil 3 laporan terbaru dari data kinerja
   const laporanTerbaru = kinerjaList.slice(0, 3).map(item => ({
     id: item.id,
     nama: item.nama || item.pegawai_nama || "Pegawai",
@@ -233,19 +219,14 @@ export default function DashboardAtasanPage() {
     ruas_jalan: item.ruas_jalan || "-"
   }));
 
-  // Tampilkan data belum absen (limit 5 jika tidak show all)
   const displayedBelumAbsen = showAllBelumAbsen ? dataBelumAbsen : dataBelumAbsen.slice(0, 3);
   
-  // Tampilkan data izin (limit 5 jika tidak show all)
   const displayedIzin = showAllIzin ? dataIzin : dataIzin.slice(0, 3);
   
-  // Tampilkan data sakit (limit 5 jika tidak show all)
   const displayedSakit = showAllSakit ? dataSakit : dataSakit.slice(0, 3);
   
-  // Tampilkan data cuti (limit 5 jika tidak show all)
   const displayedCuti = showAllCuti ? dataCuti : dataCuti.slice(0, 3);
 
-  // Loading state
   if (authLoading || (monitoringLoading.data && !stats.totalPegawai)) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -257,7 +238,6 @@ export default function DashboardAtasanPage() {
     );
   }
 
-  // Jika belum login, redirect atau tampilkan pesan
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -269,13 +249,10 @@ export default function DashboardAtasanPage() {
     );
   }
 
-  // Konten untuk tab Akun
   const renderAkunContent = () => (
     <div className="min-h-screen bg-gray-100 pb-20">
-      {/* Header Profil */}
       <div className="bg-gradient-to-b from-blue-900 to-blue-800 text-white px-4 pt-8 pb-12">
         <div className="text-center">
-          {/* Avatar besar */}
           <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg mx-auto mb-4 border-4 border-white/30">
             <span className="text-white text-3xl font-bold">
               {getUserInitial()}
@@ -292,10 +269,8 @@ export default function DashboardAtasanPage() {
         </div>
       </div>
 
-      {/* Informasi Detail Profil */}
       <div className="px-4 -mt-6">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          {/* Informasi Kontak */}
           <div className="p-4 border-b border-gray-100">
             <h2 className="font-semibold text-gray-800 text-sm mb-3 flex items-center gap-2">
               <Mail size={16} className="text-blue-500" />
@@ -320,8 +295,6 @@ export default function DashboardAtasanPage() {
             </div>
           </div>
 
-
-          {/* Menu Aplikasi */}
           <div className="p-4">
             <h2 className="font-semibold text-gray-800 text-sm mb-3 flex items-center gap-2">
               <LayoutDashboard size={16} className="text-gray-500" />
@@ -344,7 +317,6 @@ export default function DashboardAtasanPage() {
             </div>
           </div>
 
-          {/* Tombol Logout */}
           <div className="p-4 pt-0 pb-6">
             <button
               onClick={() => setShowLogoutModal(true)}
@@ -360,10 +332,8 @@ export default function DashboardAtasanPage() {
     </div>
   );
 
-  // Konten untuk tab Beranda
   const renderBerandaContent = () => (
     <>
-      {/* RINGKASAN - Compact untuk HP */}
       <div className="px-4 -mt-12 relative z-10">
         <div className="bg-white rounded-xl shadow-md p-4">
           <div className="flex items-center justify-between mb-3">
@@ -410,7 +380,6 @@ export default function DashboardAtasanPage() {
         </div>
       </div>
 
-      {/* MENU UTAMA */}
       <div className="px-4 mt-4">
         <div className="grid grid-cols-2 gap-3">
           {menuUtama.map((item, index) => (
@@ -430,7 +399,6 @@ export default function DashboardAtasanPage() {
         </div>
       </div>
 
-      {/* DAFTAR PEGAWAI BELUM ABSEN */}
       {dataBelumAbsen.length > 0 && (
         <div className="px-4 mt-4">
           <div className="bg-white rounded-xl shadow-sm p-3">
@@ -473,7 +441,6 @@ export default function DashboardAtasanPage() {
         </div>
       )}
 
-      {/* LAPORAN TERBARU */}
       <div className="px-4 mt-4 mb-4">
         <div className="bg-white rounded-xl shadow-sm p-3">
           <div className="flex justify-between items-center mb-3">
@@ -532,7 +499,6 @@ export default function DashboardAtasanPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* HEADER - Hanya tampil di tab Beranda */}
       {activeTab === "beranda" && (
         <div className="bg-gradient-to-b from-blue-900 to-blue-800 text-white px-4 pt-4 pb-16">
           <div className="flex justify-between items-start mb-3">
@@ -580,13 +546,9 @@ export default function DashboardAtasanPage() {
         </div>
       )}
 
-      {/* Konten Utama */}
       {activeTab === "beranda" ? renderBerandaContent() : renderAkunContent()}
-
-      {/* BOTTOM NAVIGATION - Hanya 2 menu: Beranda dan Akun */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
         <div className="flex justify-around items-center px-4 py-2">
-          {/* Beranda */}
           <button
             onClick={() => setActiveTab("beranda")}
             className={`flex flex-col items-center py-2 px-6 rounded-lg transition-colors flex-1 ${
@@ -597,7 +559,6 @@ export default function DashboardAtasanPage() {
             <span className="text-[11px] mt-1 font-medium">Beranda</span>
           </button>
 
-          {/* Akun */}
           <button
             onClick={() => setActiveTab("akun")}
             className={`flex flex-col items-center py-2 px-6 rounded-lg transition-colors flex-1 ${
@@ -610,7 +571,6 @@ export default function DashboardAtasanPage() {
         </div>
       </nav>
 
-      {/* LOGOUT CONFIRMATION MODAL */}
       {showLogoutModal && (
         <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl max-w-sm w-full animate-slide-up">

@@ -56,7 +56,6 @@ export function useDownloadHandler(kinerjaList, setShowDownloadModal, setSelecte
       setGeneratingProgress(0);
       
       try {
-        // Simulasi proses download
         for (let i = 0; i < kinerjaList.length; i++) {
           setGeneratingProgress(Math.round(((i + 1) / kinerjaList.length) * 100));
           await new Promise(resolve => setTimeout(resolve, 500));

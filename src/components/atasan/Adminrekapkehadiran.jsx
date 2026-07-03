@@ -38,7 +38,6 @@ import { useRekapProcessor } from "./hooks/rekapkehadiran/useRekapProcessor";
 import { useAuth } from "@/context/AuthContext";
 import * as XLSX from 'xlsx';
 
-// Daftar wilayah
 const WILAYAH_LIST = ["Cermee", "Prajekan", "Botolinggo", "Klabang", "Ijen"];
 
 export default function RekapKehadiranBulanan() {
@@ -51,7 +50,6 @@ export default function RekapKehadiranBulanan() {
   const userWilayah = user?.wilayah_penugasan || user?.wilayah || null;
   const isAdmin = user?.roles?.includes('admin') || user?.roles?.includes('superadmin') || false;
   
-  // Custom hooks
   const { 
     presensiData, 
     loading, 
@@ -85,26 +83,22 @@ export default function RekapKehadiranBulanan() {
     getDaysInMonth
   } = useRekapProcessor(presensiData, bulanFilter, tahunFilter, wilayahFilter, search);
 
-  // Filter wilayah berdasarkan user login (kecuali admin)
   useEffect(() => {
     if (!isAdmin && userWilayah) {
       setWilayahFilter(userWilayah);
     }
   }, [userWilayah, isAdmin, setWilayahFilter]);
 
-  // Load data on mount
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  // Process rekap when filters or data change
   useEffect(() => {
     if (presensiData.length > 0 && bulanFilter && tahunFilter) {
       processRekap();
     }
   }, [bulanFilter, tahunFilter, wilayahFilter, search, presensiData, processRekap]);
 
-  // Inisialisasi temp filters
   useEffect(() => {
     setTempFilters({
       bulan: bulanFilter,
@@ -143,7 +137,6 @@ export default function RekapKehadiranBulanan() {
     return wilayah;
   };
 
-  // Fungsi Export ke Excel
   const handleExportExcel = () => {
     if (rekapBulanan.length === 0) {
       alert("Tidak ada data untuk diexport");
@@ -154,21 +147,18 @@ export default function RekapKehadiranBulanan() {
     const bulanLabel = getBulanLabel(bulanFilter);
     const sheetName = `Rekap_${bulanLabel}_${tahunFilter}`;
 
-    // Header baris 1
     const headerRow1 = ["NAMA", "JABATAN"];
     for (let i = 1; i <= daysInMonth; i++) {
       headerRow1.push(`${i}`);
     }
     headerRow1.push("HADIR (H)", "TERLAMBAT (T)", "IZIN (I)", "TANPA KET (TK)");
 
-    // Header baris 2 (kosong)
     const headerRow2 = ["", ""];
     for (let i = 1; i <= daysInMonth; i++) {
       headerRow2.push("");
     }
     headerRow2.push("", "", "", "");
 
-    // Data per pegawai
     const excelData = [headerRow1, headerRow2];
 
     rekapBulanan.forEach((pegawai) => {
@@ -184,7 +174,6 @@ export default function RekapKehadiranBulanan() {
       excelData.push(row);
     });
 
-    // Baris Total
     const totalRow = ["TOTAL", ""];
     for (let i = 1; i <= daysInMonth; i++) {
       totalRow.push("");
@@ -197,7 +186,6 @@ export default function RekapKehadiranBulanan() {
     );
     excelData.push(totalRow);
 
-    // Keterangan
     excelData.push([]);
     excelData.push(["KETERANGAN:"]);
     excelData.push(["H", "= Hadir (tepat waktu)"]);
@@ -205,11 +193,10 @@ export default function RekapKehadiranBulanan() {
     excelData.push(["I", "= Izin"]);
     excelData.push(["TK", "= Tanpa Keterangan"]);
 
-    // Buat file Excel
     const ws = XLSX.utils.aoa_to_sheet(excelData);
     ws['!cols'] = [
-      {wch:25}, // Nama
-      {wch:20}, // Jabatan
+      {wch:25},
+      {wch:20},
       ...Array(daysInMonth).fill({wch:4}),
       {wch:8}, {wch:8}, {wch:8}, {wch:8}
     ];
@@ -222,7 +209,6 @@ export default function RekapKehadiranBulanan() {
     setShowExportModal(false);
   };
 
-  // Fungsi Cetak
   const handlePrintCustom = () => {
     const printWindow = window.open('', '_blank');
     const daysInMonth = getDaysInMonth(parseInt(tahunFilter), parseInt(bulanFilter));
@@ -271,18 +257,18 @@ export default function RekapKehadiranBulanan() {
               margin-bottom: 15px;
             }
             th, td { 
-              border: 1px solid #000; 
+              border: 1px solid
               padding: 4px 2px; 
               text-align: center;
               vertical-align: middle;
             }
             th { 
-              background-color: #f0f0f0; 
+              background-color:
               font-weight: bold;
               font-size: 9px;
             }
             .header-row th {
-              background-color: #e0e0e0;
+              background-color:
             }
             td:first-child, th:first-child {
               font-weight: bold;
@@ -293,7 +279,7 @@ export default function RekapKehadiranBulanan() {
             }
             .keterangan {
               margin-top: 15px;
-              border-top: 1px solid #000;
+              border-top: 1px solid
               padding-top: 10px;
             }
             .keterangan h4 {
@@ -310,14 +296,14 @@ export default function RekapKehadiranBulanan() {
               padding: 2px 5px;
             }
             .total-row {
-              background-color: #f9f9f9;
+              background-color:
               font-weight: bold;
             }
             @media print {
               body { margin: 0; }
               .no-print { display: none; }
               th, td {
-                border-color: #000 !important;
+                border-color:
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
               }
@@ -437,7 +423,6 @@ export default function RekapKehadiranBulanan() {
 
   return (
     <div className="min-h-screen bg-gray-100 pb-16">
-      {/* HEADER */}
       <div className="bg-gradient-to-b from-blue-900 to-blue-800 pt-4 pb-16">
         <div className="px-4">
           <div className="flex items-center justify-between mb-4">
@@ -465,7 +450,6 @@ export default function RekapKehadiranBulanan() {
       </div>
 
       <div className="px-4 -mt-12 text-black">
-        {/* FILTER SECTION */}
         <div className="bg-white rounded-xl shadow-lg p-3 mb-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5 text-xs">
@@ -508,7 +492,6 @@ export default function RekapKehadiranBulanan() {
             </div>
           </div>
 
-          {/* Navigasi Bulan */}
           <div className="flex items-center justify-between gap-2">
             <button
               onClick={() => {
@@ -559,7 +542,6 @@ export default function RekapKehadiranBulanan() {
           </div>
         </div>
 
-        {/* INFO WILAYAH FILTER */}
         {isAdmin && wilayahFilter && wilayahFilter !== "" && (
           <div className="mb-4">
             <div className="bg-blue-50 rounded-lg p-2.5 flex items-center justify-between">
@@ -579,7 +561,6 @@ export default function RekapKehadiranBulanan() {
           </div>
         )}
 
-        {/* STATISTIK CARD */}
         <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-4">
           <div className="p-3">
             <div className="grid grid-cols-2 gap-3">
@@ -603,7 +584,6 @@ export default function RekapKehadiranBulanan() {
           </div>
         </div>
 
-        {/* REKAP KEHADIRAN */}
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="p-3">
             {processing ? (
@@ -717,7 +697,6 @@ export default function RekapKehadiranBulanan() {
         </div>
       </div>
 
-      {/* FILTER MODAL */}
       {showFilterModal && isAdmin && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
           <div className="bg-white w-full rounded-t-xl max-h-[80vh] overflow-y-auto animate-slide-up">
@@ -794,7 +773,6 @@ export default function RekapKehadiranBulanan() {
         </div>
       )}
 
-      {/* WILAYAH SELECTOR MODAL */}
       {showWilayahModal && isAdmin && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
           <div className="bg-white w-full rounded-t-xl max-h-[80vh] overflow-y-auto animate-slide-up">
@@ -859,7 +837,6 @@ export default function RekapKehadiranBulanan() {
         </div>
       )}
 
-      {/* EXPORT MODAL */}
       {showExportModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl max-w-sm w-full">

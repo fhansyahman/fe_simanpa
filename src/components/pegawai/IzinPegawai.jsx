@@ -39,13 +39,13 @@ export default function IzinPage() {
 
   const handleSuccess = () => {
     setCurrentEditId(null);
-    loadIzin(); // Refresh data izin
-    setTab("persetujuan"); // Pindah ke tab Data Izin setelah sukses
+    loadIzin();
+    setTab("persetujuan");
   };
 
   const handleCancel = () => {
     setCurrentEditId(null);
-    setTab("persetujuan"); // Pindah ke tab Data Izin saat batal
+    setTab("persetujuan");
   };
 
   if (loading && izinList.length === 0) {
@@ -64,7 +64,7 @@ export default function IzinPage() {
             key={currentEditId?.id || 'new'}
             editData={currentEditId}
             onSuccess={handleSuccess}
-            onCancel={handleCancel} // Gunakan handleCancel yang sudah dimodifikasi
+            onCancel={handleCancel}
           />
         )}
 

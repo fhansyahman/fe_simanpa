@@ -19,7 +19,6 @@ export function UserModal({ isOpen, onClose, formData, setFormData, editingUser,
 
         <form onSubmit={onSubmit} className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Personal Information */}
             <Section title="Informasi Pribadi" icon={<User size={18} />} color="blue">
               <Input
                 label="Nama Lengkap *"
@@ -62,7 +61,6 @@ export function UserModal({ isOpen, onClose, formData, setFormData, editingUser,
               />
             </Section>
 
-            {/* Login Information */}
             <Section title="Akses Sistem" icon={<Shield size={18} />} color="emerald">
               <Input
                 label="Nomor Telepon"
@@ -95,7 +93,6 @@ export function UserModal({ isOpen, onClose, formData, setFormData, editingUser,
               />
             </Section>
 
-            {/* Work Information */}
             <Section title="Pekerjaan & Penugasan" icon={<Briefcase size={18} />} color="amber">
               <Input
                 label="Jabatan *"
@@ -137,7 +134,6 @@ export function UserModal({ isOpen, onClose, formData, setFormData, editingUser,
               />
             </Section>
 
-            {/* Additional Information */}
             <Section title="Informasi Tambahan" icon={<Database size={18} />} color="purple">
               <Input
                 label="Pendidikan Terakhir"
@@ -185,7 +181,6 @@ export function UserModal({ isOpen, onClose, formData, setFormData, editingUser,
   );
 }
 
-// Helper Components
 function Section({ title, icon, color, children }) {
   return (
     <div className="space-y-4">

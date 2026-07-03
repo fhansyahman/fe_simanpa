@@ -1,4 +1,3 @@
-// page.js (update bagian onViewDetail)
 'use client';
 import { useState, useEffect } from 'react';
 import { Search, Plus, RefreshCw, AlertCircle, Briefcase } from "lucide-react";
@@ -23,7 +22,7 @@ export default function AdminManajemenPenugasan() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedPenugasan, setSelectedPenugasan] = useState(null);
   const [detailPenugasan, setDetailPenugasan] = useState(null);
-  const [loadingDetail, setLoadingDetail] = useState(false); // Loading state untuk detail
+  const [loadingDetail, setLoadingDetail] = useState(false);
   const [monitoringData, setMonitoringData] = useState(null);
   const [monitoringDate, setMonitoringDate] = useState(new Date().toISOString().split('T')[0]);
   const [search, setSearch] = useState("");
@@ -36,7 +35,7 @@ export default function AdminManajemenPenugasan() {
     jenisFilter, 
     setJenisFilter, 
     loadPenugasanData, 
-    getPenugasanDetail, // Ambil fungsi baru
+    getPenugasanDetail,
     handleEdit, 
     handleDelete, 
     handleSoftDelete, 
@@ -73,10 +72,8 @@ export default function AdminManajemenPenugasan() {
     }
   };
 
-  // Perbaiki fungsi onViewDetail untuk mengambil data dari API
   const onViewDetail = async (penugasan) => {
     setLoadingDetail(true);
-    // Ambil detail lengkap dari API
     const detailData = await getPenugasanDetail(penugasan.id);
     if (detailData) {
       setDetailPenugasan(detailData);
@@ -212,7 +209,6 @@ export default function AdminManajemenPenugasan() {
           />
         )}
 
-        {/* Detail Modal dengan loading state */}
         {showDetailModal && (
           <DetailPenugasanModal
             isOpen={showDetailModal}

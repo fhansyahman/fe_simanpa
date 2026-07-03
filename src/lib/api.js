@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// Request interceptor untuk menambahkan token
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
@@ -35,7 +34,6 @@ export const adminDashboardAPI = {
   getWilayah: () => api.get('admin/wilayah'),
 };
 
-// Response interceptor untuk handle token expired
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -62,16 +60,14 @@ export const presensiAPI = {
   pulang: (data) => api.post('/presensi/pulang', data),
   getHariIni: () => api.get('/presensi/hari-ini'),
   getRiwayat: (bulan, tahun) => api.get('/presensi/riwayat', { params: { bulan, tahun } }),
-  getUser: () => api.get('/presensi/user'), // Legacy endpoint
+  getUser: () => api.get('/presensi/user'), 
   
-  // ENDPOINT BARU (LEBIH EFISIEN)
   getUserPerBulan: (bulan, tahun) => {
     console.log('Calling getUserPerBulan with:', bulan, tahun);
     return api.get('/presensi/perbulan', { params: { bulan, tahun } });
   },
 };
 export const dashboardAPI = {
-  // Kehadiran
   getDashboardHariIni: () =>
     api.get("/dashboard/kehadiran-hari-ini"),
 
@@ -80,7 +76,6 @@ export const dashboardAPI = {
       params: { tahun },
     }),
 
-  // Kinerja
   getDashboardKinerjaHariIni: () =>
     api.get("/dashboard/kinerja-hari-ini"),
 
@@ -93,15 +88,13 @@ export const dashboardAPI = {
 
 
 
-// Admin Penugasan API
-// Tambahkan ini di file lib/api.js
 
 export const penugasanAPI = {
   getAll: (params) => api.get('/jam-kerja/penugasan', { params }),
-  getById: (id) => api.get(`/jam-kerja/penugasan/${id}`),  // Tambahkan ini
+  getById: (id) => api.get(`/jam-kerja/penugasan/${id}`),
   getDefault: () => api.get('/jam-kerja/penugasan/default'),
   create: (data) => api.post('/jam-kerja/penugasan', data),
-  update: (id, data) => api.put(`/jam-kerja/penugasan/${id}`, data),  // Untuk update khusus
+  update: (id, data) => api.put(`/jam-kerja/penugasan/${id}`, data),
   updateDefault: (id, data) => api.put(`/jam-kerja/penugasan/default/${id}`, data),
   updateStatus: (id, data) => api.put(`/jam-kerja/penugasan/${id}/status`, data),
   delete: (id) => api.delete(`/jam-kerja/penugasan/${id}`),
@@ -113,8 +106,6 @@ export const penugasanAPI = {
 };
 
 
-// ==================== FORMATTER FUNCTIONS ====================
-// SweetAlert2 harus diimport secara dinamis
 let Swal;
 if (typeof window !== 'undefined') {
   import('sweetalert2').then((module) => {
@@ -243,7 +234,6 @@ export const aktivitasAPI = {
   tambah: (data) => api.post('/aktivitas/tambah', data),
   getSaya: (tanggal) => api.get('/aktivitas/saya', { params: { tanggal } }),
 };
-// ... kode sebelumnya ...
 
 export const usersAPI = {
   getAll: () => api.get('/users'),
@@ -254,14 +244,11 @@ export const usersAPI = {
   updatePassword: (id, password) => api.put(`/users/${id}/password`, { password }),
 };
 
-// ... kode setelahnya ...
-// ... API lainnya
 
 export const adminPresensiAPI = {
 
   getAll: (params) => api.get('/admin/presensi', { params }),
 
-  // ✅ FIX: endpoint benar
   getHariIni: () => api.get('/admin/presensi/hari-ini'),
   getById: (id) => api.get(`/admin/presensi/${id}`),
 
@@ -286,7 +273,6 @@ export const adminPresensiAPI = {
   getDashboardSummary: () =>
     api.get('/admin/presensi/dashboard/summary'),
 
-  // ============ FUNGSI BARU UNTUK REKAP KEHADIRAN ============
   getRekapBulanan: (params) =>
     api.get('/admin/presensi/rekap-bulanan', { params }),
   
@@ -295,33 +281,24 @@ export const adminPresensiAPI = {
   getPerBulan: (params) => api.get('/presensi/admin/perbulan', { params }),
 };
 export const jamKerjaAPI = {
-  // Get all jam kerja (default + penugasan)
   getAll: (params) => api.get('/jam-kerja', { params }),
   
-  // Get active default jam kerja
   getAktif: () => api.get('/jam-kerja/aktif'),
   
-  // Create default jam kerja
   createDefault: (data) => api.post('/jam-kerja/default', data),
   
-  // Create penugasan
   createPenugasan: (data) => api.post('/jam-kerja/penugasan', data),
   
-  // Update default jam kerja
   updateDefault: (id, data) => api.put(`/jam-kerja/default/${id}`, data),
   
-  // Update penugasan status
   updatePenugasanStatus: (id, status) => api.put(`/jam-kerja/penugasan/${id}/status`, { status }),
   
-  // Delete default jam kerja
   deleteDefault: (id) => api.delete(`/jam-kerja/default/${id}`),
   
-  // Get monitoring penugasan
   getMonitoringPenugasan: (id, params) => api.get(`/jam-kerja/penugasan/${id}/monitoring`, { params }),
 };
 
 
-// User Jam Kerja API
 export const userJamKerjaAPI = {
   getUsersWithJamKerja: () => api.get('/user-jam-kerja/users'),
   getAvailableJamKerja: () => api.get('/user-jam-kerja/available'),
@@ -332,37 +309,25 @@ export const userJamKerjaAPI = {
 };
 
 
-// Izin API
-// Izin API
 export const izinAPI = {
-  // Admin - Get all izin
   getAllIzin: (params) => api.get('/izin/all', { params }),
-  // Admin - Get izin per tanggal (BARU)
   getIzinPerTanggal: (params) => api.get('/izin/per-tanggal', { params }),
-  // User - Get my izin
   getMyIzin: () => api.get('/izin/saya'),
-  // User - Get my izin per bulan
   getMyIzinPerBulan: (bulan, tahun) => api.get('/izin/perbulan', { params: { bulan, tahun } }),
-  // Get izin by ID
   getById: (id) => api.get(`/izin/${id}`),
-  // Create new izin (user)
   create: (data) => api.post('/izin/ajukan', data),
-  // Create izin by admin (for user)
   createByAdmin: (data) => api.post('/izin/admin-create', data),
-  // Update izin status (admin)
   updateStatus: (id, status) => api.patch(`/izin/${id}/status`, { status }),
-  // Delete izin
   delete: (id) => api.delete(`/izin/${id}`),
   downloadDokumen: (filename) => api.get(`/izin/download/${filename}`),
   
 };
-// lib/api.js - Update kinerjaAPI section
 
 export const kinerjaAPI = {
   create: (data) => api.post('/kinerja', data),
   createWithCamera: (data) => api.post('/kinerja/camera', data),
   getMyKinerja: (params) => api.get('/kinerja/my', { params }),
-  getMyKinerjaPerBulan: (params) => api.get('/kinerja/perbulan', { params }), // TAMBAHKAN INI
+  getMyKinerjaPerBulan: (params) => api.get('/kinerja/perbulan', { params }),
   getById: (id) => api.get(`/kinerja/${id}`),
   update: (id, data) => api.put(`/kinerja/${id}`, data),
   delete: (id) => api.delete(`/kinerja/${id}`),
@@ -390,11 +355,9 @@ export const adminKinerjaAPI = {
   generatePDF: (id) => api.post(`/kinerja/admin/${id}/generate-pdf`),
   generateRekapWilayah: (data) => api.post('/kinerja/admin/generate-rekap-wilayah', data),
   downloadAllWilayah: (params) => api.get('/kinerja/admin/download-all-wilayah', { params }),
-   // Endpoint untuk per bulan (BARU)
   getPerBulan: (params) => api.get('/kinerja/admin/perbulan', { params }),
 };
 
-// Untuk handle download blob
 export const downloadBlob = (blob, filename) => {
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -407,9 +370,7 @@ export const downloadBlob = (blob, filename) => {
 };
 
 
-// lib/api.js - Tambahkan bagian wilayah
 export const wilayahAPI = {
-  // Wilayah management
   getAll: () => api.get('/wilayah'),
   getById: (id) => api.get(`/wilayah/${id}`),
   create: (data) => api.post('/wilayah', data),
@@ -418,99 +379,73 @@ export const wilayahAPI = {
   getStats: () => api.get('/wilayah/stats'),
   getAllPegawai: () => api.get('/wilayah/pegawai'),
   
-  // User assignment
   getUsersByWilayah: (wilayah_id) => api.get(`/wilayah/${wilayah_id}/users`),
   assignToUser: (user_id, data) => api.put(`/wilayah/user/${user_id}/assign`, data),
 };
 
-// lib/api.js - Tambahkan bagian hari
 export const hariAPI = {
-  // Hari Kerja
   getAllHariKerja: (params = {}) => api.get('/hari/hari-kerja', { params }),
   createHariKerja: (data) => api.post('/hari/hari-kerja', data),
   updateHariKerja: (id, data) => api.put(`/hari/hari-kerja/${id}`, data),
   deleteHariKerja: (id) => api.delete(`/hari/hari-kerja/${id}`),
   bulkCreateHariKerja: (data) => api.post('/hari/hari-kerja/bulk', data),
   
-  // Hari Libur
   getAllHariLibur: (params = {}) => api.get('/hari/hari-libur', { params }),
   createHariLibur: (data) => api.post('/hari/hari-libur', data),
   updateHariLibur: (id, data) => api.put(`/hari/hari-libur/${id}`, data),
   deleteHariLibur: (id) => api.delete(`/hari/hari-libur/${id}`),
   
-  // Kalender
   getKalender: (params = {}) => api.get('/hari/kalender', { params }),
 };
 
 export const aktifuserAPI = {
-  // Get semua pegawai dengan filter
   getAllUsers: (params = {}) => api.get('/aktifuser/all', { params }),
   
-  // Get pegawai aktif saja
   getActiveUsers: (params = {}) => api.get('/aktifuser/active', { params }),
   
-  // Get pegawai nonaktif saja
   getInactiveUsers: (params = {}) => api.get('/aktifuser/inactive', { params }),
   
-  // Get pegawai by IDs
   getUserById: (id) => api.get(`/aktifuser/${id}`),
   
-  // Nonaktifkan pegawai
   deactivateUser: (id) => api.patch(`/aktifuser/${id}/deactivate`),
   
-  // Aktifkan pegawai
   activateUser: (id) => api.patch(`/aktifuser/${id}/activate`),
   
-  // Update status pegawai
   updateUserStatus: (id, data) => api.patch(`/aktifuser/${id}/status`, data),
 };
-// lib/api.js - Tambahkan pemutihanAPI
 export const pemutihanAPI = {
-  // Get data untuk pemutihan
   getDataForPemutihan: (params) => {
     return api.get('/pemutihan/data', { params });
   },
   
-  // Proses pemutihan
   prosesPemutihan: (data) => {
     return api.post('/pemutihan/proses', data);
   },
   
-  // Batalkan pemutihan
   batalkanPemutihan: (data) => {
     return api.post('/pemutihan/batal', data);
   },
   
-  // Get riwayat pemutihan
   getRiwayatPemutihan: (params) => {
     return api.get('/pemutihan/riwayat', { params });
   }
 };
 
-// lib/api.js - Tambahkan adminAktivitasAPI
 export const adminAktivitasAPI = {
-  // Get all aktivitas dengan pagination dan filter
   getAllAktivitas: (params = {}) => api.get('/admin/aktivitas', { params }),
   
-  // Get aktivitas detail
   getAktivitasDetail: (id) => api.get(`/admin/aktivitas/${id}`),
   
-  // Create new aktivitas
   createAktivitas: (data) => api.post('/admin/aktivitas', data),
   
-  // Update aktivitas
   updateAktivitas: (id, data) => api.put(`/admin/aktivitas/${id}`, data),
   
-  // Delete aktivitas
   deleteAktivitas: (id) => api.delete(`/admin/aktivitas/${id}`),
   
-  // Bulk delete aktivitas
   bulkDeleteAktivitas: (ids) => api.delete('/admin/aktivitas/bulk/delete', { data: { ids } }),
   
-  // Get statistics
   getAktivitasStats: (params = {}) => api.get('/admin/aktivitas/stats', { params }),
   
-  // Export data
   exportAktivitas: (params = {}) => api.get('/admin/aktivitas/export', { 
     params,
     responseType: params.format === 'csv' ? 'blob' : 'json'
@@ -518,43 +453,32 @@ export const adminAktivitasAPI = {
 };
 
 export const pegawaiAktivitasAPI = {
-  // Get all aktivitas untuk pegawai (dengan pagination dan filter)
   getAllAktivitas: (params = {}) => api.get('/pegawai/aktivitas', { params }),
   
-  // Get detail aktivitas spesifik
   getAktivitasDetail: (id) => api.get(`/pegawai/aktivitas/${id}`),
   
-  // Buat aktivitas baru
   createAktivitas: (data) => api.post('/pegawai/aktivitas', data),
   
-  // Update aktivitas
   updateAktivitas: (id, data) => api.put(`/pegawai/aktivitas/${id}`, data),
   
-  // Delete aktivitas
   deleteAktivitas: (id) => api.delete(`/pegawai/aktivitas/${id}`),
   
-  // Get statistics untuk dashboard pegawai
   getAktivitasStats: (params = {}) => api.get('/pegawai/aktivitas/stats', { params }),
   
-  // Get profile pegawai
   getProfile: () => api.get('/pegawai/profile'),
   
-  // Update profile pegawai
   updateProfile: (data) => api.put('/pegawai/profile', data),
 };
-// lib/api.js - Tambahkan Telegram API
 export const telegramAPI = {
   getStatus: () => api.get('/telegram/status'),
   disconnect: () => api.post('/telegram/disconnect'),
 };
 
 export const pegawaiAPI = {
-  // Dashboard Kinerja
   getDashboardKinerja: (params) => {
     return api.get('/kinerja/pegawai/dashboard', { params });
   },
   
-  // Laporan Kinerja
   getLaporanKinerja: (params) => {
     return api.get('/kinerja/my', { params });
   },

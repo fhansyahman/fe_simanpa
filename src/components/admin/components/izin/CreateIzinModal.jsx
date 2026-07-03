@@ -9,7 +9,7 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
-  const [autoGenerate, setAutoGenerate] = useState(true); // State untuk auto-generate
+  const [autoGenerate, setAutoGenerate] = useState(true);
   const [formData, setFormData] = useState({
     user_id: "",
     jenis: "Sakit",
@@ -17,10 +17,9 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
     tanggal_selesai: "",
     keterangan: "",
     dokumen_pendukung: null,
-    status: "Disetujui" // Default langsung disetujui untuk admin
+    status: "Disetujui"
   });
 
-  // Load daftar pegawai
   useEffect(() => {
     const loadUsers = async () => {
       if (!isOpen) return;
@@ -51,7 +50,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Auto-adjust tanggal selesai jika tanggal mulai berubah
     if (name === 'tanggal_mulai' && formData.tanggal_selesai < value) {
       setFormData(prev => ({ ...prev, tanggal_selesai: value }));
     }
@@ -60,7 +58,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validasi
     if (!formData.user_id) {
       Swal.fire({
         icon: 'warning',
@@ -91,13 +88,11 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
       return;
     }
 
-    // Hitung durasi
     const start = new Date(formData.tanggal_mulai);
     const end = new Date(formData.tanggal_selesai);
     const diffTime = Math.abs(end - start);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
     
-    // Konfirmasi dengan info generate presensi
     const confirmResult = await Swal.fire({
       title: 'Buat Izin untuk Pegawai?',
       html: `
@@ -145,13 +140,11 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
 
     setLoading(true);
     try {
-      // Kirim data dengan opsi auto_generate
       await onSubmit({
         ...formData,
-        auto_generate: autoGenerate // Kirim flag ke backend
+        auto_generate: autoGenerate
       });
       
-      // Reset form setelah submit
       setFormData({
         user_id: "",
         jenis: "Sakit",
@@ -164,7 +157,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
       setAutoGenerate(true);
       onClose();
 
-      // Tampilkan notifikasi sukses dengan detail
       Swal.fire({
         icon: 'success',
         title: 'Izin Berhasil Dibuat!',
@@ -192,7 +184,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl">
-        {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Buat Izin untuk Pegawai</h2>
@@ -207,7 +198,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
-          {/* Pilih Pegawai */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <div className="flex items-center gap-2">
@@ -236,7 +226,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
             </select>
           </div>
 
-          {/* Jenis Izin */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <div className="flex items-center gap-2">
@@ -272,7 +261,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
             </div>
           </div>
 
-          {/* Tanggal */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -310,7 +298,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
             </div>
           </div>
 
-          {/* Durasi Preview */}
           {formData.tanggal_mulai && formData.tanggal_selesai && (
             <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-center justify-between">
@@ -328,7 +315,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
             </div>
           )}
 
-          {/* Keterangan */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <div className="flex items-center gap-2">
@@ -346,7 +332,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
             />
           </div>
 
-          {/* Auto-generate Presensi Option */}
           <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
             <label className="flex items-center justify-between cursor-pointer">
               <div className="flex items-center gap-3">
@@ -378,7 +363,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
             </label>
           </div>
 
-          {/* Status Info */}
           <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-full bg-green-500"></div>
@@ -392,7 +376,6 @@ export function CreateIzinModal({ isOpen, onClose, onSubmit }) {
             </p>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
             <button
               type="button"

@@ -35,7 +35,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
   const mapInstanceRef = useRef(null);
   const leafletRef = useRef(null);
 
-  // Load Leaflet hanya di client side
   useEffect(() => {
     const loadLeaflet = async () => {
       try {
@@ -44,7 +43,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
         
         leafletRef.current = L;
         
-        // Fix untuk icon Leaflet
         delete L.Icon.Default.prototype._getIconUrl;
         L.Icon.Default.mergeOptions({
           iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -61,14 +59,12 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
     loadLeaflet();
   }, []);
 
-  // Update filter tanggal ketika selectedDate berubah dari props
   useEffect(() => {
     if (selectedDate) {
       setFilterTanggal(selectedDate);
     }
   }, [selectedDate]);
 
-  // Fungsi untuk mengambil data presensi
   const fetchPresensiData = useCallback(async (tanggal) => {
     try {
       setLoading(true);
@@ -76,17 +72,14 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
 
       console.log(`📅 Mengambil data presensi untuk tanggal: ${tanggal}`);
       
-      // Gunakan dashboardService yang sudah ada
       const response = await dashboardService.getPresensiHarian(tanggal);
       
       console.log('✅ Response dari API:', response);
 
-      // Handle response dari dashboardService
       const allData = response?.data?.data || response?.data || [];
       setAllPresensiData(allData);
       console.log(`📊 Total data dari API: ${allData.length} records`);
       
-      // Filter data yang memiliki koordinat
       const dataWithLocation = allData.filter(item => {
         const hasLatMasuk = item.latitude_masuk && item.latitude_masuk !== 0;
         const hasLngMasuk = item.longitude_masuk && item.longitude_masuk !== 0;
@@ -98,12 +91,10 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
 
       console.log(`📍 Data dengan lokasi: ${dataWithLocation.length} records`);
 
-      // Format data untuk ditampilkan di peta
       const formattedData = [];
       const lokasiYangDigunakan = new Set();
       
       dataWithLocation.forEach(item => {
-        // Entry untuk presensi masuk
         if (item.latitude_masuk && item.longitude_masuk) {
           const key = `${item.user_id || item.pegawai_id}-${item.tanggal}-masuk`;
           if (!lokasiYangDigunakan.has(key)) {
@@ -128,7 +119,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
           }
         }
         
-        // Entry untuk presensi pulang
         if (item.latitude_pulang && item.longitude_pulang) {
           const key = `${item.user_id || item.pegawai_id}-${item.tanggal}-pulang`;
           if (!lokasiYangDigunakan.has(key)) {
@@ -156,7 +146,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
 
       setPresensiList(formattedData);
       
-      // Hitung statistik
       const hadir = allData.filter(p => p.status_masuk === 'Tepat Waktu').length;
       const terlambat = allData.filter(p => p.status_masuk === 'Terlambat').length;
       const izin = allData.filter(p => p.izin_id !== null).length;
@@ -172,7 +161,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
         p.latitude_pulang && p.longitude_pulang
       ).length;
 
-      // Extract wilayah unik
       const uniqueWilayah = [...new Set(allData.map(p => p.wilayah_penugasan))].filter(Boolean);
       setWilayahList(uniqueWilayah);
 
@@ -211,14 +199,12 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
     }
   }, []);
 
-  // Fetch data ketika tanggal berubah
   useEffect(() => {
     if (filterTanggal) {
       fetchPresensiData(filterTanggal);
     }
   }, [filterTanggal, fetchPresensiData]);
 
-  // Inisialisasi map
   useEffect(() => {
     if (!isMapReady || !mapRef.current || mapInstanceRef.current || !leafletRef.current) return;
 
@@ -241,17 +227,14 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
     };
   }, [isMapReady]);
 
-  // Update markers ketika data berubah
   useEffect(() => {
     const map = mapInstanceRef.current;
     const L = leafletRef.current;
     
     if (!map || !markerLayerRef.current || !L || !isMapReady) return;
 
-    // Hapus semua marker lama
     markerLayerRef.current.clearLayers();
 
-    // Filter data berdasarkan search dan wilayah untuk peta
     const filteredData = presensiList.filter(item => {
       const matchesSearch = searchTerm === '' || 
         item.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -263,7 +246,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
     });
 
     if (filteredData.length === 0) {
-      // Jika tidak ada data, tampilkan marker default
       const defaultIcon = L.divIcon({
         className: 'custom-marker',
         html: `
@@ -283,7 +265,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
       return;
     }
 
-    // Buat marker untuk setiap data
     filteredData.forEach(item => {
       if (!item.lat || !item.lng) return;
 
@@ -344,7 +325,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
       markerLayerRef.current.addLayer(marker);
     });
 
-    // Adjust bounds ke semua marker
     if (filteredData.length > 0) {
       const bounds = L.latLngBounds(filteredData.map(p => [p.lat, p.lng]));
       map.flyToBounds(bounds, { padding: [50, 50] });
@@ -352,7 +332,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
 
   }, [presensiList, searchTerm, filterWilayah, isMapReady]);
 
-  // Helper functions
   const getMarkerColor = (item) => {
     if (item.jenis === 'masuk') {
       return item.status === 'Terlambat' ? 'bg-yellow-500' : 'bg-blue-500';
@@ -478,7 +457,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
       return;
     }
     
-    // Filter data yang memiliki lokasi
     const dataWithLocation = presensiList.filter(p => p.lat && p.lng);
     if (dataWithLocation.length > 0) {
       const bounds = L.latLngBounds(dataWithLocation.map(p => [p.lat, p.lng]));
@@ -491,10 +469,9 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
 
   const focusToWilayah = (wilayah) => {
     setFilterWilayah(wilayah);
-    setSearchTerm(''); // Reset search saat filter wilayah
+    setSearchTerm(''); 
   };
 
-  // Filter untuk sidebar - menggunakan allPresensiData dan filter wilayah
   const filteredPresensiForSidebar = allPresensiData.filter(item => {
     const matchesSearch = searchTerm === '' || 
       item.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -505,7 +482,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
     return matchesSearch && matchesWilayah;
   });
 
-  // Filter untuk stats berdasarkan wilayah yang dipilih
   const filteredStats = {
     total: filteredPresensiForSidebar.length,
     denganLokasiMasuk: filteredPresensiForSidebar.filter(p => 
@@ -650,7 +626,7 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
                   key={wilayah}
                   onClick={() => {
                     setFilterWilayah(wilayah === filterWilayah ? '' : wilayah);
-                    setSearchTerm(''); // Reset search saat ganti filter wilayah
+                    setSearchTerm(''); 
                   }}
                   className={`px-2 py-1 rounded-lg text-xs transition-colors ${
                     filterWilayah === wilayah 
@@ -786,7 +762,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
                           const lng = item.longitude_masuk || item.longitude_pulang;
                           if (lat && lng && mapInstanceRef.current) {
                             mapInstanceRef.current.flyTo([parseFloat(lat), parseFloat(lng)], 16);
-                            // Highlight marker di peta
                             setSelectedPresensi({
                               nama: item.nama,
                               jabatan: item.jabatan,

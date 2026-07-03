@@ -14,12 +14,11 @@ export function ActionBar({
   onRefresh,
   onReset,
   showResetButton,
-  onCreateClick // Tambahkan prop ini
+  onCreateClick 
 }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6 shadow-sm">
       <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-        {/* Search Input */}
         <div className="flex-1 w-full">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -33,7 +32,6 @@ export function ActionBar({
           </div>
         </div>
         
-        {/* Filter Controls */}
         <div className="flex flex-wrap gap-3 w-full lg:w-auto">
           <div className="flex gap-3">
             <select
@@ -67,7 +65,6 @@ export function ActionBar({
           </div>
           
           <div className="flex gap-3">
-            {/* Tombol Create Izin */}
             <button
               onClick={onCreateClick}
               className="flex items-center gap-2 px-4 py-3 bg-green-600 text-white rounded-lg  text-sm font-medium shadow-sm"

@@ -72,7 +72,6 @@ export function AnalisisPresensi({ statistik }) {
       </h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Insight Data */}
         <div>
           <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
             <AlertCircle size={16} className="text-blue-600" />
@@ -112,7 +111,6 @@ export function AnalisisPresensi({ statistik }) {
           </ul>
         </div>
         
-        {/* Rekomendasi */}
         <div>
           <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
             <AlertTriangle size={16} className="text-amber-600" />
@@ -131,7 +129,6 @@ export function AnalisisPresensi({ statistik }) {
         </div>
       </div>
 
-      {/* Progress Bar Keseluruhan */}
       <div className="mt-6 pt-4 border-t border-blue-200">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-700">Tingkat Kehadiran Keseluruhan</span>

@@ -1,4 +1,3 @@
-// hooks/rekapkerja/useKinerjaData.js
 "use client";
 
 import { useState, useCallback } from "react";
@@ -6,7 +5,7 @@ import { kinerjaAPI } from "@/lib/api";
 
 export function useKinerjaData() {
   const [kinerjaData, setKinerjaData] = useState([]);
-  const [rekapData, setRekapData] = useState(null); // Store full rekap response
+  const [rekapData, setRekapData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentBulan, setCurrentBulan] = useState(null);
@@ -17,7 +16,6 @@ export function useKinerjaData() {
       setLoading(true);
       setError(null);
       
-      // Gunakan API getRekapBulanan dengan parameter bulan dan tahun
       const response = await kinerjaAPI.getRekapBulanan({
         bulan: bulan,
         tahun: tahun
@@ -26,7 +24,7 @@ export function useKinerjaData() {
       if (response.data.success) {
         const data = response.data.data;
         setRekapData(data);
-        setKinerjaData(data.rekap || []); // rekap array dari response
+        setKinerjaData(data.rekap || []);
         setCurrentBulan(data.periode?.bulan);
         setCurrentTahun(data.periode?.tahun);
       } else {
@@ -49,7 +47,7 @@ export function useKinerjaData() {
 
   return {
     kinerjaData,
-    rekapData, // Full rekap response with periode, summary, dates
+    rekapData,
     loading,
     error,
     currentBulan,

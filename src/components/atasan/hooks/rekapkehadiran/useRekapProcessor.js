@@ -22,7 +22,6 @@ export function useRekapProcessor(presensiData, bulanFilter, tahunFilter, wilaya
   }, []);
 
   const processRekap = useCallback(() => {
-    // Validasi input
     if (!presensiData || !Array.isArray(presensiData) || presensiData.length === 0) {
       setRekapBulanan([]);
       setStatistikBulanan({
@@ -51,7 +50,6 @@ export function useRekapProcessor(presensiData, bulanFilter, tahunFilter, wilaya
       const selectedYear = parseInt(tahunFilter);
       const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
       
-      // Filter data berdasarkan bulan dan tahun
       const filteredData = presensiData.filter(presensi => {
         if (!presensi.tanggal) return false;
         
@@ -62,7 +60,6 @@ export function useRekapProcessor(presensiData, bulanFilter, tahunFilter, wilaya
         return presensiMonth === selectedMonth && presensiYear === selectedYear;
       });
       
-      // Filter berdasarkan wilayah
       let wilayahFilteredData = filteredData;
       if (wilayahFilter && wilayahFilter !== '') {
         wilayahFilteredData = filteredData.filter(presensi => 
@@ -70,7 +67,6 @@ export function useRekapProcessor(presensiData, bulanFilter, tahunFilter, wilaya
         );
       }
       
-      // Kelompokkan data per pegawai
       const pegawaiMap = new Map();
       
       wilayahFilteredData.forEach(presensi => {
@@ -94,7 +90,6 @@ export function useRekapProcessor(presensiData, bulanFilter, tahunFilter, wilaya
         const pegawaiData = pegawaiMap.get(pegawaiId);
         const dayIndex = tanggal - 1;
         
-        // Tentukan status kehadiran
         let status = '';
         if (presensi.izin_id) {
           status = 'I';
@@ -114,17 +109,14 @@ export function useRekapProcessor(presensiData, bulanFilter, tahunFilter, wilaya
           pegawaiData.totalHadir++;
         }
         
-        // Hanya set jika dayIndex valid
         if (dayIndex >= 0 && dayIndex < daysInMonth) {
           pegawaiData.presensiHarian[dayIndex] = status;
         }
       });
       
-      // Konversi Map ke Array dan urutkan
       let rekapArray = Array.from(pegawaiMap.values())
         .sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
       
-      // Filter berdasarkan pencarian
       if (search && search.trim() !== '') {
         const searchLower = search.toLowerCase().trim();
         rekapArray = rekapArray.filter(pegawai => 
@@ -133,7 +125,6 @@ export function useRekapProcessor(presensiData, bulanFilter, tahunFilter, wilaya
         );
       }
       
-      // Hitung statistik
       const totals = rekapArray.reduce((acc, pegawai) => ({
         totalHadir: acc.totalHadir + (pegawai.totalHadir || 0),
         totalTerlambat: acc.totalTerlambat + (pegawai.totalTerlambat || 0),
@@ -178,7 +169,6 @@ export function useRekapProcessor(presensiData, bulanFilter, tahunFilter, wilaya
     }
   }, [bulanFilter, tahunFilter, wilayahFilter, search, presensiData, getDaysInMonth]);
 
-  // Auto-process when dependencies change
   useEffect(() => {
     if (presensiData && presensiData.length > 0 && bulanFilter && tahunFilter) {
       processRekap();

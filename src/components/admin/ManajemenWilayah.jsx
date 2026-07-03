@@ -31,12 +31,10 @@ export default function ManajemenWilayah() {
 
   const { sidebarOpen, setSidebarOpen, handleLogout } = useSidebar();
   
-  // Initialize hooks
   const wilayahHook = useWilayahData();
   const usersHook = useUsersData();
   const statsHook = useStatsData();
 
-  // Load stats when tab changes
   useEffect(() => {
     if (activeTab === 'stats') {
       statsHook.loadWilayahStats();

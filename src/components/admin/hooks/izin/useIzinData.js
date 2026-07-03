@@ -13,13 +13,11 @@ export function useIzinData() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [search, setSearch] = useState("");
   
-  // STATE BARU UNTUK FILTER PER TANGGAL
   const [selectedDate, setSelectedDate] = useState(DateTime.now().toISODate());
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedJenis, setSelectedJenis] = useState("");
   const [tanggalInfo, setTanggalInfo] = useState(null);
 
-  // Fungsi untuk statistik kosong
   const getEmptyStatistik = useCallback(() => ({
     total_pengajuan: 0,
     pending: 0,
@@ -42,7 +40,6 @@ export function useIzinData() {
     }
   }), []);
 
-  // Hitung statistik dari data
   const calculateStatistik = useCallback((data) => {
     if (!data || data.length === 0) {
       setStatistik(getEmptyStatistik());
@@ -54,7 +51,6 @@ export function useIzinData() {
     const disetujui = data.filter(i => i.status === 'Disetujui').length;
     const ditolak = data.filter(i => i.status === 'Ditolak').length;
     
-    // Hitung berdasarkan jenis izin yang baru
     const sakit = data.filter(i => i.jenis === 'Sakit').length;
     const izin = data.filter(i => i.jenis === 'Izin').length;
     const dinasLuar = data.filter(i => i.jenis === 'Dinas Luar').length;
@@ -63,7 +59,6 @@ export function useIzinData() {
     const persenDitolak = totalPengajuan > 0 ? Math.round((ditolak / totalPengajuan) * 100) : 0;
     const persenPending = totalPengajuan > 0 ? Math.round((pending / totalPengajuan) * 100) : 0;
     
-    // Statistik per wilayah
     const wilayahStatistik = {};
     data.forEach(izin => {
       const wilayah = izin.wilayah_penugasan || 'Unknown';
@@ -100,13 +95,11 @@ export function useIzinData() {
     });
   }, [getEmptyStatistik]);
 
-  // MODIFIKASI: Load data izin per tanggal (bukan all)
   const loadIzinData = useCallback(async (filters = {}) => {
     try {
       setLoading(true);
       setError(null);
       
-      // Gunakan endpoint per-tanggal dengan parameter yang ada
       const params = {
         tanggal: filters.tanggal || selectedDate,
         status: filters.status || selectedStatus,
@@ -114,7 +107,6 @@ export function useIzinData() {
         search: filters.search || search
       };
       
-      // Remove empty params
       Object.keys(params).forEach(key => {
         if (!params[key]) delete params[key];
       });
@@ -146,31 +138,26 @@ export function useIzinData() {
     }
   }, [selectedDate, selectedStatus, selectedJenis, search, getEmptyStatistik]);
 
-  // FUNGSI BARU: Handle date change
   const handleDateChange = useCallback((newDate) => {
     setSelectedDate(newDate);
     loadIzinData({ tanggal: newDate, status: selectedStatus, jenis: selectedJenis, search });
   }, [selectedStatus, selectedJenis, search, loadIzinData]);
 
-  // FUNGSI BARU: Handle status filter change
   const handleStatusChange = useCallback((newStatus) => {
     setSelectedStatus(newStatus);
     loadIzinData({ tanggal: selectedDate, status: newStatus, jenis: selectedJenis, search });
   }, [selectedDate, selectedJenis, search, loadIzinData]);
 
-  // FUNGSI BARU: Handle jenis filter change
   const handleJenisChange = useCallback((newJenis) => {
     setSelectedJenis(newJenis);
     loadIzinData({ tanggal: selectedDate, status: selectedStatus, jenis: newJenis, search });
   }, [selectedDate, selectedStatus, search, loadIzinData]);
 
-  // FUNGSI BARU: Handle search
   const handleSearch = useCallback((newSearch) => {
     setSearch(newSearch);
     loadIzinData({ tanggal: selectedDate, status: selectedStatus, jenis: selectedJenis, search: newSearch });
   }, [selectedDate, selectedStatus, selectedJenis, loadIzinData]);
 
-  // FUNGSI BARU: Reset semua filter
   const resetFilters = useCallback(() => {
     setSelectedStatus("");
     setSelectedJenis("");
@@ -178,30 +165,25 @@ export function useIzinData() {
     loadIzinData({ tanggal: selectedDate, status: "", jenis: "", search: "" });
   }, [selectedDate, loadIzinData]);
 
-  // FUNGSI BARU: Go to previous day
   const goToPreviousDay = useCallback(() => {
     const newDate = DateTime.fromISO(selectedDate).minus({ days: 1 }).toISODate();
     handleDateChange(newDate);
   }, [selectedDate, handleDateChange]);
 
-  // FUNGSI BARU: Go to next day
   const goToNextDay = useCallback(() => {
     const newDate = DateTime.fromISO(selectedDate).plus({ days: 1 }).toISODate();
     handleDateChange(newDate);
   }, [selectedDate, handleDateChange]);
 
-  // FUNGSI BARU: Go to today
   const goToToday = useCallback(() => {
     const today = DateTime.now().toISODate();
     handleDateChange(today);
   }, [handleDateChange]);
 
-  // Initial load - gunakan tanggal hari ini
   useEffect(() => {
     loadIzinData({ tanggal: selectedDate });
   }, []);
 
-  // Handle update status single (tetap sama)
   const handleUpdateStatus = useCallback(async (id, status) => {
     try {
       await izinAPI.updateStatus(id, status);
@@ -227,7 +209,6 @@ export function useIzinData() {
     }
   }, [loadIzinData]);
 
-  // Handle bulk action (tetap sama)
   const handleBulkAction = useCallback(async (action, items) => {
     if (!action || items.length === 0) return;
     
@@ -259,7 +240,6 @@ export function useIzinData() {
     }
   }, [loadIzinData]);
 
-  // Filtered data based on search (already filtered in backend, but for safety)
   const filteredIzin = useMemo(() => {
     if (!search) return izinList;
     
@@ -271,7 +251,6 @@ export function useIzinData() {
     );
   }, [izinList, search]);
 
-  // Options untuk filter status
   const statusOptions = [
     { value: "", label: "Semua Status" },
     { value: "Pending", label: "Pending" },
@@ -279,7 +258,6 @@ export function useIzinData() {
     { value: "Ditolak", label: "Ditolak" }
   ];
 
-  // Options untuk filter jenis
   const jenisOptions = [
     { value: "", label: "Semua Jenis" },
     { value: "Sakit", label: "Sakit" },

@@ -12,7 +12,6 @@ import { ExportButtonGroup } from "./ExportButton";
 
 export function KinerjaTab(props) {
   const {
-    // State
     activeChart,
     filterType,
     sortOrder,
@@ -24,7 +23,6 @@ export function KinerjaTab(props) {
     statistikWilayah,
     loading,
     
-    // Functions
     setActiveChart,
     setFilterType,
     setSortOrder,
@@ -141,7 +139,6 @@ export function KinerjaTab(props) {
   );
 }
 
-// Helper function untuk mendapatkan nama bulan
 function getNamaBulan(month) {
   const bulan = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',

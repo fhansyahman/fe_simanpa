@@ -11,7 +11,6 @@ import { ExportButtonGroup } from "./ExportButton";
 
 export function KinerjaTab(props) {
   const {
-    // State
     activeChart,
     filterType,
     sortOrder,
@@ -23,7 +22,6 @@ export function KinerjaTab(props) {
     statistikWilayah,
     loading,
     
-    // Functions
     setActiveChart,
     setFilterType,
     setSortOrder,
@@ -42,7 +40,6 @@ export function KinerjaTab(props) {
 
   return (
     <div className="space-y-6">
-      {/* Header with Export Button */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard Kinerja</h1>
@@ -60,7 +57,6 @@ export function KinerjaTab(props) {
         />
       </div>
 
-      {/* Filter Section */}
       <FilterKinerja
         selectedMonth={selectedMonth}
         selectedYear={selectedYear}
@@ -70,7 +66,6 @@ export function KinerjaTab(props) {
         onRefresh={processKinerjaChartData}
       />
 
-      {/* Statistik Cards */}
       <StatistikKinerja 
         statistik={statistikBulanan} 
         chartData={chartData}
@@ -78,7 +73,6 @@ export function KinerjaTab(props) {
         selectedYear={selectedYear}
       />
 
-      {/* Grafik Per Wilayah - dengan tombol export gambar */}
       <GrafikWilayahKinerja
         loading={loading}
         wilayahChartData={wilayahChartData}
@@ -88,13 +82,11 @@ export function KinerjaTab(props) {
         onExportImage={handleExportWilayahChart}
       />
 
-      {/* Tabel Statistik Wilayah */}
       {statistikWilayah && statistikWilayah.length > 0 && (
         <TabelWilayahKinerja statistikWilayah={statistikWilayah} />
       )}
 
 
-      {/* Grafik Perorangan dengan Pilihan Chart */}
       {viewType === 'chart' && (
         <GrafikPerorangan
           loading={loading}
@@ -112,9 +104,7 @@ export function KinerjaTab(props) {
           onExportImage={handleExportKinerjaChart}
         />
       )}
-      {/* Analisis Performa */}
 
-      {/* Tabel Detail Pegawai - SELALU DITAMPILKAN di bawah grafik */}
       {chartData?.labels && chartData.labels.length > 0 && (
         <div className="mt-8">
           <div className="mb-4">
@@ -135,7 +125,6 @@ export function KinerjaTab(props) {
   );
 }
 
-// Helper function untuk mendapatkan nama bulan
 function getNamaBulan(month) {
   const bulan = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',

@@ -10,7 +10,6 @@ export const createAPI = () => {
     },
   });
 
-  // Request interceptor untuk menambahkan token
   api.interceptors.request.use(
     (config) => {
       if (typeof window !== 'undefined') {
@@ -26,12 +25,10 @@ export const createAPI = () => {
     }
   );
 
-  // Response interceptor untuk handle error
   api.interceptors.response.use(
     (response) => response,
     (error) => {
       if (error.response?.status === 401) {
-        // Handle unauthorized
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token');
           localStorage.removeItem('user');

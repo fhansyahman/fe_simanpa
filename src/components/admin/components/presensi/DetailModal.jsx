@@ -19,7 +19,6 @@ export function DetailModal({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl">
-        {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Detail Presensi</h2>
@@ -33,11 +32,8 @@ export function DetailModal({
           </button>
         </div>
 
-        {/* Content */}
         <div className="p-6">
-          {/* Informasi Utama */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Info Kiri */}
             <div className="bg-gray-50 rounded-xl p-5">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <User size={18} className="text-blue-500" />
@@ -73,7 +69,6 @@ export function DetailModal({
               </div>
             </div>
 
-            {/* Info Kanan */}
             <div className="bg-gray-50 rounded-xl p-5">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <Clock size={18} className="text-blue-500" />
@@ -134,7 +129,6 @@ export function DetailModal({
             </div>
           </div>
 
-          {/* Bagian Foto */}
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Camera size={20} className="text-blue-500" />
@@ -142,7 +136,6 @@ export function DetailModal({
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Foto Masuk */}
               <FotoCard
                 title="Foto Masuk"
                 waktu={presensi.jam_masuk}
@@ -152,7 +145,6 @@ export function DetailModal({
                 formatTime={formatTime}
               />
               
-              {/* Foto Pulang */}
               <FotoCard
                 title="Foto Pulang"
                 waktu={presensi.jam_pulang}
@@ -164,7 +156,6 @@ export function DetailModal({
             </div>
           </div>
 
-          {/* Informasi Izin */}
           {presensi.izin_id && (
             <div className="bg-purple-50 rounded-xl p-5 mb-6 border border-purple-200">
               <h3 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
@@ -189,16 +180,12 @@ export function DetailModal({
               )}
             </div>
           )}
-
-          {/* Keterangan Umum */}
           {presensi.keterangan && !presensi.izin_id && (
             <div className="bg-gray-50 rounded-xl p-5 mb-8">
               <h3 className="font-semibold text-gray-900 mb-3">Keterangan</h3>
               <p className="text-gray-700">{presensi.keterangan}</p>
             </div>
           )}
-
-          {/* Footer Actions */}
           <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
             <button
               onClick={onClose}
@@ -224,7 +211,6 @@ export function DetailModal({
   );
 }
 
-// Sub-component untuk Info Item
 function InfoItem({ icon, label, value, subValue, valueClass = "text-gray-900" }) {
   return (
     <div>
@@ -244,7 +230,6 @@ function InfoItem({ icon, label, value, subValue, valueClass = "text-gray-900" }
   );
 }
 
-// Sub-component untuk Foto Card
 function FotoCard({ title, waktu, foto, jenis, onShowFoto, formatTime }) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4">

@@ -1,4 +1,3 @@
-// app/admin/rekapkerja/components/RekapTab.jsx
 "use client";
 
 import { RefreshCw, TrendingUp, Ruler, MapPin } from "lucide-react";
@@ -77,7 +76,6 @@ export function RekapTab({
 
   return (
     <div>
-      {/* Header Info */}
       <div className="mb-6 flex flex-wrap justify-between items-center gap-4">
         <div>
           <h3 className="text-xl font-bold text-slate-800">

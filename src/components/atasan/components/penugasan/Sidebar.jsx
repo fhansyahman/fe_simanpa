@@ -54,11 +54,9 @@ const sidebarMenu = [
 function SidebarItem({ item, currentPath }) {
   const [open, setOpen] = useState(false);
   
-  // Cek apakah ada submenu yang aktif
   const isSubmenuActive = item.submenu && item.submenu.some(sub => currentPath === sub.href);
   const isActive = (!item.submenu && currentPath === item.href) || isSubmenuActive;
 
-  // Buka submenu secara otomatis jika ada yang aktif
   if (item.submenu && isSubmenuActive && !open) {
     if (open !== true) setOpen(true);
   }

@@ -3,7 +3,6 @@
 import { Search, X, RefreshCw, Zap, Filter, MapPin } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-// Data wilayah
 const wilayahOptions = [
   { value: "", label: "Semua Wilayah" },
   { value: "Cermee", label: "Cermee" },
@@ -13,7 +12,6 @@ const wilayahOptions = [
   { value: "Ijen", label: "Ijen" }
 ];
 
-// Data status
 const statusOptions = [
   { value: "", label: "Semua Status" },
   { value: "Tepat Waktu", label: "Tepat Waktu" },
@@ -68,7 +66,6 @@ export function FilterBar({
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6 shadow-sm">
-      {/* Bagian Search - BARIS PERTAMA */}
       <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between mb-4">
         <div className="flex-1 w-full">
           <div className="relative">
@@ -84,9 +81,7 @@ export function FilterBar({
         </div>
       </div>
 
-      {/* Bagian Filter - BARIS KEDUA */}
       <div className="flex flex-wrap gap-3 items-center">
-        {/* Filter Status */}
         <select
           value={filters.status || ''}
           onChange={handleStatusChange}
@@ -97,7 +92,6 @@ export function FilterBar({
           ))}
         </select>
         
-        {/* Filter Wilayah - Conditional berdasarkan role */}
         {isAdmin ? (
           <select
             value={filters.wilayah || ''}
@@ -117,7 +111,6 @@ export function FilterBar({
           </div>
         ) : null}
         
-        {/* Filter Tanggal */}
         <input
           type="date"
           value={filters.tanggal || ''}
@@ -125,7 +118,6 @@ export function FilterBar({
           className="px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-800"
         />
         
-        {/* Action Buttons */}
         <div className="flex gap-2 ml-auto">
           <button
             onClick={onRefresh}
@@ -146,7 +138,6 @@ export function FilterBar({
             </button>
           )}
           
-          {/* Tombol Generate - Hanya untuk admin */}
           {activeTab === 'data' && isAdmin && (
             <button
               onClick={onGenerate}
@@ -159,7 +150,6 @@ export function FilterBar({
         </div>
       </div>
 
-      {/* Active Filters Info */}
       {activeFilterCount > 0 && (
         <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-gray-100">
           <span className="text-xs text-gray-500">Filter aktif:</span>
@@ -171,7 +161,6 @@ export function FilterBar({
             />
           )}
           
-          {/* Hanya tampilkan tag wilayah jika berbeda dari default user */}
           {filters.wilayah && filters.wilayah !== user?.wilayah_penugasan && (
             <FilterTag
               label={`Wilayah: ${filters.wilayah}`}
@@ -212,7 +201,6 @@ function FilterTag({ label, onRemove }) {
   );
 }
 
-// Helper function untuk format tanggal
 function formatTanggal(dateString) {
   if (!dateString) return '';
   const [year, month, day] = dateString.split('-');

@@ -1,4 +1,3 @@
-// hooks/penugasan/useFormPenugasan.js
 import { useState } from 'react';
 import { penugasanAPI } from '@/lib/api';
 import Swal from "sweetalert2";
@@ -13,7 +12,7 @@ export const useFormPenugasan = (onSuccess) => {
     tanggal_selesai: '',
     jam_masuk: '08:00:00',
     jam_pulang: '17:00:00',
-    batas_akhir_pulang: '17:30:00',  // <-- TAMBAHKAN INI
+    batas_akhir_pulang: '17:30:00',
     toleransi_keterlambatan: '00:15:00',
     batas_terlambat: '',
     radius: 100,
@@ -69,7 +68,7 @@ export const useFormPenugasan = (onSuccess) => {
       tanggal_selesai: penugasan.tanggal_selesai || '',
       jam_masuk: penugasan.jam_masuk || '08:00:00',
       jam_pulang: penugasan.jam_pulang || '17:00:00',
-      batas_akhir_pulang: penugasan.batas_akhir_pulang || '17:30:00',  // <-- TAMBAHKAN INI
+      batas_akhir_pulang: penugasan.batas_akhir_pulang || '17:30:00',
       toleransi_keterlambatan: penugasan.toleransi_keterlambatan || '00:15:00',
       batas_terlambat: penugasan.batas_terlambat || '',
       radius: penugasan.radius || 100,
@@ -79,7 +78,6 @@ export const useFormPenugasan = (onSuccess) => {
       is_active: penugasan.is_active !== undefined ? penugasan.is_active : true
     });
 
-    // Set checkbox states berdasarkan data yang ada
     const newWilayahState = {};
     (penugasan.selected_wilayah || []).forEach(id => {
       newWilayahState[id] = true;
@@ -95,7 +93,6 @@ export const useFormPenugasan = (onSuccess) => {
       individu: newIndividuState
     });
     
-    // Set select all states
     if (penugasan.selected_wilayah && penugasan.selected_wilayah.length > 0) {
       setSelectAllWilayah(true);
     }

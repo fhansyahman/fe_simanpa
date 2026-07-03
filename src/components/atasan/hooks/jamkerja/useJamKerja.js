@@ -21,7 +21,6 @@ export function useJamKerja() {
   
   const router = useRouter();
 
-  // Load data
   const loadJamKerja = useCallback(async () => {
     try {
       setLoading(true);
@@ -53,7 +52,6 @@ export function useJamKerja() {
     loadJamKerja();
   }, [loadJamKerja]);
 
-  // Filter jam kerja
   const filteredJamKerja = useMemo(() => {
     return jamKerja.filter((jk) => {
       const matchesSearch = jk.nama_setting?.toLowerCase().includes(search.toLowerCase());
@@ -66,14 +64,12 @@ export function useJamKerja() {
     });
   }, [jamKerja, search, statusFilter]);
 
-  // Pagination
   const totalPages = Math.ceil(filteredJamKerja.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedJamKerja = useMemo(() => {
     return filteredJamKerja.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredJamKerja, startIndex, itemsPerPage]);
 
-  // Stats
   const stats = useMemo(() => ({
     total: jamKerja.length,
     aktif: jamKerja.filter(jk => jk.is_active).length,
@@ -81,13 +77,11 @@ export function useJamKerja() {
     rataJamKerja: "8 jam"
   }), [jamKerja]);
 
-  // Format waktu
   const formatTime = useCallback((timeString) => {
     if (!timeString) return '-';
     return timeString.substring(0, 5);
   }, []);
 
-  // Calculate total hours
   const calculateTotalHours = useCallback((jamMasuk, jamPulang) => {
     if (!jamMasuk || !jamPulang) return '0';
     const [masukHours, masukMinutes] = jamMasuk.split(':').map(Number);
@@ -100,7 +94,6 @@ export function useJamKerja() {
     return `${hours} jam ${minutes > 0 ? `${minutes} menit` : ''}`;
   }, []);
 
-  // Modal handlers
   const handleShowAddModal = useCallback(() => {
     setEditingJamKerja(null);
     setShowModal(true);
@@ -126,7 +119,6 @@ export function useJamKerja() {
     setSelectedJamKerja(null);
   }, []);
 
-  // Delete handler
   const handleDelete = useCallback(async (jk) => {
     const result = await Swal.fire({
       title: "Yakin hapus data ini?",
@@ -163,13 +155,11 @@ export function useJamKerja() {
     }
   }, [loadJamKerja]);
 
-  // Logout handler
   const handleLogout = useCallback(async () => {
     await fetch("/api/logout", { method: "POST" });
     router.push("/login");
   }, [router]);
 
-  // Submit handler (akan diisi dari hook form)
   const handleSubmit = useCallback(async (formData) => {
     try {
       const submitData = {
@@ -216,7 +206,6 @@ export function useJamKerja() {
   }, [editingJamKerja, handleCloseModal, loadJamKerja]);
 
   return {
-    // Data & States
     jamKerja,
     loading,
     error,
@@ -230,14 +219,12 @@ export function useJamKerja() {
     selectedJamKerja,
     sidebarOpen,
     
-    // Data hasil filter & pagination
     filteredJamKerja,
     paginatedJamKerja,
     totalPages,
     startIndex,
     stats,
     
-    // Actions
     setSearch,
     setStatusFilter,
     setCurrentPage,
@@ -252,7 +239,6 @@ export function useJamKerja() {
     loadJamKerja,
     handleLogout,
     
-    // Utilities
     formatTime,
     calculateTotalHours
   };

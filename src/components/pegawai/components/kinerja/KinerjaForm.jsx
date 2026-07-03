@@ -67,7 +67,6 @@ export function KinerjaForm({ editData, onSuccess, onCancel, locationData, userN
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-      {/* Header dengan waktu realtime */}
       <div className="mb-6">
         <div className="flex justify-between items-start">
           <div>
@@ -101,7 +100,6 @@ export function KinerjaForm({ editData, onSuccess, onCancel, locationData, userN
       )}
 
       <form onSubmit={onSubmit} className="space-y-6">
-        {/* Informasi Dasar */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -137,7 +135,6 @@ export function KinerjaForm({ editData, onSuccess, onCancel, locationData, userN
           </div>
         </div>
 
-        {/* Ruas Jalan */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Ruas Jalan *
@@ -156,7 +153,6 @@ export function KinerjaForm({ editData, onSuccess, onCancel, locationData, userN
           </div>
         </div>
 
-        {/* Panjang Pekerjaan */}
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
   <div>
     <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -200,7 +196,6 @@ export function KinerjaForm({ editData, onSuccess, onCancel, locationData, userN
     <p className="text-xs text-slate-400 mt-1">Panjang Kerusakan Berat (KN) - Isi 0 jika tidak ada</p>
   </div>
 </div>
-        {/* Sket Jalan dengan Color Picker */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Sketsa Jalan
@@ -221,7 +216,6 @@ export function KinerjaForm({ editData, onSuccess, onCancel, locationData, userN
           />
         </div>
 
-        {/* Dokumentasi Foto with Camera Support */}
         <div className="border-t border-slate-200 pt-6">
           <div className="flex items-center justify-between mb-4">
             <label className="block text-sm font-medium text-slate-700 flex items-center space-x-2">
@@ -282,7 +276,6 @@ export function KinerjaForm({ editData, onSuccess, onCancel, locationData, userN
           </p>
         </div>
 
-        {/* Informasi Lokasi (Ringkasan) */}
         {locationData?.alamat && locationData.alamat.length > 0 && (
           <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
             <div className="flex items-center gap-2 mb-2">
@@ -302,7 +295,6 @@ export function KinerjaForm({ editData, onSuccess, onCancel, locationData, userN
           </div>
         )}
 
-        {/* Tombol Submit */}
         <div className="flex space-x-4 pt-6 border-t border-slate-200">
           <button
             type="button"

@@ -39,10 +39,8 @@ export function StatistikWilayah({ statistik = {}, kinerjaList = [] }) {
 }
 
 function WilayahDetailItem({ wilayah, data }) {
-  // Gunakan total_pegawai dari data (bukan pegawai)
   const jumlahPegawai = data.total_pegawai || 0;
   
-  // Hitung rata-rata jika belum ada
   const avgKr = data.avg_kr || (data.total > 0 ? data.total_kr / data.total : 0);
   const avgKn = data.avg_kn || (data.total > 0 ? data.total_kn / data.total : 0);
 
@@ -64,7 +62,6 @@ function WilayahDetailItem({ wilayah, data }) {
       </div>
       
       <div className="text-right ml-4 flex-shrink-0">
-        {/* Total Laporan */}
         <div className="flex items-center justify-end gap-2">
           <span className="text-lg font-semibold text-blue-600">
             {data.total || 0}
@@ -72,7 +69,6 @@ function WilayahDetailItem({ wilayah, data }) {
           <span className="text-xs text-gray-500">laporan</span>
         </div>
         
-        {/* Total KR */}
         <div className="flex items-center justify-end gap-2 mt-1">
           <Ruler size={12} className="text-amber-500" />
           <span className="text-sm font-medium text-amber-600">
@@ -81,7 +77,6 @@ function WilayahDetailItem({ wilayah, data }) {
           <span className="text-xs text-gray-400">total KR</span>
         </div>
         
-        {/* Rata-rata KR & KN */}
         <div className="flex items-center justify-end gap-2 mt-1">
           <span className="text-xs text-gray-500">
             Rata KR: {avgKr.toFixed(1)}m

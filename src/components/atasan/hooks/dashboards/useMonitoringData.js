@@ -15,7 +15,7 @@ export function useMonitoringData() {
     dataIzin: [],
     dataSakit: [],
     dataCuti: [],
-    dataSudahLapor: [], // Tambahan untuk kompatibilitas
+    dataSudahLapor: [],
     semuaPegawai: [],
     presensiData: [],
     kinerjaData: [],
@@ -40,7 +40,6 @@ export function useMonitoringData() {
     filteredByWilayah: false
   });
 
-  // ==================== FIX: Handle roles dengan aman (STRING atau ARRAY) ====================
   const getUserRoles = useCallback(() => {
     if (!user?.roles) return [];
     if (Array.isArray(user.roles)) return user.roles;
@@ -50,12 +49,10 @@ export function useMonitoringData() {
   
   const userRoles = getUserRoles();
   
-  // Cek role dengan aman
   const isAdmin = userRoles.includes('admin') || userRoles.includes('superadmin');
   const isAtasan = userRoles.includes('atasan') || userRoles.includes('supervisor');
   const userWilayah = user?.wilayah_penugasan;
   
-  // Log untuk debugging
   console.log('🔍 [useMonitoringData] User Role Info:', {
     rawRoles: user?.roles,
     parsedRoles: userRoles,
@@ -66,16 +63,13 @@ export function useMonitoringData() {
     shouldFilter: !isAdmin && !!userWilayah
   });
 
-  // ==================== FILTER DATA BERDASARKAN WILAYAH ====================
 
   const filterDataByWilayah = useCallback((data) => {
-    // Jika admin, tampilkan semua data
     if (isAdmin) {
       console.log('📌 Admin mode: menampilkan semua data');
       return data;
     }
     
-    // Jika atasan dan punya wilayah, filter
     if (isAtasan && userWilayah) {
       console.log(`📌 Atasan mode: filter data untuk wilayah ${userWilayah}`);
       return data.filter(item => 
@@ -85,19 +79,16 @@ export function useMonitoringData() {
       );
     }
     
-    // Jika bukan admin dan bukan atasan, atau tidak punya wilayah
     console.log('📌 Default mode: tidak ada filter (tampilkan semua)');
     return data;
   }, [isAdmin, isAtasan, userWilayah]);
 
   const filterPegawaiByWilayah = useCallback((pegawaiList) => {
-    // Jika admin, tampilkan semua pegawai
     if (isAdmin) {
       console.log('👥 Admin mode: semua pegawai =', pegawaiList?.length);
       return pegawaiList;
     }
     
-    // Jika atasan dan punya wilayah, filter
     if (isAtasan && userWilayah && pegawaiList && pegawaiList.length > 0) {
       const filtered = pegawaiList.filter(pegawai => 
         pegawai.wilayah_penugasan === userWilayah ||
@@ -108,11 +99,9 @@ export function useMonitoringData() {
       return filtered;
     }
     
-    // Jika tidak ada filter, kembalikan semua
     return pegawaiList;
   }, [isAdmin, isAtasan, userWilayah]);
 
-  // ==================== DETEKSI STATUS DENGAN PRIORITAS ====================
 
   const kategorikanPresensi = useCallback((presensiData) => {
     if (!presensiData || !Array.isArray(presensiData)) {
@@ -124,7 +113,6 @@ export function useMonitoringData() {
       };
     }
     
-    // Filter data berdasarkan wilayah terlebih dahulu
     const filteredPresensi = filterDataByWilayah(presensiData);
     
     const izinMap = new Map();
@@ -233,10 +221,8 @@ export function useMonitoringData() {
     };
   }, [filterDataByWilayah, state.selectedDate]);
 
-  // ==================== FILTER BELUM ABSEN ====================
 
   const filterBelumAbsen = useCallback((belumAbsenData, kategorisasi) => {
-    // Filter belum absen berdasarkan wilayah terlebih dahulu
     const filteredBelumAbsen = filterDataByWilayah(belumAbsenData);
     
     const { izin, sakit, cuti, hadir } = kategorisasi;
@@ -265,10 +251,8 @@ export function useMonitoringData() {
     return result;
   }, [filterDataByWilayah]);
 
-  // ==================== FILTER BELUM LAPOR ====================
 
   const filterBelumLapor = useCallback((belumLaporData, kategorisasi) => {
-    // Filter belum lapor berdasarkan wilayah terlebih dahulu
     const filteredBelumLapor = filterDataByWilayah(belumLaporData);
     
     const { izin, sakit, cuti } = kategorisasi;
@@ -296,7 +280,6 @@ export function useMonitoringData() {
     return result;
   }, [filterDataByWilayah]);
 
-  // ==================== HITUNG STATISTIK ====================
 
   const calculateStats = useCallback((
     semuaPegawai,
@@ -305,7 +288,6 @@ export function useMonitoringData() {
     belumLaporData,
     kinerjaData
   ) => {
-    // Filter semua pegawai berdasarkan wilayah
     const filteredSemuaPegawai = filterPegawaiByWilayah(semuaPegawai);
     
     const { izin, sakit, cuti, hadir } = kategorisasi;
@@ -314,7 +296,6 @@ export function useMonitoringData() {
     const terlambatCount = hadir.filter(h => h.type === 'terlambat').length;
     const tepatWaktuCount = hadir.filter(h => h.type === 'hadir').length;
     
-    // Hitung yang sudah lapor kinerja
     const sudahLapor = kinerjaData.sudah_lapor || 0;
     
     const teridentifikasi = 
@@ -356,7 +337,6 @@ export function useMonitoringData() {
     };
   }, [filterPegawaiByWilayah]);
 
-  // ==================== FETCH DATA ====================
 
   const fetchMonitoringData = useCallback(async (tanggal) => {
     if (!tanggal) {
@@ -399,7 +379,6 @@ export function useMonitoringData() {
         presensi: presensiHarianData.length
       });
       
-      // Filter semua data berdasarkan wilayah user
       const filteredBelumAbsenData = filterDataByWilayah(belumAbsenData);
       const filteredPresensiData = filterDataByWilayah(presensiHarianData);
       
@@ -420,14 +399,11 @@ export function useMonitoringData() {
       let semuaPegawaiList = [];
       
       if (masterPegawaiData && masterPegawaiData.length > 0) {
-        // Filter master pegawai berdasarkan wilayah
         semuaPegawaiList = filterPegawaiByWilayah(masterPegawaiData);
         console.log('👥 Menggunakan data master pegawai (filtered):', semuaPegawaiList.length);
       } else {
-        // Fallback: kumpulkan dari berbagai sumber
         const pegawaiMap = new Map();
         
-        // Dari data belum absen
         filteredBelumAbsenData.forEach(p => {
           const id = p.id || p.pegawai_id;
           const key = id || p.nama;
@@ -443,7 +419,6 @@ export function useMonitoringData() {
           }
         });
         
-        // Dari kategorisasi presensi
         [...kategorisasi.izin, ...kategorisasi.sakit, ...kategorisasi.cuti, ...kategorisasi.hadir].forEach(p => {
           const id = p.id || p.pegawai_id;
           const key = id || p.nama;
@@ -475,7 +450,6 @@ export function useMonitoringData() {
         kategorisasi
       );
       
-      // Data sudah lapor
       const sudahLaporData = kinerjaData.daftar_sudah_lapor || [];
       const filteredSudahLapor = filterDataByWilayah(sudahLaporData);
       
@@ -522,7 +496,6 @@ export function useMonitoringData() {
     } catch (err) {
       console.error('❌ Error fetching monitoring data:', err);
       
-      // Data fallback dengan filter wilayah
       const fallbackSemuaPegawai = [
         { id: 101, nama: 'HERUL RAHMAN', wilayah_penugasan: 'Prajekan', jabatan: 'Staff' },
         { id: 102, nama: 'IWAN SETIAWAN', wilayah_penugasan: 'Klabang', jabatan: 'Staff' },
@@ -547,7 +520,6 @@ export function useMonitoringData() {
         { id: 121, nama: 'HERIK SWANDI', wilayah_penugasan: 'Cermee', jabatan: 'Staff' }
       ];
       
-      // Filter fallback data berdasarkan wilayah user
       const filteredFallbackPegawai = filterPegawaiByWilayah(fallbackSemuaPegawai);
       
       console.log('📊 Fallback pegawai setelah filter:', filteredFallbackPegawai.length);
@@ -690,7 +662,6 @@ export function useMonitoringData() {
     calculateStats
   ]);
 
-  // ==================== HANDLE DATE CHANGE ====================
 
   const handleDateChange = useCallback((e) => {
     const newDate = e.target.value;
@@ -698,13 +669,11 @@ export function useMonitoringData() {
     fetchMonitoringData(newDate);
   }, [fetchMonitoringData]);
 
-  // ==================== REFRESH DATA ====================
 
   const refreshData = useCallback(() => {
     fetchMonitoringData(state.selectedDate);
   }, [fetchMonitoringData, state.selectedDate]);
 
-  // ==================== EXPORT DATA ====================
 
   const handleExportData = useCallback(() => {
     const { 
@@ -795,7 +764,6 @@ export function useMonitoringData() {
     });
   }, [state, userWilayah]);
 
-  // ==================== GET STATISTIK DETAIL ====================
 
   const getStatistikDetail = useCallback(() => {
     const { stats } = state;
@@ -813,14 +781,12 @@ export function useMonitoringData() {
     ];
   }, [state.stats]);
 
-  // ==================== GET PERSENTASE ====================
 
   const getPersentase = useCallback((value, total = state.stats.totalPegawai) => {
     if (!total || total === 0) return '0%';
     return `${Math.round((value / total) * 100)}%`;
   }, [state.stats.totalPegawai]);
 
-  // ==================== EFFECT UNTUK AUTO REFRESH ====================
 
   useEffect(() => {
     if (user) {
@@ -836,7 +802,6 @@ export function useMonitoringData() {
     return () => clearInterval(interval);
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ==================== RETURN ====================
 
   return {
     selectedDate: state.selectedDate,

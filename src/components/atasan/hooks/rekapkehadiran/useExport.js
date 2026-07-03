@@ -24,23 +24,18 @@ export function useExport() {
     }
 
     try {
-      // Import dinamis untuk menghindari error SSR
       const XLSX = await import('xlsx');
       
       const daysInMonth = new Date(parseInt(tahunFilter), parseInt(bulanFilter), 0).getDate();
       const bulanLabel = getBulanLabel(bulanFilter);
       
-      // Header untuk Excel
       const wsData = [
-        // Judul
         [`REKAP KEHADIRAN PEGAWAI - BULAN ${bulanLabel} ${tahunFilter}`],
         [wilayahFilter ? `Wilayah: ${wilayahFilter}` : 'Semua Wilayah'],
         [''],
-        // Header tabel
         ['NO', 'NAMA', 'JABATAN', ...Array.from({length: daysInMonth}, (_, i) => (i + 1).toString()), 'H', 'T', 'I', 'TK']
       ];
       
-      // Data pegawai
       rekapBulanan.forEach((pegawai, index) => {
         wsData.push([
           index + 1,
@@ -54,7 +49,6 @@ export function useExport() {
         ]);
       });
       
-      // Total
       wsData.push([
         '',
         'TOTAL',
@@ -66,27 +60,23 @@ export function useExport() {
         statistikBulanan.totalTanpaKeterangan
       ]);
       
-      // Buat worksheet
       const ws = XLSX.utils.aoa_to_sheet(wsData);
       
-      // Atur lebar kolom
       const wscols = [
-        { wch: 5 }, // NO
-        { wch: 30 }, // NAMA
-        { wch: 20 }, // JABATAN
-        ...Array(daysInMonth).fill({ wch: 3 }), // Hari
-        { wch: 5 }, // H
-        { wch: 5 }, // T
-        { wch: 5 }, // I
-        { wch: 5 }  // TK
+        { wch: 5 }, 
+        { wch: 30 }, 
+        { wch: 20 }, 
+        ...Array(daysInMonth).fill({ wch: 3 }), 
+        { wch: 5 }, 
+        { wch: 5 }, 
+        { wch: 5 }, 
+        { wch: 5 }  
       ];
       ws['!cols'] = wscols;
       
-      // Buat workbook
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, `Rekap ${bulanLabel} ${tahunFilter}`);
       
-      // Simpan file
       const fileName = `Rekap_Kehadiran_${bulanLabel}_${tahunFilter}${wilayahFilter ? `_${wilayahFilter}` : ''}.xlsx`;
       XLSX.writeFile(wb, fileName);
       

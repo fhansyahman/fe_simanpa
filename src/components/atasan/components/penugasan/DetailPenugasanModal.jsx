@@ -1,13 +1,10 @@
-// components/penugasan/DetailPenugasanModal.jsx
 'use client';
 import { X, MapPin, Clock, Calendar, Users, Map, Navigation, Circle as LucideCircle, Loader, Maximize2 } from "lucide-react";
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 
-// Import Leaflet CSS
 import 'leaflet/dist/leaflet.css';
 
-// Dynamic import untuk menghindari SSR issues dengan Leaflet
 const MapContainer = dynamic(
   () => import('react-leaflet').then((mod) => mod.MapContainer),
   { ssr: false }
@@ -85,7 +82,6 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
     return <span className="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Khusus</span>;
   };
 
-  // Komponen map view
   const MapView = ({ latitude, longitude, radius, locationName }) => {
     const [L, setL] = useState(null);
     const [defaultIcon, setDefaultIcon] = useState(null);
@@ -175,15 +171,12 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* Backdrop */}
       <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
       
-      {/* Modal */}
       <div className="relative min-h-screen flex items-center justify-center p-4">
         <div className={`relative bg-white rounded-2xl shadow-xl w-full max-w-4xl transition-all duration-300 ${
           isMapFullscreen ? 'max-w-6xl' : ''
         } max-h-[90vh] overflow-y-auto`}>
-          {/* Header */}
           <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10">
             <div>
               <h2 className="text-xl font-bold text-gray-800">Detail Penugasan</h2>
@@ -197,11 +190,8 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
             </button>
           </div>
 
-          {/* Content */}
           <div className="p-6 space-y-6">
-            {/* Informasi Umum */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left Column */}
               <div className="space-y-4">
                 <div>
                   <h3 className="text-sm font-medium text-gray-500 mb-2">Nama Penugasan</h3>
@@ -219,7 +209,6 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
                 </div>
               </div>
 
-              {/* Right Column */}
               <div className="space-y-4">
                 <div>
                   <h3 className="text-sm font-medium text-gray-500 mb-2">Waktu Kerja</h3>
@@ -232,7 +221,6 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
                       <Clock size={16} className="text-orange-500" />
                       <span>Jam Pulang: {formatTime(penugasan.jam_pulang)}</span>
                     </div>
-                    {/* TAMBAHKAN BATAS AKHIR PULANG */}
                     <div className="flex items-center gap-2 text-gray-700">
                       <Clock size={16} className="text-red-500" />
                       <span>Batas Akhir Pulang: {formatTime(penugasan.batas_akhir_pulang)}</span>
@@ -253,7 +241,6 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
               </div>
             </div>
 
-            {/* Informasi Khusus (hanya untuk penugasan khusus) */}
             {penugasan.tipe_penugasan === 'khusus' && (
               <>
                 <div className="border-t border-gray-200 pt-4">
@@ -275,14 +262,12 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
                   </div>
                 </div>
 
-                {/* Lokasi dengan Map View */}
                 <div className="border-t border-gray-200 pt-4">
                   <h3 className="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
                     <MapPin size={18} className="text-red-500" />
                     Lokasi Penugasan
                   </h3>
                   
-                  {/* Map View */}
                   <div className="mb-4">
                     <MapView 
                       latitude={penugasan.latitude}
@@ -292,7 +277,6 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
                     />
                   </div>
 
-                  {/* Detail Lokasi */}
                   <div className="bg-gray-50 rounded-lg p-4 space-y-3">
                     <div>
                       <p className="text-sm text-gray-500 mb-1">Alamat</p>
@@ -337,7 +321,6 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
               </>
             )}
 
-            {/* Penugasan Default Info */}
             {penugasan.tipe_penugasan === 'default' && (
               <div className="border-t border-gray-200 pt-4">
                 <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
@@ -358,7 +341,6 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
               </div>
             )}
 
-            {/* User Assignment */}
             <div className="border-t border-gray-200 pt-4">
               <h3 className="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <Users size={18} className="text-purple-500" />
@@ -411,7 +393,6 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
               })()}
             </div>
 
-            {/* Metadata */}
             <div className="border-t border-gray-200 pt-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -426,7 +407,6 @@ export const DetailPenugasanModal = ({ isOpen, onClose, penugasan, loading = fal
             </div>
           </div>
 
-          {/* Footer */}
           <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 flex justify-end">
             <button
               onClick={onClose}

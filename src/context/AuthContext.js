@@ -1,4 +1,3 @@
-// context/AuthContext.js
 'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI } from '@/lib/api';
@@ -26,10 +25,8 @@ export function AuthProvider({ children }) {
       
       if (response.data.success) {
         setUser(response.data.data);
-        // Simpan user ke localStorage untuk akses cepat
         localStorage.setItem('user', JSON.stringify(response.data.data));
       } else {
-        // Token tidak valid
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }

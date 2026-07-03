@@ -12,7 +12,6 @@ import {
   Filler
 } from 'chart.js';
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -26,7 +25,6 @@ ChartJS.register(
   Filler
 );
 
-// Status Kinerja helpers
 export const getStatusLabelKinerja = (status) => {
   switch (status) {
     case 'tercapai_target': return 'Tercapai Target';
@@ -60,7 +58,6 @@ export const getStatusIconKinerja = (status) => {
   return icons[status] || '❓';
 };
 
-// Chart options generators
 export const getBarChartOptions = (title, yAxisLabel) => ({
   responsive: true,
   maintainAspectRatio: false,

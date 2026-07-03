@@ -76,7 +76,6 @@ export default function RekapKinerjaPage() {
         />
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
-          {/* System Overview Cards */}
           <StatCards 
             statistik={statistik}
             selectedWilayah={selectedWilayah}
@@ -84,7 +83,6 @@ export default function RekapKinerjaPage() {
             formatDateShort={formatDateShort}
           />
 
-          {/* Filter Bar */}
           <FilterBar
             selectedWilayah={selectedWilayah}
             selectedDate={selectedDate}
@@ -95,7 +93,6 @@ export default function RekapKinerjaPage() {
             formatDateShort={formatDateShort}
           />
 
-          {/* Action Buttons */}
           <div className="flex flex-col md:flex-row gap-3 mb-6">
             <DownloadButtons
               kinerjaList={kinerjaList}
@@ -106,7 +103,6 @@ export default function RekapKinerjaPage() {
             <ViewToggle activeView={activeView} setActiveView={setActiveView} />
           </div>
 
-          {/* Progress Bar */}
           {isGeneratingPDF && (
             <ProgressBar 
               progress={generatingProgress}
@@ -115,12 +111,9 @@ export default function RekapKinerjaPage() {
             />
           )}
 
-          {/* Error Message */}
           {error && <ErrorMessage error={error} />}
 
-          {/* Content Area */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-            {/* Tab Navigation */}
             <div className="flex border-b border-gray-200 overflow-x-auto">
               <div className="px-4 md:px-6 py-4 text-sm font-medium text-gray-900">
                 {activeView === 'rekap' ? 'Rekap per Wilayah' : 'Detail Perorangan'}
@@ -130,7 +123,6 @@ export default function RekapKinerjaPage() {
               </div>
             </div>
 
-            {/* Tab Content */}
             <div className="p-4 md:p-6">
               {activeView === 'rekap' ? (
                 <RekapWilayahView
@@ -154,7 +146,6 @@ export default function RekapKinerjaPage() {
         </main>
       </div>
 
-      {/* Modals */}
       <DetailModal
         isOpen={detailModalOpen}
         onClose={() => setDetailModalOpen(false)}

@@ -1,4 +1,3 @@
-// components/ui/table.jsx
 import * as React from "react";
 
 const Table = React.forwardRef(({ className, ...props }, ref) => (

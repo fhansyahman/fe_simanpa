@@ -197,7 +197,6 @@ export function useKinerjaData() {
 
       const { pegawaiKinerja, apiStatistik } = await loadKinerjaData(bulan, tahun);
       
-      // Hitung target bulanan tunggal
       let hariKerja = apiStatistik.hari_kerja || 0;
       if (hariKerja === 0 && hariKerjaData.length > 0) {
         hariKerja = hariKerjaData.filter(h => {
@@ -206,7 +205,6 @@ export function useKinerjaData() {
         }).length;
       }
       if (hariKerja === 0) {
-        // Fallback: hitung manual
         const daysInMonth = new Date(tahun, bulan, 0).getDate();
         for (let day = 1; day <= daysInMonth; day++) {
           const date = new Date(tahun, bulan - 1, day);
@@ -230,7 +228,6 @@ export function useKinerjaData() {
 
       if (pegawaiKinerja && pegawaiKinerja.length > 0) {
         pegawaiKinerja.forEach(pegawai => {
-          // Pencapaian berdasarkan total panjang
           const pencapaian = pegawai.pencapaian !== undefined 
             ? pegawai.pencapaian 
             : (pegawai.total_panjang / targetBulanan) * 100 || 0;
@@ -307,7 +304,6 @@ export function useKinerjaData() {
         targetBulanan: targetBulanan
       };
 
-      // Proses statistik wilayah
       const wilayahMap = {};
       WILAYAH_LIST.forEach(wilayahItem => {
         wilayahMap[wilayahItem] = {
@@ -448,7 +444,6 @@ export function useKinerjaData() {
     }));
   }, []);
 
-  // ==================== EXPORT FUNCTIONS ====================
 
   const exportToCSV = useCallback((data, filename) => {
     if (!data || data.length === 0) {
@@ -511,8 +506,8 @@ export function useKinerjaData() {
             <meta charset="UTF-8">
             <title>${filename}</title>
             <style>
-              th { background-color: #4CAF50; color: white; padding: 8px; }
-              td { padding: 6px; border: 1px solid #ddd; }
+              th { background-color:
+              td { padding: 6px; border: 1px solid
               table { border-collapse: collapse; width: 100%; }
             </style>
           </head>
@@ -782,7 +777,6 @@ export function useKinerjaData() {
     }
   }, [state.chartData, state.statistikWilayah, state.selectedMonth, state.selectedYear, exportToCSV, exportToExcel]);
 
-  // ==================== EXPORT CHART IMAGE FUNCTIONS ====================
 
   const handleExportKinerjaChart = useCallback(() => {
     if (!state.chartData) {
@@ -928,7 +922,6 @@ export function useKinerjaData() {
   }, []);
 
   return {
-    // State
     activeChart: state.activeChart,
     filterType: state.filterType,
     sortOrder: state.sortOrder,
@@ -944,7 +937,6 @@ export function useKinerjaData() {
     statistikBulanan: state.statistikBulanan,
     statistikWilayah: state.statistikWilayah,
     
-    // Functions
     setActiveChart: (chart) => setState(prev => ({ ...prev, activeChart: chart })),
     setFilterType: (type) => setState(prev => ({ ...prev, filterType: type })),
     setSortOrder: (order) => setState(prev => ({ ...prev, sortOrder: order })),
@@ -952,7 +944,6 @@ export function useKinerjaData() {
     handleYearChange,
     processKinerjaChartData,
     
-    // Export Functions
     exportKinerjaPegawai,
     exportStatistikWilayah,
     exportRekapKinerja,
@@ -960,7 +951,6 @@ export function useKinerjaData() {
     exportToCSV,
     exportToExcel,
     
-    // Export Chart Image Functions
     handleExportKinerjaChart,
     handleExportWilayahChart,
   };

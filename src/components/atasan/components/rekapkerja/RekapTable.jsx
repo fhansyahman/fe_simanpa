@@ -12,7 +12,6 @@ export function RekapTable({
   statistikBulanan,
   getDaysInMonth 
 }) {
-  // Validasi input
   if (!rekapBulanan || !Array.isArray(rekapBulanan) || rekapBulanan.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -23,7 +22,6 @@ export function RekapTable({
 
   const daysInMonth = getDaysInMonth(parseInt(tahunFilter), parseInt(bulanFilter));
   
-  // Validasi daysInMonth
   if (!daysInMonth || daysInMonth <= 0) {
     return (
       <div className="text-center py-8 text-gray-500">

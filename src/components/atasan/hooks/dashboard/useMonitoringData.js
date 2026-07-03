@@ -44,13 +44,10 @@ export function useMonitoringData() {
   const isAtasan = user?.roles === 'atasan';
   const userWilayah = user?.wilayah_penugasan;
 
-  // ==================== FILTER DATA BERDASARKAN WILAYAH ====================
 
   const filterDataByWilayah = useCallback((data) => {
-    // Jika admin, tampilkan semua data
     if (isAdmin || !userWilayah) return data;
     
-    // Jika atasan, filter berdasarkan wilayah user
     if (!data || !Array.isArray(data)) return [];
     return data.filter(item => 
       item.wilayah_penugasan === userWilayah
@@ -58,21 +55,17 @@ export function useMonitoringData() {
   }, [isAdmin, userWilayah]);
 
   const filterPegawaiByWilayah = useCallback((pegawaiList) => {
-    // Jika admin, tampilkan semua pegawai
     if (isAdmin || !userWilayah) return pegawaiList;
     
-    // Jika atasan, filter berdasarkan wilayah user
     if (!pegawaiList || !Array.isArray(pegawaiList)) return [];
     return pegawaiList.filter(pegawai => 
       pegawai.wilayah_penugasan === userWilayah
     );
   }, [isAdmin, userWilayah]);
 
-  // ==================== FUNGSI UNTUK MENDAPATKAN TOTAL PEGAWAI PER WILAYAH ====================
   
   const getTotalPegawaiByWilayah = useCallback(async (wilayah) => {
     try {
-      // Coba ambil dari master pegawai terlebih dahulu
       const masterPegawaiRes = await dashboardService.getAllPegawai?.();
       const masterPegawaiData = masterPegawaiRes?.data?.data || masterPegawaiRes?.data || [];
       
@@ -85,7 +78,6 @@ export function useMonitoringData() {
       console.warn('⚠️ Gagal mengambil master pegawai:', err);
     }
     
-    // Fallback: data statis berdasarkan wilayah
     const wilayahCount = {
       'Prajekan': 7,
       'Klabang': 4,
@@ -99,7 +91,6 @@ export function useMonitoringData() {
     return count;
   }, []);
 
-  // ==================== FETCH DATA - LANGSUNG DARI BACKEND ====================
 
   const fetchMonitoringData = useCallback(async (tanggal) => {
     try {
@@ -112,7 +103,6 @@ export function useMonitoringData() {
       console.log('🔄 Fetching monitoring data untuk tanggal:', tanggal);
       console.log('👤 User:', user?.nama, 'Roles:', user?.roles, 'Wilayah:', userWilayah);
       
-      // 🔥 AMBIL SEMUA DATA TERMASUK DATA IZIN
       const [kehadiranRes, belumAbsenRes, kinerjaRes, izinRes] = await Promise.all([
         dashboardService.getKehadiranByDate(tanggal),
         dashboardService.getPegawaiBelumAbsenByDate(tanggal),
@@ -125,7 +115,6 @@ export function useMonitoringData() {
       let belumAbsenData = belumAbsenRes?.data?.data || belumAbsenRes?.data || [];
       let izinData = izinRes?.data?.data || { izin: [], sakit: [], cuti: [] };
       
-      // Pastikan data berbentuk array
       belumAbsenData = Array.isArray(belumAbsenData) ? belumAbsenData : [];
       izinData = {
         izin: Array.isArray(izinData.izin) ? izinData.izin : [],
@@ -133,13 +122,11 @@ export function useMonitoringData() {
         cuti: Array.isArray(izinData.cuti) ? izinData.cuti : []
       };
       
-      // 🔥 FILTER DATA BERDASARKAN WILAYAH USER
       const filteredBelumAbsen = filterDataByWilayah(belumAbsenData);
       const filteredIzin = filterDataByWilayah(izinData.izin);
       const filteredSakit = filterDataByWilayah(izinData.sakit);
       const filteredCuti = filterDataByWilayah(izinData.cuti);
       
-      // Filter daftar belum lapor berdasarkan wilayah
       let belumLaporOriginal = kinerjaData.daftar_belum_lapor || [];
       belumLaporOriginal = Array.isArray(belumLaporOriginal) ? filterDataByWilayah(belumLaporOriginal) : [];
       
@@ -155,33 +142,27 @@ export function useMonitoringData() {
         sudahLapor: sudahLaporData.length
       });
       
-      // 🔥 HITUNG TOTAL PEGAWAI BERDASARKAN WILAYAH USER
       let totalPegawai = 0;
       
       if (!isAdmin && userWilayah) {
-        // Untuk atasan, ambil total pegawai dari master data atau fallback
         totalPegawai = await getTotalPegawaiByWilayah(userWilayah);
         
-        // Alternatif: hitung dari kombinasi data yang ada
         const hitungDariData = filteredBelumAbsen.length + 
                                (kehadiranData.hadir || 0) + 
                                filteredIzin.length + 
                                filteredSakit.length + 
                                filteredCuti.length;
         
-        // Jika total dari master lebih besar, gunakan yang lebih besar
         if (hitungDariData > totalPegawai) {
           console.log(`📊 Menggunakan total dari data (${hitungDariData}) karena lebih besar dari master (${totalPegawai})`);
           totalPegawai = hitungDariData;
         }
       } else {
-        // Untuk admin, gunakan dari response backend
         totalPegawai = kehadiranData.total_pegawai || kinerjaData.total_pegawai || 0;
       }
       
       console.log('📊 Total pegawai final:', totalPegawai);
       
-      // 🔥 HITUNG STATISTIK
       const finalStats = {
         totalPegawai: totalPegawai,
         hadir: kehadiranData.hadir || 0,
@@ -237,10 +218,8 @@ export function useMonitoringData() {
     } catch (err) {
       console.error('❌ Error fetching monitoring data:', err);
       
-      // FALLBACK - DATA SIMULASI BERDASARKAN WILAYAH
       console.log('🔄 Menggunakan data fallback...');
       
-      // Data statis pegawai per wilayah
       const dataPegawaiPerWilayah = {
         'Prajekan': [
           { id: 101, nama: 'HERUL RAHMAN', wilayah_penugasan: 'Prajekan', nip: '001', jabatan: 'Staff' },
@@ -275,7 +254,6 @@ export function useMonitoringData() {
         ]
       };
       
-      // Pilih data berdasarkan wilayah user atau semua jika admin
       let filteredFallbackPegawai = [];
       let totalPegawai = 0;
       
@@ -284,7 +262,6 @@ export function useMonitoringData() {
         totalPegawai = filteredFallbackPegawai.length;
         console.log(`📊 Fallback untuk wilayah ${userWilayah}: ${totalPegawai} pegawai`);
       } else {
-        // Untuk admin, gabungkan semua wilayah
         filteredFallbackPegawai = Object.values(dataPegawaiPerWilayah).flat();
         totalPegawai = filteredFallbackPegawai.length;
         console.log(`📊 Fallback untuk admin: ${totalPegawai} pegawai`);
@@ -331,7 +308,6 @@ export function useMonitoringData() {
     }
   }, [user, isAdmin, userWilayah, filterDataByWilayah, getTotalPegawaiByWilayah]);
 
-  // ==================== HANDLE DATE CHANGE ====================
 
   const handleDateChange = useCallback((e) => {
     const newDate = e.target.value;
@@ -339,13 +315,11 @@ export function useMonitoringData() {
     fetchMonitoringData(newDate);
   }, [fetchMonitoringData]);
 
-  // ==================== REFRESH DATA ====================
 
   const refreshData = useCallback(() => {
     fetchMonitoringData(state.selectedDate);
   }, [fetchMonitoringData, state.selectedDate]);
 
-  // ==================== EXPORT DATA ====================
 
   const handleExportData = useCallback(() => {
     const { 
@@ -369,7 +343,6 @@ export function useMonitoringData() {
       ...dataCuti.map(item => ({...item, status: 'Cuti', keterangan: item.keterangan || 'Cuti'}))
     ];
     
-    // Tambahkan ringkasan dari stats
     const wilayahInfo = filteredByWilayah ? ` (Wilayah: ${userWilayah})` : '';
     const ringkasan = [
       { nama: '=== RINGKASAN HARIAN' + wilayahInfo + ' ===', status: '', keterangan: '' },
@@ -440,7 +413,6 @@ export function useMonitoringData() {
     });
   }, [state, userWilayah]);
 
-  // ==================== GET STATISTIK DETAIL ====================
 
   const getStatistikDetail = useCallback(() => {
     const { stats } = state;
@@ -458,17 +430,14 @@ export function useMonitoringData() {
     ];
   }, [state.stats]);
 
-  // ==================== GET PERSENTASE ====================
 
   const getPersentase = useCallback((value) => {
     const total = state.stats.totalPegawai;
     if (!total || total === 0) return '0%';
-    // Batasi maksimal 100%
     const persentase = Math.min(100, Math.round((value / total) * 100));
     return `${persentase}%`;
   }, [state.stats.totalPegawai]);
 
-  // ==================== EFFECT UNTUK INITIAL FETCH ====================
 
   useEffect(() => {
     if (user) {
@@ -476,7 +445,6 @@ export function useMonitoringData() {
       fetchMonitoringData(state.selectedDate);
     }
     
-    // Auto refresh every 5 minutes
     const interval = setInterval(() => {
       console.log('🔄 Auto refresh monitoring data');
       if (user) {
@@ -487,7 +455,6 @@ export function useMonitoringData() {
     return () => clearInterval(interval);
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ==================== RETURN ====================
 
   return {
     selectedDate: state.selectedDate,

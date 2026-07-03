@@ -38,7 +38,6 @@ import { useModal } from "./hooks/presensi/useModal";
 import { adminPresensiAPI } from "@/lib/api";
 import Swal from "sweetalert2";
 
-// Komponen Peta Presensi - Compact untuk HP
 function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
   const [presensiList, setPresensiList] = useState([]);
   const [allPresensiData, setAllPresensiData] = useState([]);
@@ -69,7 +68,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
     tanpaKeterangan: 0
   });
 
-  // Fungsi untuk copy link Google Maps
   const copyGoogleMapsLink = async (lat, lng, presensiId) => {
     if (!lat || !lng) return;
     
@@ -79,7 +77,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
       await navigator.clipboard.writeText(googleMapsLink);
       setCopiedId(presensiId);
       
-      // Tampilkan notifikasi sukses
       Swal.fire({
         icon: 'success',
         title: 'Berhasil!',
@@ -90,7 +87,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
         toast: true,
       });
       
-      // Reset copied state setelah 2 detik
       setTimeout(() => {
         setCopiedId(null);
       }, 2000);
@@ -114,7 +110,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
     return nama.substring(0, 3).toUpperCase();
   };
 
-  // Load Leaflet
   useEffect(() => {
     const loadLeaflet = async () => {
       try {
@@ -139,19 +134,16 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
     loadLeaflet();
   }, []);
 
-  // Update tanggal ketika props berubah
   useEffect(() => {
     setFilterTanggal(tanggal);
   }, [tanggal]);
 
-  // Update filter wilayah ketika userWilayah berubah
   useEffect(() => {
     if (userWilayah) {
       setFilterWilayah(userWilayah);
     }
   }, [userWilayah]);
 
-  // Fetch data presensi
   const fetchPresensiData = useCallback(async (tgl) => {
     try {
       setLoading(true);
@@ -288,14 +280,12 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
     }
   }, [userWilayah]);
 
-  // Fetch data ketika tanggal berubah
   useEffect(() => {
     if (filterTanggal) {
       fetchPresensiData(filterTanggal);
     }
   }, [filterTanggal, fetchPresensiData]);
 
-  // Inisialisasi map
   useEffect(() => {
     if (!isMapReady || !mapRef.current || mapInstanceRef.current || !leafletRef.current) return;
 
@@ -318,7 +308,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
     };
   }, [isMapReady, mapCenter, mapZoom]);
 
-  // Update markers
   useEffect(() => {
     const map = mapInstanceRef.current;
     const L = leafletRef.current;
@@ -434,9 +423,7 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
 
   return (
     <div className="space-y-3">
-      {/* Filter Bar - Compact untuk HP */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
-        {/* Baris 1: Tanggal */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1">
             <Calendar size={14} className="text-gray-500" />
@@ -467,7 +454,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
           </div>
         </div>
 
-        {/* Baris 2: Search */}
         <div className="relative mb-2">
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={12} />
           <input
@@ -479,7 +465,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
           />
         </div>
 
-        {/* Statistik - Scroll horizontal untuk HP */}
         <div className="overflow-x-auto no-scrollbar -mx-1 px-1">
           <div className="flex gap-2 min-w-max">
             <span className="text-[10px] text-gray-600 flex items-center gap-1 px-2 py-0.5 bg-gray-50 rounded-full">
@@ -504,7 +489,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
           </div>
         </div>
 
-        {/* Info wilayah */}
         <div className="mt-1 pt-1 border-t border-gray-100">
           <div className="flex items-center gap-1 flex-wrap">
             <span className="text-[9px] text-gray-500">Menampilkan:</span>
@@ -515,7 +499,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
         </div>
       </div>
 
-      {/* Map Container */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden relative" style={{ zIndex: 1 }}>
         {!isMapReady ? (
           <div className="h-[400px] flex items-center justify-center">
@@ -524,13 +507,9 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
         ) : (
           <div className="relative h-[400px]">
             <div ref={mapRef} className="w-full h-full" style={{ zIndex: 1 }} />
-
-            {/* Info Panel */}
             <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-1.5 px-2" style={{ zIndex: 10 }}>
               <p className="text-[10px] font-medium">{filteredPresensi.length} Lokasi</p>
             </div>
-
-            {/* Legend - Compact */}
             <div className="absolute bottom-2 left-2 bg-white rounded-lg shadow-lg p-1.5" style={{ zIndex: 10 }}>
               <div className="flex flex-wrap gap-1.5 text-[9px]">
                 <div className="flex items-center gap-0.5"><div className="w-2 h-2 rounded-full bg-blue-500"></div><span>Masuk</span></div>
@@ -540,7 +519,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
               </div>
             </div>
 
-            {/* Selected Info Panel - Slide from bottom untuk HP */}
             {selectedPresensi && showSidebar && (
               <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-xl shadow-xl p-3 animate-slide-up" style={{ zIndex: 15 }}>
                 <div className="flex items-start justify-between mb-2">
@@ -566,7 +544,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
                   <p><span className="text-gray-500">Tipe:</span> {selectedPresensi.jenis === 'masuk' ? 'Check In' : 'Check Out'}</p>
                 </div>
                 <div className="pt-2 mt-2 border-t border-gray-100 flex gap-3">
-                  {/* Tombol Copy Link Google Maps */}
                   <button
                     onClick={() => copyGoogleMapsLink(selectedPresensi.lat, selectedPresensi.lng, selectedPresensi.id)}
                     className="flex-1 inline-flex items-center justify-center gap-1 text-blue-600 text-xs font-medium py-1.5 bg-blue-50 rounded-lg"
@@ -662,7 +639,6 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
   );
 }
 
-// Komponen Utama - Compact untuk HP
 export default function MonitoringKehadiran() {
   const { filters, updateFilter, resetFilters, activeFilterCount, user } = useFilters();
   const {
@@ -713,7 +689,6 @@ export default function MonitoringKehadiran() {
     updateFilter("search", searchInput);
   };
 
-  // Fungsi copy link untuk daftar pegawai
   const copyLocationLink = async (lat, lng, id) => {
     if (!lat || !lng) return;
     
@@ -763,7 +738,6 @@ export default function MonitoringKehadiran() {
 
   return (
     <div className="min-h-screen bg-gray-100 pb-16 text-black">
-      {/* HEADER - Compact untuk HP */}
       <div className="bg-gradient-to-b from-blue-900 to-blue-700 pt-4 pb-8">
         <div className="px-4">
           <div className="flex items-center justify-between mb-3">
@@ -779,7 +753,6 @@ export default function MonitoringKehadiran() {
 
           </div>
 
-          {/* Filter Baris - Stack untuk HP */}
           <div className="space-y-2">
             <div className="bg-white/10 border border-white/20 rounded-lg px-3 py-2">
               <div className="flex items-center gap-2">
@@ -819,14 +792,12 @@ export default function MonitoringKehadiran() {
       </div>
 
       <div className="px-4 -mt-4 pb-4">
-        {/* PETA PRESENSI */}
         <MapPresensiContent 
           tanggal={filters.tanggal} 
           userWilayah={user?.wilayah_penugasan}
           onOpenDetailModal={openDetailModal}
         />
 
-        {/* TAB - Daftar Pegawai */}
         <div className="bg-white rounded-xl shadow-lg mt-4 overflow-hidden">
           <div className="border-b border-gray-100 px-4 py-2">
             <button className="text-sm font-medium border-b-2 border-blue-600 text-blue-600 pb-2">
@@ -834,12 +805,10 @@ export default function MonitoringKehadiran() {
             </button>
           </div>
 
-          {/* LIST - Card view untuk HP, bukan tabel */}
           <div className="divide-y divide-gray-100">
             {filteredPresensi && filteredPresensi.length > 0 ? (
               filteredPresensi.map((presensi) => (
                 <div key={presensi.id} className="p-3 hover:bg-gray-50 transition-colors">
-                  {/* Header Card */}
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center gap-2">
                       <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
@@ -859,7 +828,6 @@ export default function MonitoringKehadiran() {
                     </span>
                   </div>
 
-                  {/* Info Row */}
                   <div className="grid grid-cols-2 gap-2 mb-2 text-xs">
                     <div>
                       <p className="text-[9px] text-gray-500">Tanggal</p>
@@ -910,7 +878,6 @@ export default function MonitoringKehadiran() {
                     </div>
                   )} */}
 
-                  {/* Action Buttons */}
                   <div className="flex gap-2 mt-2 pt-2 border-t border-gray-100">
                     {presensi.foto_masuk && (
                       <button onClick={() => openFotoModal(presensi.foto_masuk, "Masuk", presensi)} className="flex-1 py-1.5 bg-blue-50 rounded-lg text-[10px] text-blue-600 flex items-center justify-center gap-1">
@@ -935,14 +902,12 @@ export default function MonitoringKehadiran() {
             )}
           </div>
 
-          {/* FOOTER */}
           <div className="p-3 flex flex-wrap gap-2 justify-between items-center border-t border-gray-100">
             <div className="text-[10px] text-gray-500">Menampilkan {filteredPresensi?.length || 0} data</div>
           </div>
         </div>
       </div>
 
-      {/* FILTER SIDEBAR MODAL untuk HP */}
       {showFilterSidebar && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
           <div className="bg-white w-full rounded-t-xl max-h-[80vh] overflow-y-auto animate-slide-up">
@@ -1004,7 +969,6 @@ export default function MonitoringKehadiran() {
         </div>
       )}
 
-      {/* Detail Modal - Compact untuk HP */}
       {modalState.detail && selectedPresensi && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
           <div className="bg-white w-full rounded-t-xl max-h-[85vh] overflow-y-auto">
@@ -1048,7 +1012,6 @@ export default function MonitoringKehadiran() {
                 </div>
               </div>
 
-              {/* Tombol copy link di detail modal */}
               {(selectedPresensi.latitude_masuk || selectedPresensi.latitude_pulang) && (
                 <div className="mb-4">
                   {/* <button
@@ -1125,7 +1088,6 @@ export default function MonitoringKehadiran() {
         </div>
       )}
 
-      {/* Foto Modal - Compact */}
       {modalState.foto && selectedFoto && selectedFoto.src && (
         <div className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4">
           <div className="relative max-w-lg w-full">

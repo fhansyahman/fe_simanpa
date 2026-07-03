@@ -988,7 +988,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg">
-      {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
           <h3 className="text-xl font-bold text-gray-900">Download Rekap Laporan</h3>
@@ -1013,7 +1012,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         </div>
       </div>
 
-      {/* Error Message */}
       {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-center gap-3">
@@ -1023,7 +1021,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         </div>
       )}
 
-      {/* Progress Bar */}
       {downloading && (
         <div className="mb-6">
           <div className="flex justify-between text-sm text-gray-600 mb-2">
@@ -1042,7 +1039,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         </div>
       )}
 
-      {/* Format Selection */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <h4 className="font-medium text-gray-900">Pilih Format PDF</h4>
@@ -1063,7 +1059,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {/* Halaman 1 - Tabel Rekap */}
           <button
             onClick={() => toggleFormat('halaman1')}
             disabled={downloading}
@@ -1093,7 +1088,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
             </div>
           </button>
 
-          {/* Halaman 2 - Foto Per Pekerja (style LaporanGenerator) */}
           <button
             onClick={() => toggleFormat('halaman2')}
             disabled={downloading || !hasPhotos}
@@ -1130,7 +1124,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         </div>
       </div>
 
-      {/* Main Download Button */}
       <div className="mb-6">
         <button
           onClick={handleBulkDownload}
@@ -1157,7 +1150,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         )}
       </div>
 
-      {/* Individual Download Buttons */}
       <div className="mb-6 pt-4 border-t border-gray-200">
         <h4 className="font-medium text-gray-900 mb-4">Download Per Format</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1199,7 +1191,6 @@ export default function LaporanGeneratorRekap({ data, wilayah, tanggal, isLoadin
         </div>
       </div>
 
-      {/* Preview Information */}
       <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
         <div className="flex items-start gap-3">
           <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">

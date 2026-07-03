@@ -8,20 +8,18 @@ import {
 } from 'recharts';
 import {MapPin, TrendingUp, Users, Target, Activity,Download, Filter, RefreshCw} from 'lucide-react';
 
-// Helper nama bulan
 const getNamaBulan = (month) => {
   const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
   return bulan[month - 1] || '';
 };
 
-// Warna untuk chart
 const COLORS = {
-  tercapai_target: '#10b981',  // emerald
-  hampir_tercapai: '#84cc16',  // lime
-  sedang: '#eab308',           // yellow
-  tidak_tercapai: '#ef4444',   // red
-  tidak_ada_laporan: '#9ca3af' // gray
+  tercapai_target: '#10b981',
+  hampir_tercapai: '#84cc16',
+  sedang: '#eab308',
+  tidak_tercapai: '#ef4444',
+  tidak_ada_laporan: '#9ca3af'
 };
 
 const STATUS_LABELS = {
@@ -49,7 +47,6 @@ export function KpiMobilityDashboard() {
     getStatusColor
   } = useKpiMobility();
 
-  // Dapatkan daftar wilayah unik dari data
   const wilayahList = useMemo(() => {
     const wilayahSet = new Set();
     kpiData.pegawaiDetails?.forEach(pegawai => {
@@ -60,7 +57,6 @@ export function KpiMobilityDashboard() {
     return ['all', ...Array.from(wilayahSet).sort()];
   }, [kpiData.pegawaiDetails]);
 
-  // Filter data berdasarkan wilayah
   const filteredPegawai = useMemo(() => {
     if (selectedWilayah === 'all') {
       return kpiData.pegawaiDetails || [];
@@ -70,7 +66,6 @@ export function KpiMobilityDashboard() {
     );
   }, [kpiData.pegawaiDetails, selectedWilayah]);
 
-  // Statistik untuk chart (berdasarkan filter wilayah)
   const chartStats = useMemo(() => {
     const totalPegawai = filteredPegawai.length;
     const totalSudahLapor = filteredPegawai.filter(p => p.hadir > 0).length;
@@ -80,7 +75,6 @@ export function KpiMobilityDashboard() {
       ? filteredPegawai.filter(p => p.hadir > 0).reduce((sum, p) => sum + p.pencapaian, 0) / totalSudahLapor 
       : 0;
     
-    // Status counts untuk pie chart
     const statusCounts = {
       tercapai_target: filteredPegawai.filter(p => p.status === 'tercapai_target').length,
       hampir_tercapai: filteredPegawai.filter(p => p.status === 'hampir_tercapai').length,
@@ -100,7 +94,6 @@ export function KpiMobilityDashboard() {
     };
   }, [filteredPegawai]);
 
-  // Data untuk Bar Chart (Top 10 Pegawai by Pencapaian)
   const topPegawaiData = useMemo(() => {
     return [...filteredPegawai]
       .filter(p => p.hadir > 0)
@@ -114,7 +107,6 @@ export function KpiMobilityDashboard() {
       }));
   }, [filteredPegawai]);
 
-  // Data untuk Pie Chart (Status Distribution)
   const pieData = useMemo(() => {
     return Object.entries(chartStats.statusCounts)
       .filter(([_, value]) => value > 0)
@@ -125,7 +117,6 @@ export function KpiMobilityDashboard() {
       }));
   }, [chartStats.statusCounts]);
 
-  // Data untuk Bar Chart Pencapaian per Pegawai (semua)
   const allPegawaiData = useMemo(() => {
     return [...filteredPegawai]
       .sort((a, b) => b.pencapaian - a.pencapaian)
@@ -139,7 +130,6 @@ export function KpiMobilityDashboard() {
       }));
   }, [filteredPegawai]);
 
-  // Data untuk statistik wilayah
   const wilayahStats = useMemo(() => {
     const stats = [];
     const wilayahMap = new Map();
@@ -177,7 +167,6 @@ export function KpiMobilityDashboard() {
     return stats.sort((a, b) => b.rataPencapaian - a.rataPencapaian);
   }, [kpiData.pegawaiDetails]);
 
-  // Custom Tooltip untuk chart
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -208,7 +197,6 @@ export function KpiMobilityDashboard() {
 
   return (
     <div className="space-y-6 text-black">
-      {/* Header with Filters */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-5 shadow-sm">
   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
     <div>
@@ -220,7 +208,6 @@ export function KpiMobilityDashboard() {
   </div>
   
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-    {/* Filter Bulan */}
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">Bulan</label>
       <select
@@ -235,7 +222,6 @@ export function KpiMobilityDashboard() {
       </select>
     </div>
     
-    {/* Filter Tahun */}
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">Tahun</label>
       <select
@@ -250,7 +236,6 @@ export function KpiMobilityDashboard() {
       </select>
     </div>
     
-    {/* Filter Wilayah */}
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">Wilayah</label>
       <select
@@ -266,7 +251,6 @@ export function KpiMobilityDashboard() {
       </select>
     </div>
     
-    {/* Button Refresh */}
     <div className="flex items-end">
       <button
         onClick={refreshData}
@@ -279,7 +263,6 @@ export function KpiMobilityDashboard() {
     </div>
   </div>
   
-  {/* Info periode yang dipilih */}
   <div className="mt-4 pt-3 border-t border-gray-100">
     <div className="flex items-center gap-2 text-sm text-gray-500">
       <span className="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
@@ -292,7 +275,6 @@ export function KpiMobilityDashboard() {
   </div>
 </div>
 
-      {/* Summary Cards - Filtered */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <div className="flex items-center gap-2 text-blue-600 mb-2">
@@ -347,7 +329,6 @@ export function KpiMobilityDashboard() {
         </div>
       </div>
 
-      {/* Progress Bar */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <div className="flex justify-between text-sm text-gray-600 mb-2">
           <span>📈 Progress Capaian Tim</span>
@@ -383,9 +364,6 @@ export function KpiMobilityDashboard() {
         </div>
       </div>
 
-      
-
-      {/* Bar Chart - Top 10 Pegawai */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
           <h3 className="font-semibold text-gray-800">🏆 Top 10 Pegawai Terbaik</h3>
@@ -422,7 +400,6 @@ export function KpiMobilityDashboard() {
           </ResponsiveContainer>
         </div>
       </div>
-{/* Pie Chart - Status Distribution */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
           <h3 className="font-semibold text-gray-800">📊 Distribusi Status Pencapaian</h3>
@@ -457,7 +434,6 @@ export function KpiMobilityDashboard() {
           </ResponsiveContainer>
         </div>
       </div>
-      {/* Tabel Pegawai dengan Filter */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center flex-wrap gap-3">
           <div>
@@ -539,14 +515,12 @@ export function KpiMobilityDashboard() {
         </div>
       </div>
 
-      {/* Tabel Statistik Wilayah */}
       {wilayahStats.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
             <h3 className="font-semibold text-gray-800">🗺️ Statistik per Wilayah</h3>
             <p className="text-sm text-gray-500">Perbandingan kinerja antar wilayah kerja</p>
           </div>
-                {/* Bar Chart - Statistik Per Wilayah */}
       {wilayahStats.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
 
@@ -671,7 +645,6 @@ export function KpiMobilityDashboard() {
         </div>
       )}
 
-      {/* Insight Footer */}
       <div className="bg-blue-50 rounded-xl p-5 border-l-4 border-blue-500">
         <p className="text-sm text-blue-800">
           <strong>Insight:</strong> Target 50m/hari × {kpiData.hariKerja} hari = {formatNumber(kpiData.targetPerPegawai)} m/bulan per pegawai.

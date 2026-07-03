@@ -1,4 +1,3 @@
-// components/penugasan/PenugasanTable.jsx
 import { Eye, Edit, Trash2, Archive, X, Check, Radio, Briefcase } from "lucide-react";
 
 const getStatusBadge = (status, is_active) => {
@@ -71,7 +70,6 @@ export const PenugasanTable = ({
               <td className="py-4 px-6">{getTipeBadge(penugasan.tipe_penugasan)}</td>
               <td className="py-4 px-6 text-gray-700">{penugasan.jam_masuk?.substring(0, 5)}</td>
               <td className="py-4 px-6 text-gray-700">{penugasan.jam_pulang?.substring(0, 5)}</td>
-              {/* TAMBAHKAN KOLOM BATAS AKHIR PULANG */}
               <td className="py-4 px-6">
                 <span className="font-mono text-sm text-red-600 font-medium">
                   {penugasan.batas_akhir_pulang?.substring(0, 5) || '-'}
@@ -90,7 +88,6 @@ export const PenugasanTable = ({
                 </td>
               <td className="py-4 px-6">
                 <div className="flex gap-2 justify-center flex-wrap">
-                  {/* Tombol Detail (Show Mata) */}
                   <button 
                     onClick={() => onViewDetail(penugasan)} 
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 

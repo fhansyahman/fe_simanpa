@@ -20,16 +20,13 @@ export function ActionMenu({ user, onClose, onViewDetail, onEdit, onPasswordRese
         const menuRect = menuRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
         
-        // Cek apakah ada cukup ruang di bawah
         const spaceBelow = viewportHeight - buttonRect.bottom;
         const spaceAbove = buttonRect.top;
         
         let topPosition;
         if (spaceBelow < menuRect.height && spaceAbove > menuRect.height) {
-          // Tampilkan di atas jika ruang di bawah tidak cukup
           topPosition = buttonRect.top - menuRect.height - 8;
         } else {
-          // Tampilkan di bawah seperti biasa
           topPosition = buttonRect.bottom + 8;
         }
         

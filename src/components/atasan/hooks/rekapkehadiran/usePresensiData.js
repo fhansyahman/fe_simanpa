@@ -14,7 +14,6 @@ export function usePresensiData() {
       setError(null);
       
       const response = await adminPresensiAPI.getAll({});
-      // Pastikan data adalah array
       const data = response.data?.data || [];
       setPresensiData(Array.isArray(data) ? data : []);
       

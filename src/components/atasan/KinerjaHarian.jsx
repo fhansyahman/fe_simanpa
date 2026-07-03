@@ -61,7 +61,6 @@ export default function LaporanKerjaPegawai() {
     handleShowDownloadPerorangan
   } = useDownloadHandler(kinerjaList, setShowDownloadModal, setSelectedDownloadType, setSelectedKinerjaForDownload);
 
-  // Format tanggal short (DD-MM-YYYY)
   const formatDateShort = (dateString) => {
     if (!dateString) return "-";
     try {
@@ -75,7 +74,6 @@ export default function LaporanKerjaPegawai() {
     }
   };
 
-  // Get image list dari laporan
   const getImageList = (kinerja) => {
     const images = [];
     if (kinerja?.sket_image) images.push(kinerja.sket_image);
@@ -85,20 +83,17 @@ export default function LaporanKerjaPegawai() {
     return images;
   };
 
-  // Open image viewer
   const openImageViewer = (imageUrl, images, index) => {
     setSelectedImage(imageUrl);
     setCurrentImageIndex(index);
     setCurrentImageList(images);
   };
 
-  // Close image viewer
   const closeImageViewer = () => {
     setSelectedImage(null);
     setCurrentImageList([]);
   };
 
-  // Navigasi gambar
   const nextImage = () => {
     if (currentImageList.length > 0) {
       const nextIndex = (currentImageIndex + 1) % currentImageList.length;
@@ -115,7 +110,6 @@ export default function LaporanKerjaPegawai() {
     }
   };
 
-  // Download image
   const downloadImage = async (imageUrl) => {
     try {
       const response = await fetch(imageUrl);
@@ -134,7 +128,6 @@ export default function LaporanKerjaPegawai() {
     }
   };
 
-  // Filter data berdasarkan search
   const filteredData = kinerjaList.filter(item => {
     if (searchQuery && !item.nama?.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
@@ -142,20 +135,17 @@ export default function LaporanKerjaPegawai() {
     return true;
   });
 
-  // Pagination
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Statistik
   const statsLaporan = {
     total: kinerjaList.length,
     sudah: kinerjaList.filter(i => i.kegiatan || i.panjang_kr || i.panjang_kn || i.created_at).length
   };
 
-  // Format tanggal
   const formatDate = (dateString) => {
     if (!dateString) return "5 Juni 2026";
     const date = new Date(dateString);
@@ -169,13 +159,11 @@ export default function LaporanKerjaPegawai() {
     return `${date.getHours().toString().padStart(2, '0')}.${date.getMinutes().toString().padStart(2, '0')} WIB`;
   };
 
-  // Handle date change from date picker
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
     setShowDatePicker(false);
   };
 
-  // Navigasi tanggal
   const goToPreviousDay = () => {
     const date = new Date(selectedDate);
     date.setDate(date.getDate() - 1);
@@ -188,12 +176,10 @@ export default function LaporanKerjaPegawai() {
     setSelectedDate(date.toISOString().split('T')[0]);
   };
 
-  // Navigasi kembali ke dashboard
   const goBackToDashboard = () => {
     router.push("/atasan/dashboard");
   };
 
-  // Status Badge Component
   const StatusBadge = ({ item }) => {
     const isSudahMelapor = item.kegiatan || item.panjang_kr || item.panjang_kn || item.created_at;
     return (
@@ -207,7 +193,6 @@ export default function LaporanKerjaPegawai() {
 
   return (
     <div className="min-h-screen bg-gray-100 pb-24" style={{ backgroundColor: "#f3f4f6" }}>
-      {/* HEADER - Fixed colors, no mode change */}
       <div className="bg-gradient-to-b from-blue-900 to-blue-800 pb-24">
         <div className="max-w-7xl mx-auto px-6 pt-6">
           <div className="flex items-center justify-between text-white">
@@ -230,9 +215,7 @@ export default function LaporanKerjaPegawai() {
 
           </div>
 
-          {/* FILTER */}
           <div className="grid md:grid-cols-3 gap-4 mt-8">
-            {/* Kolom kiri - Calendar dengan Date Picker */}
             <div className="relative">
               <div 
                 className="bg-white/10 border border-white/20 rounded-xl h-12 flex items-center px-4 text-white cursor-pointer hover:bg-white/20 transition"
@@ -244,7 +227,6 @@ export default function LaporanKerjaPegawai() {
                 <button onClick={goToNextDay} className="px-2 text-white hover:text-blue-200">▶</button>
               </div>
               
-              {/* Date Picker Dropdown */}
               {showDatePicker && (
                 <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 p-3 z-20">
                   <input
@@ -275,7 +257,6 @@ export default function LaporanKerjaPegawai() {
               )}
             </div>
 
-            {/* Kolom tengah - Search */}
             <div className="bg-white/10 border border-white/20 rounded-xl h-12 flex items-center px-4">
               <Search size={18} className="text-white mr-2" />
               <input
@@ -286,7 +267,6 @@ export default function LaporanKerjaPegawai() {
               />
             </div>
 
-            {/* Kolom kanan - Tombol Download Rekap */}
             <button 
               onClick={handleShowDownloadRekap}
               disabled={kinerjaList.length === 0}
@@ -300,7 +280,6 @@ export default function LaporanKerjaPegawai() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 -mt-16">
-        {/* STATS - Fixed colors */}
         <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
           <div className="grid grid-cols-2">
             <StatCard
@@ -318,9 +297,7 @@ export default function LaporanKerjaPegawai() {
           </div>
         </div>
 
-        {/* LIST LAPORAN */}
         <div className="bg-white rounded-3xl shadow-lg mt-6">
-          {/* LOADING STATE */}
           {loading && (
             <div className="text-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-3" />
@@ -328,7 +305,6 @@ export default function LaporanKerjaPegawai() {
             </div>
           )}
 
-          {/* LIST */}
           {!loading && (
             <div>
               {paginatedData.length === 0 ? (
@@ -382,7 +358,6 @@ export default function LaporanKerjaPegawai() {
             </div>
           )}
 
-          {/* PAGINATION */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between p-5 border-t border-gray-100">
               <button
@@ -406,11 +381,9 @@ export default function LaporanKerjaPegawai() {
           )}
         </div>
 
-        {/* DETAIL MODAL */}
         {selectedLaporan && (
           <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              {/* Header dengan tanggal di kiri dan status di kanan */}
               <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white">
                 <div>
                   <h2 className="font-bold text-lg text-gray-800">
@@ -432,7 +405,6 @@ export default function LaporanKerjaPegawai() {
               </div>
 
               <div className="p-6">
-                {/* Informasi Ruas Jalan */}
                 <div className="mb-6 bg-blue-50 rounded-xl p-4 border border-blue-100">
                   <div className="flex items-center gap-2 mb-2">
                     <MapPin className="w-4 h-4 text-blue-600" />
@@ -448,7 +420,6 @@ export default function LaporanKerjaPegawai() {
                   )}
                 </div>
 
-                {/* Ringkasan Pekerjaan */}
                 <div className="mb-6 bg-gray-50 rounded-xl p-4 border border-gray-100">
                   <div className="flex items-center gap-2 mb-3">
                     <Activity className="w-4 h-4 text-green-600" />
@@ -468,7 +439,6 @@ export default function LaporanKerjaPegawai() {
                   )}
                 </div>
 
-                {/* Informasi Pengukuran */}
                 {(selectedLaporan.panjang_kr > 0 || selectedLaporan.panjang_kn > 0) && (
                   <div className="mb-6 bg-amber-50 rounded-xl p-4 border border-amber-100">
                     <div className="flex items-center gap-2 mb-3">
@@ -492,7 +462,6 @@ export default function LaporanKerjaPegawai() {
                   </div>
                 )}
 
-                {/* Galeri Gambar */}
                 {(() => {
                   const images = getImageList(selectedLaporan);
                   if (images.length > 0) {
@@ -508,7 +477,6 @@ export default function LaporanKerjaPegawai() {
                               onClick={() => openImageViewer(img, images, idx)}
                               className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition group"
                             >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={img}
                                 alt={`Dokumentasi ${idx + 1}`}
@@ -526,7 +494,6 @@ export default function LaporanKerjaPegawai() {
                   return null;
                 })()}
 
-                {/* Tombol Download Laporan Perorangan */}
                 <div className="mt-6 pt-4 border-t border-gray-100">
                   <button 
                     onClick={() => {
@@ -544,7 +511,6 @@ export default function LaporanKerjaPegawai() {
         )}
       </div>
 
-      {/* IMAGE VIEWER MODAL */}
       {selectedImage && (
         <div className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center">
           <div className="relative max-w-5xl w-full mx-4">
@@ -555,7 +521,6 @@ export default function LaporanKerjaPegawai() {
               <X size={28} className="text-white" />
             </button>
 
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={selectedImage}
               alt="Preview"
@@ -596,7 +561,6 @@ export default function LaporanKerjaPegawai() {
         </div>
       )}
 
-      {/* DOWNLOAD MODAL */}
       <DownloadModal
         isOpen={showDownloadModal}
         onClose={() => setShowDownloadModal(false)}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react'; // TIDAK PERLU useEffect
+import { useState } from 'react'; 
 import { useRouter } from "next/navigation";
 
 export function useSidebar() {

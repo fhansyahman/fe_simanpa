@@ -64,12 +64,10 @@ export default function PersetujuanIzinPage() {
     goToToday
   } = useIzinData();
 
-  // Navigasi kembali ke dashboard
   const goBackToDashboard = () => {
     router.push("/atasan/dashboard");
   };
 
-  // FUNGSI DOWNLOAD DOKUMEN
   const handleDownloadDokumen = async (filename, jenis) => {
     if (!filename) {
       Swal.fire({
@@ -109,7 +107,6 @@ export default function PersetujuanIzinPage() {
     }
   };
 
-  // Filter data berdasarkan tab
   const getFilteredByTab = () => {
     if (activeTab === "pending") {
       return izinList.filter(item => item.status === "Pending");
@@ -125,20 +122,17 @@ export default function PersetujuanIzinPage() {
 
   const filteredByTab = getFilteredByTab();
 
-  // Pagination
   const totalPages = Math.ceil(filteredByTab.length / itemsPerPage);
   const paginatedData = filteredByTab.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Handle date change
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
     setShowDatePicker(false);
   };
 
-  // Format tanggal
   const formatDate = (dateString) => {
     if (!dateString) return "5 Juni 2026";
     const date = new Date(dateString);
@@ -184,7 +178,6 @@ export default function PersetujuanIzinPage() {
     );
   };
 
-  // Get lampiran dari izin
   const getLampiran = (izin) => {
     const attachments = [];
     
@@ -210,7 +203,6 @@ export default function PersetujuanIzinPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
-      {/* HEADER */}
       <div className="bg-gradient-to-b from-blue-900 to-blue-800 pb-20">
         <div className="max-w-7xl mx-auto px-4 pt-6">
           <div className="flex items-center justify-between text-white">
@@ -232,7 +224,6 @@ export default function PersetujuanIzinPage() {
             </div>
           </div>
 
-          {/* FILTER */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
             <div className="relative">
               <div 
@@ -295,7 +286,6 @@ export default function PersetujuanIzinPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 -mt-12">
-        {/* STATISTIC */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="grid grid-cols-2 md:grid-cols-4">
             <StatCard
@@ -325,7 +315,6 @@ export default function PersetujuanIzinPage() {
           </div>
         </div>
 
-        {/* TAB */}
         <div className="bg-white rounded-2xl shadow-lg mt-4 overflow-hidden">
           <div className="flex border-b border-gray-200 overflow-x-auto">
             <TabButton
@@ -345,7 +334,6 @@ export default function PersetujuanIzinPage() {
             />
           </div>
 
-          {/* LOADING STATE */}
           {loading && (
             <div className="text-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-3" />
@@ -353,7 +341,6 @@ export default function PersetujuanIzinPage() {
             </div>
           )}
 
-          {/* LIST */}
           {!loading && (
             <div>
               {paginatedData.length === 0 ? (
@@ -372,7 +359,6 @@ export default function PersetujuanIzinPage() {
                     }}
                   >
                     <div className="flex flex-col md:flex-row md:items-center gap-4">
-                      {/* USER */}
                       <div className="flex gap-3 flex-1">
                         <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                           <User className="text-blue-600" size={20} />
@@ -390,7 +376,6 @@ export default function PersetujuanIzinPage() {
                         </div>
                       </div>
 
-                      {/* TANGGAL & ALASAN */}
                       <div className="flex-1">
                         <p className="font-semibold text-sm text-gray-800">
                           {item.tanggal_mulai && item.tanggal_selesai ? 
@@ -406,7 +391,6 @@ export default function PersetujuanIzinPage() {
                         </p>
                       </div>
 
-                      {/* DIAJUKAN & STATUS */}
                       <div className="flex items-center justify-between md:block">
                         <div>
                           <p className="text-xs text-gray-500 hidden md:block">Diajukan</p>
@@ -419,7 +403,6 @@ export default function PersetujuanIzinPage() {
                         </div>
                       </div>
 
-                      {/* ACTION Buttons */}
                       {item.status === "Pending" && (
                         <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                           <button 
@@ -461,7 +444,6 @@ export default function PersetujuanIzinPage() {
             </div>
           )}
 
-          {/* PAGINATION */}
           {totalPages > 1 && (
             <div className="p-4 flex flex-wrap gap-3 justify-between items-center border-t border-gray-100">
               <div className="flex items-center gap-2">
@@ -517,11 +499,9 @@ export default function PersetujuanIzinPage() {
         </div>
       </div>
 
-      {/* DETAIL MODAL */}
       {showDetailModal && selectedIzin && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Header Modal - dengan status badge di kanan */}
             <div className="flex justify-between items-center p-5 border-b border-gray-100 sticky top-0 bg-white">
               <div>
                 <h2 className="font-bold text-lg text-gray-800">
@@ -532,14 +512,11 @@ export default function PersetujuanIzinPage() {
                 </p>
               </div>
               
-              {/* Container untuk Status Badge dan Tombol Close */}
               <div className="flex items-center gap-3">
-                {/* Status Badge di sini */}
                 <div>
                   {getStatusBadge(selectedIzin.status)}
                 </div>
                 
-                {/* Tombol Close */}
                 <button 
                   onClick={() => {
                     setShowDetailModal(false);
@@ -553,7 +530,6 @@ export default function PersetujuanIzinPage() {
             </div>
 
             <div className="p-5 space-y-4">
-              {/* Informasi Pegawai */}
               <div className="bg-gray-50 rounded-xl p-4">
                 <h3 className="font-semibold text-gray-800 mb-3 text-sm flex items-center gap-2">
                   <User size={14} /> Informasi Pegawai
@@ -578,7 +554,6 @@ export default function PersetujuanIzinPage() {
                 </div>
               </div>
 
-              {/* Detail Izin */}
               <div className="bg-gray-50 rounded-xl p-4">
                 <h3 className="font-semibold text-gray-800 mb-3 text-sm flex items-center gap-2">
                   <Calendar size={14} /> Detail Izin
@@ -610,7 +585,6 @@ export default function PersetujuanIzinPage() {
                 </div>
               </div>
 
-              {/* Lampiran */}
               {hasLampiran(selectedIzin) && (
                 <div className="bg-gray-50 rounded-xl p-4">
                   <h3 className="font-semibold text-gray-800 mb-3 text-sm flex items-center gap-2">
@@ -652,7 +626,6 @@ export default function PersetujuanIzinPage() {
                 </div>
               )}
 
-              {/* Tombol Aksi untuk Pending */}
               {selectedIzin.status === "Pending" && (
                 <div className="flex gap-3 pt-4 border-t border-gray-100">
                   <button 
@@ -680,7 +653,6 @@ export default function PersetujuanIzinPage() {
         </div>
       )}
 
-      {/* IMAGE VIEWER MODAL */}
       {selectedImage && (
         <div className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4">
           <div className="relative max-w-4xl w-full">
@@ -727,7 +699,6 @@ function TabButton({ active, label, onClick }) {
   );
 }
 
-// Komponen NavItem yang diperbaiki
 function NavItem({ icon, label, href, active, badge }) {
   return (
     <Link

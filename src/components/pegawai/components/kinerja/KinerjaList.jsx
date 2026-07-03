@@ -39,7 +39,6 @@ export function KinerjaList({
         </button>
       </div>
 
-      {/* Filter Section */}
       <FilterSection
         selectedMonth={selectedMonth}
         selectedYear={selectedYear}

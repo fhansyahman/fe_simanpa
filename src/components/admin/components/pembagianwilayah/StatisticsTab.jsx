@@ -10,7 +10,6 @@ export function StatisticsTab({ wilayahList, usersList, wilayahStats }) {
 
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <SummaryCard
           label="Total Wilayah"
@@ -38,7 +37,6 @@ export function StatisticsTab({ wilayahList, usersList, wilayahStats }) {
         />
       </div>
 
-      {/* Detail Statistik */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         <div className="p-6 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">Distribusi User per Wilayah</h3>
@@ -71,7 +69,6 @@ export function StatisticsTab({ wilayahList, usersList, wilayahStats }) {
                 </tr>
               ))}
               
-              {/* Row untuk user tanpa wilayah */}
               <tr className="hover:bg-gray-50">
                 <td className="py-4 px-6 font-medium text-red-600">Tanpa Wilayah</td>
                 <td className="py-4 px-6 text-red-600 font-semibold">{wilayahStats.no_wilayah_total || 0}</td>

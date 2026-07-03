@@ -1,4 +1,3 @@
-// app/admin/rekapterja/components/TableRow.jsx
 "use client";
 
 import { memo } from "react";

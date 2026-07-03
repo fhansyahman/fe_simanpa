@@ -16,7 +16,6 @@ import { useHariData } from "./hooks/harikerja/useHariData";
 
 export default function ManajemenHariPage() {
   const {
-    // States
     activeTab,
     setActiveTab,
     tahunFilter,
@@ -39,7 +38,6 @@ export default function ManajemenHariPage() {
     totalPages,
     getCurrentData,
     
-    // Modal states
     showHariKerjaModal,
     setShowHariKerjaModal,
     showHariLiburModal,
@@ -49,7 +47,6 @@ export default function ManajemenHariPage() {
     isEdit,
     selectedHari,
     
-    // Form states
     hariKerjaForm,
     setHariKerjaForm,
     hariLiburForm,
@@ -57,7 +54,6 @@ export default function ManajemenHariPage() {
     bulkForm,
     setBulkForm,
     
-    // Handlers
     handleEditHariKerja,
     handleEditHariLibur,
     handleDeleteHariKerja,
@@ -72,7 +68,6 @@ export default function ManajemenHariPage() {
     getHariStatus,
     formatDate,
     
-    // Options
     tahunOptions,
   } = useHariData();
 
@@ -87,7 +82,6 @@ export default function ManajemenHariPage() {
         setSidebarOpen={setSidebarOpen} 
       />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         <Header 
           sidebarOpen={sidebarOpen}
@@ -95,7 +89,6 @@ export default function ManajemenHariPage() {
           title="Manajemen Hari Kerja & Libur"
         />
 
-        {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
           <StatsCards 
             totalHariKerja={hariKerjaList.filter(h => h.is_hari_kerja === 1).length}
@@ -113,7 +106,6 @@ export default function ManajemenHariPage() {
               }}
             />
 
-            {/* Tab Content */}
             {activeTab === 'kalender' && (
               <KalenderTab
                 kalender={kalender}
@@ -181,7 +173,6 @@ export default function ManajemenHariPage() {
         </main>
       </div>
 
-      {/* Modals */}
       <HariKerjaModal
         isOpen={showHariKerjaModal}
         onClose={() => {

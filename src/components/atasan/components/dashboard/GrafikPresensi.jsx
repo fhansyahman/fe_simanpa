@@ -61,7 +61,7 @@ export function GrafikPresensi({
       },
       y: {
         beginAtZero: true,
-        max: 100, // Maksimal 100%
+        max: 100, 
         grid: { color: 'rgba(229, 231, 235, 0.5)', drawBorder: false },
         title: {
           display: true,

@@ -144,7 +144,6 @@ export function GrafikPerorangan({
     }
   };
 
-  // PERUBAHAN: Bar chart hanya menampilkan total panjang vs target
   const processBarChartData = () => {
     const { labels, totalPanjang, target } = chartData;
     
@@ -185,7 +184,6 @@ export function GrafikPerorangan({
     };
   };
 
-  // PERUBAHAN: Line chart hanya menampilkan pencapaian total
   const processLineChartData = () => {
     const { labels, pencapaian } = chartData;
     

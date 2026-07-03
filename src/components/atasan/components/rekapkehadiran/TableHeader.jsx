@@ -15,7 +15,6 @@ export function TableHeader({ daysInMonth }) {
         </th>
       </tr>
       <tr className="bg-gray-50">
-        {/* Header tanggal (1-31) */}
         {Array.from({length: daysInMonth}, (_, i) => (
           <th key={i} className="border border-gray-300 p-1 font-medium text-xs w-6 md:w-8">
             {i + 1}

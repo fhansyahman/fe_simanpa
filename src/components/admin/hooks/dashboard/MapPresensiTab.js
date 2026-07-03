@@ -23,7 +23,7 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
   const [showRoutes, setShowRoutes] = useState(true);
   const [routeOpacity, setRouteOpacity] = useState(0.7);
   const [showDistanceLabels, setShowDistanceLabels] = useState(true);
-  const [mapKey, setMapKey] = useState(0); // Untuk force re-render map
+  const [mapKey, setMapKey] = useState(0); 
   const [stats, setStats] = useState({
     total: 0,
     denganLokasiMasuk: 0,
@@ -43,7 +43,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
   const routeLayerRef = useRef(null);
   const distanceLabelLayerRef = useRef(null);
 
-  // Load Leaflet hanya di client side
   useEffect(() => {
     const loadLeaflet = async () => {
       try {
@@ -52,7 +51,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
         
         leafletRef.current = L;
         
-        // Fix untuk icon Leaflet
         delete L.Icon.Default.prototype._getIconUrl;
         L.Icon.Default.mergeOptions({
           iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -69,14 +67,12 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
     loadLeaflet();
   }, []);
 
-  // Update filter tanggal ketika selectedDate berubah dari props
   useEffect(() => {
     if (selectedDate) {
       setFilterTanggal(selectedDate);
     }
   }, [selectedDate]);
 
-  // Handle resize untuk map
   useEffect(() => {
     const handleResize = () => {
       if (mapInstanceRef.current) {
@@ -95,7 +91,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
     };
   }, []);
 
-  // Fungsi untuk mengambil data presensi
   const fetchPresensiData = useCallback(async (tanggal) => {
     try {
       setLoading(true);
@@ -233,27 +228,22 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
     }
   }, []);
 
-  // Fetch data ketika tanggal berubah
   useEffect(() => {
     if (filterTanggal) {
       fetchPresensiData(filterTanggal);
     }
   }, [filterTanggal, fetchPresensiData]);
 
-  // Inisialisasi map - PERBAIKAN UTAMA
   useEffect(() => {
     if (!isMapReady || !mapRef.current || mapInstanceRef.current || !leafletRef.current) return;
 
     const L = leafletRef.current;
     
-    // Pastikan container map memiliki ukuran yang valid
     const container = mapRef.current;
     if (!container) return;
     
-    // Bersihkan container terlebih dahulu
     container.innerHTML = '';
     
-    // Inisialisasi map dengan ukuran yang benar
     const map = L.map(container, {
       center: [-7.919021, 113.820801],
       zoom: 11,
@@ -262,7 +252,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
       attributionControl: true
     });
     
-    // Tambahkan tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       maxZoom: 19
@@ -273,7 +262,6 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
     routeLayerRef.current = L.layerGroup().addTo(map);
     distanceLabelLayerRef.current = L.layerGroup().addTo(map);
     
-    // Force map untuk memperbarui ukurannya
     setTimeout(() => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.invalidateSize();
@@ -288,10 +276,8 @@ export function MapPresensiTab({ selectedDate, onDateChange }) {
     };
   }, [isMapReady, mapKey]);
 
-  // Fungsi untuk menghitung jarak antara dua titik (Haversine formula)
-  // Fungsi untuk menghitung jarak antara dua titik (Haversine formula) - DALAM METER
 const calculateDistance = (lat1, lng1, lat2, lng2) => {
-  const R = 6371000; // Ubah dari 6371 km menjadi 6371000 meter
+  const R = 6371000; 
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lng2 - lng1) * Math.PI / 180;
   const a = 
@@ -299,10 +285,10 @@ const calculateDistance = (lat1, lng1, lat2, lng2) => {
     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
     Math.sin(dLon/2) * Math.sin(dLon/2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c; // Sekarang mengembalikan jarak dalam meter
+  return R * c; 
 };
 
-  // Fungsi untuk membuat garis route antara dua titik
+
   const createRouteLine = (startLat, startLng, endLat, endLng, color, distance) => {
     const L = leafletRef.current;
     if (!L) return null;
@@ -321,7 +307,6 @@ const calculateDistance = (lat1, lng1, lat2, lng2) => {
     return routeLine;
   };
 
-  // Fungsi untuk membuat label jarak di tengah garis
   const createDistanceLabel = (startLat, startLng, endLat, endLng, distance, nama) => {
     const L = leafletRef.current;
     if (!L) return null;
@@ -373,17 +358,14 @@ const calculateDistance = (lat1, lng1, lat2, lng2) => {
     return Object.values(grouped).filter(item => item.masuk && item.pulang);
   };
 
-  // Update markers dan routes ketika data berubah
   useEffect(() => {
     const map = mapInstanceRef.current;
     const L = leafletRef.current;
     
     if (!map || !markerLayerRef.current || !L || !isMapReady) return;
 
-    // Hapus semua marker lama
     markerLayerRef.current.clearLayers();
     
-    // Hapus routes dan labels lama
     if (routeLayerRef.current) {
       routeLayerRef.current.clearLayers();
     }
@@ -391,7 +373,6 @@ const calculateDistance = (lat1, lng1, lat2, lng2) => {
       distanceLabelLayerRef.current.clearLayers();
     }
 
-    // Filter data berdasarkan search dan wilayah untuk peta
     const filteredData = presensiList.filter(item => {
       const matchesSearch = searchTerm === '' || 
         item.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -650,7 +631,6 @@ const calculateDistance = (lat1, lng1, lat2, lng2) => {
   const handleRefresh = () => {
     if (filterTanggal) {
       fetchPresensiData(filterTanggal);
-      // Refresh map
       setMapKey(prev => prev + 1);
     }
   };

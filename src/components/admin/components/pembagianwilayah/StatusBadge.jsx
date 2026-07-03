@@ -11,8 +11,6 @@ export function StatusBadge({ status, type = 'default' }) {
 
   const getStyle = () => {
     if (type !== 'default') return styles[type];
-    
-    // Auto-detect berdasarkan nilai status
     if (status?.toLowerCase().includes('aktif')) return styles.success;
     if (status?.toLowerCase().includes('nonaktif')) return styles.danger;
     if (status?.toLowerCase().includes('proses')) return styles.warning;

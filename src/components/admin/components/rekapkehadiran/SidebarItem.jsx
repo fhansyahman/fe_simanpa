@@ -12,7 +12,6 @@ export function SidebarItem({ title, icon, submenu, active, href, currentPath })
     (href && currentPath === href) ||
     isSubmenuActive;
 
-  // Buka submenu otomatis jika ada child yang aktif
   if (submenu && isSubmenuActive && !open) {
     if (open !== true) setOpen(true);
   }

@@ -46,7 +46,6 @@ export function FileUploader({
         </button>
       </div>
 
-      {/* Uploaded Files List */}
       {uploadedFiles.length > 0 && (
         <div className="mt-4">
           <h4 className="text-sm font-medium text-gray-700 mb-2">

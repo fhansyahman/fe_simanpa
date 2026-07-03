@@ -1,4 +1,3 @@
-// hooks/rekapterja/useExport.js
 "use client";
 
 import { useCallback } from "react";
@@ -6,11 +5,9 @@ import { useCallback } from "react";
 export function useExport() {
   const exportToExcel = useCallback(async (rekapData, statistik, bulan, tahun, wilayah, getBulanLabel, type = 'presensi') => {
     try {
-      // Generate CSV content
       let csv = [];
       
       if (type === 'kinerja') {
-        // Header untuk laporan kerja
         csv.push(`"REKAP LAPORAN KERJA BULANAN"`);
         csv.push(`"Periode: ${getBulanLabel(bulan)} ${tahun}"`);
         csv.push(`"Wilayah: ${wilayah || 'Semua Wilayah'}"`);
@@ -40,11 +37,8 @@ export function useExport() {
           ].join(','));
         });
       } else {
-        // Header untuk presensi (existing code)
-        // ... keep existing presensi export code
       }
       
-      // Download file
       const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
@@ -75,9 +69,9 @@ export function useExport() {
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
             table { border-collapse: collapse; width: 100%; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            th { background-color: #f2f2f2; }
-            h2 { color: #333; }
+            th, td { border: 1px solid
+            th { background-color:
+            h2 { color:
           </style>
         </head>
         <body>

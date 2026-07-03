@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from 'react'; // TIDAK PERLU useEffect KARENA TIDAK ADA AUTO-LOAD
+import { useState, useCallback } from 'react'; 
 import { wilayahAPI } from '@/lib/api';
 
 export function useStatsData() {

@@ -75,7 +75,6 @@ export const useFormPenugasan = (onSuccess) => {
       is_active: penugasan.is_active !== undefined ? penugasan.is_active : true
     });
 
-    // Set checkbox states berdasarkan data yang ada
     const newWilayahState = {};
     (penugasan.selected_wilayah || []).forEach(id => {
       newWilayahState[id] = true;
@@ -91,7 +90,6 @@ export const useFormPenugasan = (onSuccess) => {
       individu: newIndividuState
     });
     
-    // Set select all states
     if (penugasan.selected_wilayah && penugasan.selected_wilayah.length > 0) {
       setSelectAllWilayah(true);
     }

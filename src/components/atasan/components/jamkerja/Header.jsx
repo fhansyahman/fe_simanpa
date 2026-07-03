@@ -8,7 +8,6 @@ export function Header({ sidebarOpen, setSidebarOpen, title }) {
 
   const handleLogout = async () => {
     try {
-      // 1. Panggil endpoint logout di backend (optional)
       await fetch("/api/logout", { 
         method: "POST",
         headers: {
@@ -16,30 +15,23 @@ export function Header({ sidebarOpen, setSidebarOpen, title }) {
         }
       });
       
-      // 2. Hapus semua data dari localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      localStorage.removeItem('refreshToken'); // jika ada
-      localStorage.clear(); // atau clear semua jika ingin
+      localStorage.removeItem('refreshToken');
+      localStorage.clear();
       
-      // 3. Hapus cookie
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       
-      // 4. Hapus sessionStorage jika ada
       sessionStorage.clear();
       
-      // 5. Reset state axios atau http client jika perlu
-      // (jika menggunakan axios instance dengan default headers)
       
       console.log("✅ Logout berhasil, semua data client telah dihapus");
       
-      // 6. Redirect ke login
       router.push("/login");
       
     } catch (error) {
       console.error("❌ Error saat logout:", error);
-      // Tetap hapus data client meskipun request ke backend gagal
       localStorage.clear();
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       router.push("/login");
@@ -61,7 +53,6 @@ export function Header({ sidebarOpen, setSidebarOpen, title }) {
           </div>
         </div>
 
-        {/* Header Actions */}
         <div className="flex items-center gap-3">
           <div className="text-right">
             {/* <p className="text-sm font-medium text-white truncate">Administrator</p>

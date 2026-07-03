@@ -13,7 +13,7 @@ export function useMonitoringData() {
     dataIzin: [],
     dataSakit: [],
     dataCuti: [],
-    dataSudahLapor: [], // Tambahkan untuk yang sudah lapor
+    dataSudahLapor: [],
     semuaPegawai: [],
     presensiData: [],
     kinerjaData: [],
@@ -37,7 +37,6 @@ export function useMonitoringData() {
     lastUpdated: null
   });
 
-  // ==================== FETCH DATA - LANGSUNG DARI BACKEND ====================
 
   const fetchMonitoringData = useCallback(async (tanggal) => {
   try {
@@ -49,12 +48,11 @@ export function useMonitoringData() {
     
     console.log('🔄 Fetching monitoring data untuk tanggal:', tanggal);
     
-    // 🔥 AMBIL SEMUA DATA TERMASUK DATA IZIN
     const [kehadiranRes, belumAbsenRes, kinerjaRes, izinRes] = await Promise.all([
       dashboardService.getKehadiranByDate(tanggal),
       dashboardService.getPegawaiBelumAbsenByDate(tanggal),
       dashboardService.getKinerjaByDate(tanggal),
-      dashboardService.getPegawaiIzinByDate(tanggal)  // TAMBAHKAN
+      dashboardService.getPegawaiIzinByDate(tanggal)
     ]);
     
     const kehadiranData = kehadiranRes?.data?.data || kehadiranRes?.data || {};
@@ -82,7 +80,6 @@ export function useMonitoringData() {
     const sudahLapor = kinerjaData.sudah_lapor || 0;
     const sudahLaporData = kinerjaData.top_performers || [];
     
-    // 🔥 HITUNG STATISTIK
     const finalStats = {
       totalPegawai: totalPegawai,
       hadir: kehadiranData.hadir || 0,
@@ -110,12 +107,12 @@ export function useMonitoringData() {
       semuaPegawai: [],
       presensiData: [],
       kinerjaData: kinerjaData,
-      dataBelumAbsen: belumAbsenData,      // SEKARANG HANYA YANG BENAR-BENAR BELUM ABSEN
+      dataBelumAbsen: belumAbsenData,
       dataBelumLapor: belumLaporOriginal,
       dataSudahLapor: sudahLaporData,
-      dataIzin: izinData.izin || [],        // TAMBAHKAN
-      dataSakit: izinData.sakit || [],      // TAMBAHKAN
-      dataCuti: izinData.cuti || [],        // TAMBAHKAN
+      dataIzin: izinData.izin || [],
+      dataSakit: izinData.sakit || [],
+      dataCuti: izinData.cuti || [],
       stats: finalStats,
       lastUpdated: new Date().toISOString(),
       loading: { data: false, stats: false }
@@ -137,7 +134,6 @@ export function useMonitoringData() {
   } catch (err) {
     console.error('❌ Error fetching monitoring data:', err);
     
-    // FALLBACK - coba gunakan endpoint legacy jika ada error
     try {
       console.log('🔄 Mencoba endpoint legacy...');
       const [kehadiranRes, belumAbsenRes, kinerjaRes] = await Promise.all([
@@ -224,7 +220,6 @@ export function useMonitoringData() {
   }
 }, []);
 
-  // ==================== HANDLE DATE CHANGE ====================
 
   const handleDateChange = useCallback((e) => {
     const newDate = e.target.value;
@@ -232,13 +227,11 @@ export function useMonitoringData() {
     fetchMonitoringData(newDate);
   }, [fetchMonitoringData]);
 
-  // ==================== REFRESH DATA ====================
 
   const refreshData = useCallback(() => {
     fetchMonitoringData(state.selectedDate);
   }, [fetchMonitoringData, state.selectedDate]);
 
-  // ==================== EXPORT DATA ====================
 
   const handleExportData = useCallback(() => {
     const { 
@@ -255,7 +248,6 @@ export function useMonitoringData() {
       ...dataSudahLapor.map(item => ({...item, status: 'Sudah Lapor Kinerja', keterangan: `Total kinerja: ${item.total_kinerja}`}))
     ];
     
-    // Tambahkan ringkasan dari stats
     const ringkasan = [
       { nama: '=== RINGKASAN HARIAN ===', status: '', keterangan: '' },
       { nama: `Tanggal: ${formatDate(selectedDate)}`, status: '', keterangan: '' },
@@ -320,7 +312,6 @@ export function useMonitoringData() {
     });
   }, [state]);
 
-  // ==================== GET STATISTIK DETAIL ====================
 
   const getStatistikDetail = useCallback(() => {
     const { stats } = state;
@@ -338,31 +329,26 @@ export function useMonitoringData() {
     ];
   }, [state.stats]);
 
-  // ==================== GET PERSENTASE ====================
 
   const getPersentase = useCallback((value) => {
     const total = state.stats.totalPegawai;
     if (!total || total === 0) return '0%';
-    // Batasi maksimal 100%
     const persentase = Math.min(100, Math.round((value / total) * 100));
     return `${persentase}%`;
   }, [state.stats.totalPegawai]);
 
-  // ==================== EFFECT UNTUK INITIAL FETCH ====================
 
   useEffect(() => {
     fetchMonitoringData(state.selectedDate);
     
-    // Auto refresh every 5 minutes
     const interval = setInterval(() => {
       console.log('🔄 Auto refresh monitoring data');
       fetchMonitoringData(state.selectedDate);
     }, 5 * 60 * 1000);
     
     return () => clearInterval(interval);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); 
 
-  // ==================== RETURN ====================
 
   return {
     selectedDate: state.selectedDate,

@@ -83,7 +83,6 @@ export function TabelWilayahKinerja({ statistikWilayah }) {
               
               return (
                 <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                  {/* Wilayah */}
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
                       <MapPin size={14} className="text-blue-600" />
@@ -91,10 +90,8 @@ export function TabelWilayahKinerja({ statistikWilayah }) {
                     </div>
                   </td>
 
-                  {/* Total Pegawai */}
                   <td className="py-3 px-4 text-right font-medium">{wilayah.totalPegawai}</td>
 
-                  {/* Sudah Lapor */}
                   <td className="py-3 px-4 text-right">
                     <span className="font-medium text-gray-900">{wilayah.totalSudahLapor}</span>
                     <span className="text-xs text-gray-500 ml-1">
@@ -102,12 +99,10 @@ export function TabelWilayahKinerja({ statistikWilayah }) {
                     </span>
                   </td>
 
-                  {/* Total Panjang Realisasi */}
                   <td className="py-3 px-4 text-right">
                     <span className="font-semibold text-green-600">{formatNumber(totalPanjang)}</span>
                   </td>
 
-                  {/* Target */}
                   <td className="py-3 px-4 text-right">
                     <span className="font-semibold text-red-600">{formatNumber(target)}</span>
                     <div className="text-xs mt-1">
@@ -117,7 +112,6 @@ export function TabelWilayahKinerja({ statistikWilayah }) {
                     </div>
                   </td>
 
-                  {/* Pencapaian */}
                   <td className="py-3 px-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <span className={getStatusColor(persenPencapaian)}>
@@ -132,7 +126,6 @@ export function TabelWilayahKinerja({ statistikWilayah }) {
                     </div>
                   </td>
 
-                  {/* Status */}
                   <td className="py-3 px-4 text-center">
                     <div className="flex items-center justify-center gap-1">
                       {getStatusIcon(persenPencapaian)}
@@ -149,7 +142,6 @@ export function TabelWilayahKinerja({ statistikWilayah }) {
             })}
           </tbody>
 
-          {/* Footer dengan total */}
           <tfoot className="bg-gray-50 border-t border-gray-200 text-black">
             <tr>
               <td className="py-3 px-4 font-bold" colSpan="3">TOTAL KESELURUHAN</td>
@@ -173,7 +165,6 @@ export function TabelWilayahKinerja({ statistikWilayah }) {
         </table>
       </div>
 
-      {/* Legend */}
       <div className="p-4 bg-gray-50 border-t border-gray-200 flex flex-wrap gap-4 text-xs">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-green-500"></div>

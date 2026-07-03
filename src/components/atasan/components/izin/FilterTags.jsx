@@ -11,7 +11,7 @@ export function FilterTags({
   onClearJenis,
   onClearTanggal,
   onClearWilayah,
-  user // Tambahkan prop user untuk mengetahui default wilayah
+  user 
 }) {
   const today = new Date().toISOString().split('T')[0];
   const defaultWilayah = user?.wilayah_penugasan || '';
@@ -26,7 +26,6 @@ export function FilterTags({
     <div className="flex flex-wrap gap-2 mb-6">
       <span className="text-xs text-gray-500 self-center">Filter aktif:</span>
       
-      {/* Filter Wilayah - hanya tampil jika berbeda dari default user */}
       {wilayahFilter && wilayahFilter !== defaultWilayah && (
         <FilterTag
           icon={<MapPin size={10} />}
@@ -72,7 +71,6 @@ function FilterTag({ icon, label, onClear }) {
   );
 }
 
-// Helper function untuk format tanggal
 function formatDate(dateString) {
   if (!dateString) return '';
   try {

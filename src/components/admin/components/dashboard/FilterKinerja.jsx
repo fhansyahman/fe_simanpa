@@ -48,7 +48,6 @@ export function FilterKinerja({
           </div>
           
           <div className="flex flex-wrap gap-3">
-            {/* Select Bulan */}
             <div className="relative">
               <select
                 value={selectedMonth}
@@ -64,7 +63,6 @@ export function FilterKinerja({
               </select>
             </div>
             
-            {/* Select Tahun */}
             <div className="relative">
               <select
                 value={selectedYear}
@@ -78,7 +76,6 @@ export function FilterKinerja({
               </select>
             </div>
             
-            {/* Tombol Refresh */}
             <button
               onClick={handleRefresh}
               disabled={loading}
@@ -90,7 +87,6 @@ export function FilterKinerja({
           </div>
         </div>
 
-        {/* Info Periode yang Dipilih */}
         <div className="mt-3 text-sm text-gray-600 bg-blue-50 p-2 rounded-lg">
           <span className="font-medium">Periode aktif:</span> {getNamaBulan(selectedMonth)} {selectedYear}
         </div>

@@ -18,7 +18,6 @@ export function DetailModal({ isOpen, onClose, user, onEdit }) {
         
         <div className="p-6">
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Left Column - Profile */}
             <div className="lg:w-1/3">
               <div className="bg-gray-50 rounded-xl p-6 text-center border border-gray-200">
                 <div className="relative inline-block mb-4">
@@ -36,7 +35,6 @@ export function DetailModal({ isOpen, onClose, user, onEdit }) {
               </div>
             </div>
 
-            {/* Right Column - Details */}
             <div className="lg:w-2/3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InfoSection title="Informasi Pribadi" icon={<User size={18} />} color="blue">

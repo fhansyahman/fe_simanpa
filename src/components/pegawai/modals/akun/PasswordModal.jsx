@@ -105,21 +105,17 @@ export function PasswordModal({ isOpen, onClose }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <div className="sticky top-0 bg-white px-6 py-4 border-b border-slate-200">
           <h2 className="text-lg font-semibold text-slate-800">Ganti Password</h2>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmitPassword} className="p-6 space-y-4">
-          {/* Error Message */}
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
               {error}
             </div>
           )}
 
-          {/* Current Password */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Password Saat Ini
@@ -145,7 +141,6 @@ export function PasswordModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* New Password */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Password Baru
@@ -172,7 +167,6 @@ export function PasswordModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Confirm Password */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Konfirmasi Password Baru
@@ -198,7 +192,6 @@ export function PasswordModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Password Requirements */}
           <div className="bg-slate-50 p-3 rounded-lg text-xs text-slate-600">
             <p className="font-medium mb-1">Syarat Password:</p>
             <ul className="list-disc list-inside space-y-1">
@@ -214,7 +207,6 @@ export function PasswordModal({ isOpen, onClose }) {
             </ul>
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 pt-4">
             <button
               type="button"

@@ -373,7 +373,6 @@ export default function CameraCapture({ onCapture, onClose, isOpen }) {
     <div className="fixed inset-0 bg-black/90 flex justify-center items-center z-50">
       <div className="bg-white w-48 max-w-full rounded-xl overflow-hidden">
         
-        {/* HEADER */}
         <div className="flex justify-between p-3 border-b">
           <h3 className="font-semibold">Ambil Foto</h3>
           <button onClick={onClose}><X /></button>
@@ -382,7 +381,6 @@ export default function CameraCapture({ onCapture, onClose, isOpen }) {
         <div className="p-3">
           {!photo ? (
             <>
-                            {/* Camera Controls */}
               <div className="flex justify-between items-center mb-3">
                 <div className="text-sm text-slate-600">
                   Kamera: <span className="font-medium">
@@ -421,9 +419,6 @@ export default function CameraCapture({ onCapture, onClose, isOpen }) {
           )}
         </div>
 
-
-
-        {/* FOOTER */}
         <div className="flex p-3 border-t">
           <button
             onClick={onClose}

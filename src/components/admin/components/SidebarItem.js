@@ -9,13 +9,10 @@ const SidebarItem = ({ title, icon, submenu, path, onClick, isActive: propIsActi
   const pathname = usePathname();
   const router = useRouter();
   
-  // Cek apakah menu aktif
   const isActive = propIsActive !== undefined ? propIsActive : (path && pathname === path);
   
-  // Cek apakah salah satu submenu aktif
   const isSubmenuActive = submenu?.some(item => item.path && pathname === item.path);
   
-  // Jika ada submenu yang aktif, buka dropdown
   if (isSubmenuActive && !open) {
     setTimeout(() => setOpen(true), 0);
   }
@@ -41,7 +38,6 @@ const SidebarItem = ({ title, icon, submenu, path, onClick, isActive: propIsActi
 
   return (
     <li className="text-gray-800">
-      {/* Main Menu Item */}
       {path && !submenu ? (
         <Link 
           href={path} 
@@ -87,7 +83,6 @@ const SidebarItem = ({ title, icon, submenu, path, onClick, isActive: propIsActi
         </div>
       )}
 
-      {/* Submenu Items */}
       {submenu && open && (
         <ul className="ml-6 md:ml-8 mt-1 border-l border-gray-300 space-y-1">
           {submenu.map((item, index) => {
@@ -130,7 +125,6 @@ const SidebarItem = ({ title, icon, submenu, path, onClick, isActive: propIsActi
   );
 };
 
-// Data menu sidebar yang sudah diurutkan ulang dan ditambah Rekap Kerja
 export const sidebarMenuData = [
   { 
     title: "Dashboard", 
@@ -260,7 +254,6 @@ export const sidebarMenuData = [
   },
 ];
 
-// Menu untuk user biasa (pegawai)
 export const userMenuData = [
   { 
     title: "Dashboard", 
@@ -294,7 +287,6 @@ export const userMenuData = [
   },
 ];
 
-// Menu untuk atasan
 export const atasanMenuData = [
   { 
     title: "Dashboard", 

@@ -15,15 +15,14 @@ const nextConfig = {
     ];
   },
   
-  // ✅ TAMBAHKAN: Increase body size limit untuk proxy
   api: {
     bodyParser: {
-      sizeLimit: '10mb', // Naikkan jadi 10MB atau sesuai kebutuhan
+      sizeLimit: '10mb', 
     },
     responseLimit: '10mb',
   },
   
-  // ✅ TAMBAHKAN: Configure server runtime options
+
   serverRuntimeConfig: {
     maxBodySize: '10mb',
   },

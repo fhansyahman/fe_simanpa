@@ -17,11 +17,9 @@ export default function GrafikKinerjaPage() {
 
   return (
     <div className="min-h-screen bg-slate-100 pb-16">
-      {/* HEADER - Optimized untuk HP */}
       <div className="bg-gradient-to-b from-blue-900 to-blue-700 pt-4 pb-6">
         <div className="px-4">
           <div className="flex items-center text-white mb-2">
-            {/* Bagian kiri: Arrow + Judul */}
             <div className="flex items-center gap-x-2 flex-1">
               <Link href="/atasan/dashboard" className="hover:opacity-80 transition-opacity">
                 <ArrowLeft size={24} />
@@ -31,8 +29,6 @@ export default function GrafikKinerjaPage() {
                 <p className="text-blue-100 text-xs mt-1">Pencapaian kinerja pekerja lapangan non-ASN</p>
               </div>
             </div>
-
-            {/* Tombol aksi di kanan - Dropdown Export */}
             <div className="relative">
 
               
@@ -43,7 +39,6 @@ export default function GrafikKinerjaPage() {
       </div>
 
       <div className="px-4 -mt-4">
-        {/* KPI MOBILITY DASHBOARD */}
         <KpiMobilityDashboard />
       </div>
 

@@ -8,7 +8,6 @@ export function useFilters(onFilterChange) {
   const [jenisFilter, setJenisFilter] = useState("");
   const [tanggalFilter, setTanggalFilter] = useState("");
 
-  // Set default tanggal ke hari ini
   useEffect(() => {
     if (!tanggalFilter) {
       const today = new Date().toISOString().split('T')[0];
@@ -16,7 +15,6 @@ export function useFilters(onFilterChange) {
     }
   }, [tanggalFilter]);
 
-  // Load data saat filter berubah
   useEffect(() => {
     const filters = {};
     if (statusFilter) filters.status = statusFilter;

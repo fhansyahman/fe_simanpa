@@ -21,10 +21,7 @@ export function SketJalanCanvas({
         <span>Denah Pekerjaan Jalan</span>
       </label>
 
-      {/* Perubahan: Layout vertical di mobile, horizontal di desktop */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
-        
-        {/* Container canvas dengan scroll horizontal untuk mobile */}
         <div className="w-full lg:flex-1 overflow-x-auto overflow-y-hidden">
           <div className="border border-slate-300 rounded bg-white p-2 md:p-3 shadow-sm inline-block min-w-full lg:min-w-0">
             <canvas
@@ -40,10 +37,8 @@ export function SketJalanCanvas({
           </div>
         </div>
         
-        {/* Panel kontrol - di bawah canvas di mobile, di samping di desktop */}
         <div className="w-full lg:w-auto lg:min-w-[200px] lg:max-w-[220px]">
           <div className="flex flex-row lg:flex-col gap-3">
-            {/* Picker warna */}
             <div className="flex-1 lg:w-full">
               <label className="text-sm font-medium text-slate-600 mb-2 block">
                 Pilih Warna
@@ -56,7 +51,6 @@ export function SketJalanCanvas({
               />
             </div>
             
-            {/* Tombol aksi - horizontal di mobile */}
             <div className="flex flex-row gap-2 lg:flex-col">
               <button
                 type="button"
@@ -77,7 +71,6 @@ export function SketJalanCanvas({
             </div>
           </div>
           
-          {/* Informasi area terpilih */}
           {selectedArea !== null && (
             <div className="mt-3 text-sm text-slate-600 p-3 bg-white rounded border border-slate-200">
               <p className="font-medium text-xs md:text-sm">Area Terpilih:</p>

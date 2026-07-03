@@ -108,7 +108,7 @@ export default function UsersManagement() {
         onViewDetail={handleViewDetail}
         onEdit={handleShowEditModal}
         onResetPassword={handleShowPasswordModal}
-        onDelete={handleDelete}  // Pastikan ini mengirim handleDelete
+        onDelete={handleDelete}
       />
 
       {totalPages > 1 && (
@@ -122,7 +122,6 @@ export default function UsersManagement() {
         />
       )}
 
-      {/* Modals */}
       <UserModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -152,7 +151,6 @@ export default function UsersManagement() {
         onSubmit={handlePasswordChange}
       />
 
-      {/* Confirmation Dialog untuk Delete */}
       <ConfirmationDialog
         isOpen={showConfirmDialog}
         onClose={() => {

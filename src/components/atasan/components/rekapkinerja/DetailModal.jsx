@@ -36,7 +36,6 @@ export function DetailModal({ isOpen, onClose, data, formatDate, onDownload }) {
         </InfoCard>
       </div>
 
-      {/* Dokumentasi Foto */}
       {(data.foto_0 || data.foto_50 || data.foto_100 || data.sket_image) && (
         <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-5 mb-6">
           <h4 className="font-semibold text-gray-900 mb-4">Dokumentasi Foto</h4>

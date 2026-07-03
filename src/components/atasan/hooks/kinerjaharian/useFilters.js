@@ -9,7 +9,6 @@ export function useFilters(onFilterChange) {
   const [wilayahFilter, setWilayahFilter] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
 
-  // Set default tanggal ke hari ini
   useEffect(() => {
     if (!selectedDate) {
       const today = new Date().toISOString().split('T')[0];
@@ -17,7 +16,6 @@ export function useFilters(onFilterChange) {
     }
   }, []);
 
-  // Set filter wilayah berdasarkan user yang login
   useEffect(() => {
     if (user?.wilayah_penugasan) {
       console.log('Setting wilayah filter dari user:', user.wilayah_penugasan);
@@ -25,13 +23,10 @@ export function useFilters(onFilterChange) {
     }
   }, [user]);
 
-  // Trigger filter change when filters update
   useEffect(() => {
-    // Pastikan user sudah ada dan selectedDate sudah diset
     if (user && selectedDate) {
       const params = {};
       
-      // Prioritaskan wilayahFilter, fallback ke user.wilayah_penugasan
       if (wilayahFilter) {
         params.wilayah = wilayahFilter;
       } else if (user?.wilayah_penugasan) {
@@ -47,7 +42,6 @@ export function useFilters(onFilterChange) {
   }, [wilayahFilter, selectedDate, search, user, onFilterChange]);
 
   const handleResetFilters = useCallback(() => {
-    // Reset ke wilayah user
     if (user?.wilayah_penugasan) {
       setWilayahFilter(user.wilayah_penugasan);
     } else {
@@ -62,7 +56,6 @@ export function useFilters(onFilterChange) {
   const handleRefresh = useCallback(() => {
     const params = {};
     
-    // Prioritaskan wilayahFilter, fallback ke user.wilayah_penugasan
     if (wilayahFilter) {
       params.wilayah = wilayahFilter;
     } else if (user?.wilayah_penugasan) {
@@ -79,23 +72,19 @@ export function useFilters(onFilterChange) {
   const hasActiveFilters = useMemo(() => {
     let hasFilters = false;
     
-    // Cek apakah wilayah berbeda dari default user
     const defaultWilayah = user?.wilayah_penugasan || '';
     if (wilayahFilter && wilayahFilter !== defaultWilayah) {
       hasFilters = true;
     }
     
-    // Cek apakah search terisi
     if (search) hasFilters = true;
     
-    // Cek apakah tanggal bukan hari ini
     const today = new Date().toISOString().split('T')[0];
     if (selectedDate && selectedDate !== today) hasFilters = true;
     
     return hasFilters;
   }, [wilayahFilter, search, selectedDate, user]);
 
-  // Fungsi navigasi tanggal
   const goToPreviousDay = useCallback(() => {
     const date = new Date(selectedDate);
     date.setDate(date.getDate() - 1);

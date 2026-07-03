@@ -10,7 +10,6 @@ import {
   ChartBarIcon
 } from '@heroicons/react/24/outline';
 
-// ... import dan menuItems sebelumnya
 
 const menuItems = [
   {
@@ -57,7 +56,6 @@ const menuItems = [
   }
 ];
 
-// ... sisanya tetap
 export default function Sidebar() {
   const { user, hasRole } = useAuth();
   const pathname = usePathname();

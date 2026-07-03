@@ -5,7 +5,6 @@ import { BarChart3, MapPin, Building, Users2, UserCheck2, UserX } from "lucide-r
 export function StatistikTab({ statistik, usersList }) {
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <SummaryCard
           title="Total Pegawai"
@@ -31,7 +30,6 @@ export function StatistikTab({ statistik, usersList }) {
         />
       </div>
 
-      {/* Detail Statistik */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DistribusiChart statistik={statistik} />
         <WilayahRekap statistik={statistik} />

@@ -26,7 +26,6 @@ import { ExportButtonGroup } from "./components/dashboards/ExportButton";
 
 export default function GrafikKinerjaPage() {
   const {
-    // State
     activeChart,
     filterType,
     sortOrder,
@@ -38,7 +37,6 @@ export default function GrafikKinerjaPage() {
     statistikWilayah,
     loading,
     
-    // Functions
     setActiveChart,
     setFilterType,
     setSortOrder,
@@ -67,7 +65,6 @@ export default function GrafikKinerjaPage() {
 
   return (
     <div className="min-h-screen bg-slate-100">
-      {/* HEADER */}
       <div className="bg-gradient-to-b from-blue-900 to-blue-700 pb-24">
         <div className="max-w-7xl mx-auto px-6 pt-6">
           <div className="flex justify-between items-center text-white">
@@ -91,14 +88,10 @@ export default function GrafikKinerjaPage() {
               />
             </div>
           </div>
-
-          {/* FILTER & NAVIGASI - Style seperti halaman rekap */}
-
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 -mt-16">
-        {/* Filter Kinerja */}
         <div className="mb-6">
           <FilterKinerja
             selectedMonth={selectedMonth}
@@ -110,7 +103,6 @@ export default function GrafikKinerjaPage() {
           />
         </div>
 
-        {/* Statistik Cards */}
         <StatistikKinerja 
           statistik={statistikBulanan} 
           chartData={chartData}
@@ -118,7 +110,6 @@ export default function GrafikKinerjaPage() {
           selectedYear={selectedYear}
         />
 
-        {/* Analisis Performa */}
         {chartData && (
           <AnalisisKinerja
             statistik={statistikBulanan}
@@ -126,7 +117,6 @@ export default function GrafikKinerjaPage() {
           />
         )}
 
-        {/* TAB NAVIGATION */}
         <div className="bg-white rounded-3xl shadow-lg mt-6">
           <div className="flex overflow-x-auto border-b">
             {[
@@ -149,7 +139,6 @@ export default function GrafikKinerjaPage() {
             ))}
           </div>
 
-          {/* TAB 1: GRAFIK KINERJA */}
           {activeTab === "kinerja" && (
             <div className="p-6">
               <GrafikPerorangan
@@ -170,7 +159,6 @@ export default function GrafikKinerjaPage() {
             </div>
           )}
 
-          {/* TAB 2: PERBANDINGAN WILAYAH */}
           {activeTab === "wilayah" && (
             <div className="p-6">
               <GrafikWilayahKinerja
@@ -190,7 +178,6 @@ export default function GrafikKinerjaPage() {
             </div>
           )}
 
-          {/* TAB 3: DETAIL PEGAWAI */}
           {activeTab === "detail" && (
             <div className="p-6">
               {chartData?.labels && chartData.labels.length > 0 ? (
@@ -206,7 +193,6 @@ export default function GrafikKinerjaPage() {
             </div>
           )}
 
-          {/* FOOTER CARDS - Style seperti halaman rekap */}
           <div className="grid md:grid-cols-4 gap-6 p-6 pt-0">
             <MiniCard
               title="Rata-rata KR Harian"
@@ -236,7 +222,6 @@ export default function GrafikKinerjaPage() {
         </div>
       </div>
 
-      {/* BOTTOM NAV */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t">
         <div className="max-w-7xl mx-auto grid grid-cols-5">
           <NavItem icon={<Home />} label="Beranda" />
@@ -250,7 +235,6 @@ export default function GrafikKinerjaPage() {
   );
 }
 
-// ==================== KOMPONEN PENDUKUNG (Style seperti halaman rekap) ====================
 
 function FilterBox({ children, icon }) {
   return (

@@ -3,7 +3,6 @@
 import { Download, FileSpreadsheet, FileText, Database, Users, MapPin, ClipboardList, Image } from "lucide-react";
 import { useState } from "react";
 
-// Export Button untuk single button
 export function ExportButton({ 
   onClick, 
   disabled, 
@@ -22,7 +21,6 @@ export function ExportButton({
   );
 }
 
-// Export Button untuk export gambar
 export function ExportImageButton({ onClick, disabled, label = 'Export Grafik' }) {
   return (
     <button
@@ -36,7 +34,6 @@ export function ExportImageButton({ onClick, disabled, label = 'Export Grafik' }
   );
 }
 
-// Export Button Group untuk multiple options
 export function ExportButtonGroup({ 
   onExportPegawai,
   onExportWilayah,
@@ -55,13 +52,11 @@ export function ExportButtonGroup({
     { label: 'Export Semua Data', icon: Database, onClick: onExportAll, color: 'orange' },
   ];
 
-  // Untuk presensi
   const presensiOptions = [
     { label: 'Export Grafik', icon: Image, onClick: onExportChart, color: 'blue' },
     { label: 'Export Data', icon: FileSpreadsheet, onClick: onExportData, color: 'green' },
   ];
 
-  // Pilih options berdasarkan props yang tersedia
   const options = onExportPegawai ? exportOptions : presensiOptions;
 
   return (

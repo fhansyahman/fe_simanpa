@@ -1,11 +1,8 @@
-// Wilayah
 export const WILAYAH_LIST = ['Cermee', 'Botolinggo', 'Prajekan', 'Klabang', 'Ijen'];
 
-// Target
 export const TARGET_KR_HARIAN = 50;
 export const TARGET_KN_HARIAN = 50;
 
-// Bulan
 export const BULAN_OPTIONS = [
   { value: '01', label: 'Januari' },
   { value: '02', label: 'Februari' },
@@ -25,13 +22,11 @@ export const getNamaBulan = (month) => {
   return BULAN_OPTIONS[parseInt(month) - 1]?.label || '';
 };
 
-// Tahun
 export const getTahunOptions = () => {
   const currentYear = new Date().getFullYear();
   return Array.from({ length: 6 }, (_, i) => (currentYear - 2 + i).toString());
 };
 
-// Sidebar Menu
 export const SIDEBAR_MENU = [
   { title: "Dashboard", icon: "Home", href: "/admin/dashboard" },
   {

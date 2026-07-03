@@ -19,7 +19,6 @@ export default function ManajemenStatusPegawai() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Custom hooks
   const {
     usersList,
     sortedUsers,
@@ -84,10 +83,7 @@ export default function ManajemenStatusPegawai() {
 
   return (
     <MainLayout>
-      {/* System Overview Cards */}
       <StatCards statistik={statistik} />
-
-      {/* Action Bar */}
       <FilterBar
         search={search}
         onSearchChange={setSearch}
@@ -98,7 +94,6 @@ export default function ManajemenStatusPegawai() {
         hasActiveFilters={!!(aktivasiFilter || search)}
       />
 
-      {/* Tab Navigation */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm mb-6">
         <div className="flex border-b border-gray-200">
           <TabButton
@@ -153,7 +148,6 @@ export default function ManajemenStatusPegawai() {
         </div>
       </div>
 
-      {/* Modal Detail Pegawai */}
       {showDetailModal && selectedUser && (
         <DetailModal
           user={selectedUser}

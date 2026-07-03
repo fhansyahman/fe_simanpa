@@ -1,4 +1,3 @@
-// app/pegawai/kinerja/page.jsx (or wherever your main page is)
 "use client";
 
 import { useState } from "react";
@@ -11,7 +10,7 @@ import { KinerjaList } from "./components/kinerja/KinerjaList";
 import { ImageModal } from "./components/kinerja/ImageModal";
 import { LoadingState } from "./components/kinerja/LoadingState";
 import { useKinerjaData } from "./hooks/kinerja/useKinerjaData";
-import { useLocation } from "./hooks/useLocation"; // Import location hook
+import { useLocation } from "./hooks/useLocation";
 
 export default function KinerjaPage() {
   const router = useRouter();
@@ -20,7 +19,6 @@ export default function KinerjaPage() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageModalOpen, setImageModalOpen] = useState(false);
 
-  // Get location for camera capture
   const { coords, alamat, status, ambilLokasi, isLoading: locationLoading } = useLocation();
 
   const {
@@ -43,7 +41,6 @@ export default function KinerjaPage() {
     formatDate
   } = useKinerjaData();
 
-  // Get location when camera is about to be used
   const handleOpenCamera = async () => {
     await ambilLokasi();
   };
@@ -77,7 +74,6 @@ export default function KinerjaPage() {
     setTab("tampilan");
   };
 
-  // Prepare location data for camera
   const locationData = {
     coords: coords,
     alamat: alamat,
@@ -92,7 +88,6 @@ export default function KinerjaPage() {
     <div className="min-h-screen bg-slate-50">
       <Header onBack={() => router.push('/pegawai/dashboard')} />
 
-      {/* Error Display */}
       {error && (
         <div className="max-w-6xl mx-auto px-6 mt-4">
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -111,7 +106,6 @@ export default function KinerjaPage() {
         </div>
       )}
 
-      {/* Stats Cards */}
       <div className="max-w-6xl mx-auto px-6 mt-4 mb-6">
         <StatsCard 
           stats={stats}
@@ -120,7 +114,6 @@ export default function KinerjaPage() {
         />
       </div>
 
-      {/* Main Content */}
       <div className="w-full max-w-6xl mx-auto text-black px-6 pb-6">
         <TabNavigation tab={tab} onTabChange={setTab} />
 
@@ -159,7 +152,6 @@ export default function KinerjaPage() {
         )}
       </div>
 
-      {/* Image Modal */}
       <ImageModal
         isOpen={imageModalOpen}
         imageUrl={selectedImage}

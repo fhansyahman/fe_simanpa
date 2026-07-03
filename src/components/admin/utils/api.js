@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { adminPresensiAPI, adminKinerjaAPI, usersAPI, hariAPI } from '@/lib/api';
 
-// Dashboard API functions
 export const dashboardAPI = {
   getPegawaiBelumAbsen: (tanggal) => 
     adminPresensiAPI.getPegawaiBelumAbsen?.(tanggal) || 
@@ -20,7 +19,6 @@ export const dashboardAPI = {
     axios.get(`/api/admin/dashboard/kehadiran-hari-ini?tanggal=${tanggal}`),
 };
 
-// Presensi API
 export const fetchPresensiData = async (params = {}) => {
   try {
     const response = await adminPresensiAPI.getAll(params);
@@ -31,7 +29,6 @@ export const fetchPresensiData = async (params = {}) => {
   }
 };
 
-// Pegawai API
 export const fetchPegawaiData = async () => {
   try {
     const response = await usersAPI.getAll();
@@ -47,7 +44,6 @@ export const fetchPegawaiData = async () => {
   }
 };
 
-// Hari Kerja API
 export const fetchHariKerjaData = async (bulan, tahun) => {
   try {
     const params = { bulan, tahun };
@@ -59,7 +55,6 @@ export const fetchHariKerjaData = async (bulan, tahun) => {
   }
 };
 
-// Kinerja API
 export const fetchKinerjaData = async (params) => {
   try {
     const response = await adminKinerjaAPI.getAll(params);

@@ -57,7 +57,6 @@ export function IzinCard({ izin, userInfo, onEdit, onRefresh }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow duration-200">
       <div className="space-y-4">
-        {/* Header */}
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center space-x-2">
@@ -77,7 +76,6 @@ export function IzinCard({ izin, userInfo, onEdit, onRefresh }) {
           </div>
         </div>
 
-        {/* Periode */}
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="text-sm text-gray-600">
             <div className="font-medium mb-3">Periode Izin:</div>
@@ -101,17 +99,13 @@ export function IzinCard({ izin, userInfo, onEdit, onRefresh }) {
           </div>
         </div>
 
-        {/* Keterangan */}
         <div>
           <div className="text-sm font-medium text-gray-600 mb-2">Keterangan:</div>
           <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3">
             {izin.keterangan || "Tidak ada keterangan yang dicantumkan"}
           </p>
         </div>
-        
-   
-        
-        {/* Footer */}
+             
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
           <div className="flex items-center space-x-2 mb-2 sm:mb-0">
             <Calendar className="w-4 h-4" />
@@ -122,7 +116,6 @@ export function IzinCard({ izin, userInfo, onEdit, onRefresh }) {
           </div>
         </div>
         
-        {/* Actions */}
         {izin.status === "Pending" && (
           <div className="flex space-x-3 pt-4 border-t border-gray-100">
             <button

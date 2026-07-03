@@ -1,4 +1,3 @@
-// app/admin/rekapterja/components/DistributionChart.jsx
 "use client";
 
 import { PieChart, TrendingUp, Ruler } from "lucide-react";

@@ -1,4 +1,3 @@
-// sidebar-menu.js (atau di dalam hook useSidebar)
 
 import { act, useState } from "react";
 import { 
@@ -37,11 +36,11 @@ export function useSidebar(setActiveTab) {
       ],
     },
     {
-      title: "Manajemen Hasil Kerja",  // ← NAMA GRUP BARU (ganti dari "Kinerja")
-      icon: <Award size={20} />,  // Icon award/target lebih menggambarkan hasil
+      title: "Manajemen Hasil Kerja",
+      icon: <Award size={20} />,
       submenu: [
         { name: "Riwayat Hasil Kerja", icon: <Clipboard size={14} />, href: "/admin/datakinerja" },
-        { name: "Rekap Hasil Kerja", icon: <Briefcase size={14} />, href: "/admin/rekapkerja" }, // ← route /admin/rekapkerja
+        { name: "Rekap Hasil Kerja", icon: <Briefcase size={14} />, href: "/admin/rekapkerja" },
         { name: "Laporan Hasil Kerja", icon: <ClipboardX size={14} />, href: "/admin/laporankinerja" },
 
       ],

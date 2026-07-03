@@ -26,7 +26,6 @@ export default function LaporanGenerator({ data, isLoading = false }) {
     page2: true
   });
 
-  // Format tanggal
   const formatDate = (dateString) => {
     if (!dateString) return '06 Januari 2025';
     try {
@@ -54,7 +53,6 @@ export default function LaporanGenerator({ data, isLoading = false }) {
     }
   };
 
-  // Generate konten untuk Halaman 1 (Foto Lokasi) - TANPA TTD
   const generatePage1Content = () => {
     if (!data) return '';
 
@@ -323,7 +321,6 @@ export default function LaporanGenerator({ data, isLoading = false }) {
     `;
   };
 
-  // Generate konten untuk Halaman 2 (Hasil Kerja Lapangan) - LANDSCAPE dengan SKET BESAR
   const generatePage2Content = () => {
     if (!data) return '';
 
@@ -647,7 +644,6 @@ export default function LaporanGenerator({ data, isLoading = false }) {
 
   const renderToCanvas = async (htmlContent, pageNumber, isLandscape = false) => {
     try {
-      // Create temporary container
       const container = document.createElement('div');
       container.style.position = 'fixed';
       container.style.left = '-9999px';
@@ -659,17 +655,14 @@ export default function LaporanGenerator({ data, isLoading = false }) {
       container.style.color = '#000000';
       container.innerHTML = htmlContent;
       
-      // Append to body temporarily
       document.body.appendChild(container);
 
-      // Force black color for all elements
       const allElements = container.querySelectorAll('*');
       allElements.forEach(el => {
         el.style.color = '#000000';
         el.style.setProperty('color', '#000000', 'important');
       });
 
-      // Generate canvas dengan konfigurasi untuk teks hitam
       const canvas = await html2canvas(container, {
         scale: 2,
         useCORS: true,
@@ -678,33 +671,27 @@ export default function LaporanGenerator({ data, isLoading = false }) {
         logging: false,
         imageTimeout: 30000,
         onclone: (clonedDoc) => {
-          // Force semua teks menjadi hitam
           const allClonedElements = clonedDoc.querySelectorAll('*');
           allClonedElements.forEach(el => {
             const computedStyle = window.getComputedStyle(el);
             const color = computedStyle.color;
             
-            // Jika warna bukan hitam, ubah ke hitam
             if (color !== 'rgb(0, 0, 0)' && !el.tagName.includes('IMG')) {
               el.style.color = '#000000';
               el.style.setProperty('color', '#000000', 'important');
             }
             
-            // Force text color untuk semua element
             el.style.webkitPrintColorAdjust = 'exact';
             el.style.printColorAdjust = 'exact';
             el.style.colorAdjust = 'exact';
           });
 
-          // Handle images dengan lebih baik
           const images = clonedDoc.querySelectorAll('img');
           images.forEach(img => {
-            // Pastikan gambar dimuat dengan CORS
             img.crossOrigin = 'anonymous';
             
             if (!img.complete) {
               img.onload = () => {
-                // Gambar berhasil dimuat
               };
               img.onerror = () => {
                 img.style.display = 'none';
@@ -725,7 +712,6 @@ export default function LaporanGenerator({ data, isLoading = false }) {
         }
       });
 
-      // Remove container
       document.body.removeChild(container);
 
       return canvas;
@@ -834,7 +820,6 @@ export default function LaporanGenerator({ data, isLoading = false }) {
       setDownloadProgress(0);
       setError(null);
       
-      // Execute PDF downloads in sequence
       for (let i = 0; i < downloads.length; i++) {
         await downloads[i];
         setDownloadProgress(((i + 1) / downloads.length) * 100);

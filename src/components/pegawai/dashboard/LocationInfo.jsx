@@ -248,7 +248,6 @@ export default function LocationInfo({
 
   return (
     <div className="space-y-3">
-      {/* Status message */}
       <div className={`p-3 rounded-lg border ${getStatusColor()}`}>
         <div className="flex items-center gap-2">
           {getStatusIcon()}
@@ -261,7 +260,6 @@ export default function LocationInfo({
         )}
       </div>
 
-      {/* Tampilkan peta jika ada penugasan dengan radius */}
       {penugasan && penugasan.latitude && (
         <LocationRadiusChecker
           penugasan={penugasan}
@@ -271,7 +269,6 @@ export default function LocationInfo({
         />
       )}
 
-      {/* Alamat detail */}
       {alamat.length > 0 && !penugasan?.latitude && (
         <div className="bg-gray-50 rounded-lg p-3 space-y-1">
           <p className="text-xs font-medium text-gray-700 mb-2">Detail Lokasi:</p>
@@ -281,7 +278,6 @@ export default function LocationInfo({
         </div>
       )}
 
-      {/* Tombol refresh lokasi */}
       <button
         onClick={ambilLokasi}
         disabled={isLoading}

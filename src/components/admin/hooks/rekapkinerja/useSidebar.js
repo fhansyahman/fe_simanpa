@@ -10,7 +10,6 @@ export function useSidebar() {
     router.push("/login");
   };
 
-  // Sidebar menu items
   const sidebarMenu = [
     { 
       title: "Dashboard", 

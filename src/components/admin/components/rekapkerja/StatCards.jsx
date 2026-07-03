@@ -1,4 +1,3 @@
-// app/admin/rekapterja/components/StatCards.jsx
 "use client";
 
 import { Users, FileText, Ruler, TrendingUp, Activity, Target } from "lucide-react";

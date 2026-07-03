@@ -23,7 +23,6 @@ export default function DashboardGrafikPage() {
   const kinerja = useKinerjaData();
   const monitoring = useMonitoringData();
 
-  // Load all data on tab change
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -35,10 +34,8 @@ export default function DashboardGrafikPage() {
         } else if (activeTab === 'monitoring') {
           await monitoring.fetchMonitoringData(monitoring.selectedDate);
         } else if (activeTab === 'map') {
-          // Untuk map, data akan di-load oleh komponen MapPresensiTab sendiri
           setLoading(false);
         } else if (activeTab === 'kpi') {
-          // KPI Mobility tidak perlu loading manual
           setLoading(false);
         }
       } catch (error) {

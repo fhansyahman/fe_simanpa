@@ -165,7 +165,6 @@ export const PenugasanFormModal = ({
                   required
                 />
               </div>
-              {/* TAMBAHKAN INPUT BATAS AKHIR PULANG */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Batas Akhir Pulang <span className="text-red-500">*</span>

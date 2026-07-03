@@ -1,4 +1,3 @@
-// app/admin/rekapterja/components/DistributionChart.jsx
 "use client";
 
 import { PieChart, TrendingUp, Ruler } from "lucide-react";
@@ -28,7 +27,6 @@ export function DistributionChart({ statistik }) {
         </div>
       </div>
       
-      {/* Donut Chart Visualization */}
       <div className="flex flex-col items-center">
         <div className="relative w-48 h-48 mb-4">
           <svg viewBox="0 0 100 100" className="transform -rotate-90">
@@ -74,7 +72,6 @@ export function DistributionChart({ statistik }) {
           </div>
         </div>
         
-        {/* Legend */}
         <div className="flex gap-6 mt-2">
           {distributionData.map((item, idx) => (
             <div key={idx} className="flex items-center gap-2">
@@ -85,7 +82,6 @@ export function DistributionChart({ statistik }) {
           ))}
         </div>
         
-        {/* Detail Bars */}
         <div className="w-full mt-6 space-y-3">
           {distributionData.map((item, idx) => (
             <div key={idx}>

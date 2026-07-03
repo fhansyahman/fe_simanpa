@@ -36,7 +36,6 @@ function calculateStatistics(data) {
   const totalLaporan = data.length;
   const uniquePegawai = [...new Set(data.map(item => item.user_id || item.nama))].length;
   
-  // Pastikan nilai panjang adalah number
   const totalPanjangKR = data.reduce((sum, item) => {
     const kr = parseFloat(item.panjang_kr) || 0;
     return sum + kr;
@@ -50,7 +49,6 @@ function calculateStatistics(data) {
   const avgPanjangKR = totalLaporan > 0 ? totalPanjangKR / totalLaporan : 0;
   const avgPanjangKN = totalLaporan > 0 ? totalPanjangKN / totalLaporan : 0;
   
-  // Statistik per wilayah
   const wilayahStatistik = {};
   data.forEach(item => {
     const wilayah = item.wilayah_penugasan || 'Unknown';
@@ -72,7 +70,6 @@ function calculateStatistics(data) {
     wilayahStatistik[wilayah].total_pegawai.add(item.user_id || item.nama);
   });
   
-  // Hitung rata-rata per wilayah
   Object.keys(wilayahStatistik).forEach(wilayah => {
     const w = wilayahStatistik[wilayah];
     w.avg_kr = w.total > 0 ? w.total_kr / w.total : 0;

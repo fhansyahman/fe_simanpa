@@ -1,4 +1,3 @@
-// hooks/penugasan/usePenugasan.js
 import { useState, useCallback } from 'react';
 import { penugasanAPI } from '@/lib/api';
 import Swal from "sweetalert2";
@@ -23,7 +22,6 @@ export const usePenugasan = () => {
     }
   }, [jenisFilter]);
 
-  // Tambahkan fungsi baru untuk mengambil detail penugasan
   const getPenugasanDetail = useCallback(async (id) => {
     try {
       setLoading(true);

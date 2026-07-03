@@ -453,7 +453,6 @@ export function useKinerjaData() {
     }));
   }, []);
 
-  // ==================== EXPORT FUNCTIONS ====================
 
   const exportToCSV = useCallback((data, filename) => {
     if (!data || data.length === 0) {
@@ -516,8 +515,8 @@ export function useKinerjaData() {
             <meta charset="UTF-8">
             <title>${filename}</title>
             <style>
-              th { background-color: #4CAF50; color: white; padding: 8px; }
-              td { padding: 6px; border: 1px solid #ddd; }
+              th { background-color:
+              td { padding: 6px; border: 1px solid
               table { border-collapse: collapse; width: 100%; }
             </style>
           </head>
@@ -793,7 +792,6 @@ export function useKinerjaData() {
     }
   }, [state.chartData, state.statistikWilayah, state.selectedMonth, state.selectedYear, exportToCSV, exportToExcel]);
 
-  // ==================== EXPORT CHART IMAGE FUNCTIONS ====================
 
   const handleExportKinerjaChart = useCallback(() => {
     if (!state.chartData) {
@@ -939,7 +937,6 @@ export function useKinerjaData() {
   }, []);
 
   return {
-    // State
     activeChart: state.activeChart,
     filterType: state.filterType,
     sortOrder: state.sortOrder,
@@ -955,7 +952,6 @@ export function useKinerjaData() {
     statistikBulanan: state.statistikBulanan,
     statistikWilayah: state.statistikWilayah,
     
-    // Functions
     setActiveChart: (chart) => setState(prev => ({ ...prev, activeChart: chart })),
     setFilterType: (type) => setState(prev => ({ ...prev, filterType: type })),
     setSortOrder: (order) => setState(prev => ({ ...prev, sortOrder: order })),
@@ -963,7 +959,6 @@ export function useKinerjaData() {
     handleYearChange,
     processKinerjaChartData,
     
-    // Export Functions
     exportKinerjaPegawai,
     exportStatistikWilayah,
     exportRekapKinerja,
@@ -971,7 +966,6 @@ export function useKinerjaData() {
     exportToCSV,
     exportToExcel,
     
-    // Export Chart Image Functions
     handleExportKinerjaChart,
     handleExportWilayahChart,
   };

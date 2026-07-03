@@ -1,4 +1,3 @@
-// app/admin/rekapterja/components/TableFooter.jsx
 "use client";
 
 export function TableFooter({ daysInMonth, statistik }) {

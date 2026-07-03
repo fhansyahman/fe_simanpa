@@ -13,7 +13,7 @@ export function useSidebar(setActiveTab) {
       title: "Dashboard", 
       icon: <Home size={20} />,
       href: "/atasan/dashboard",
-      active: true, // Ditambahkan properti active: true
+      active: true, 
     },
     {
       title: "Kehadiran",

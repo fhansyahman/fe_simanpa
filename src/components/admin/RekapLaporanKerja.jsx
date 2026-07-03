@@ -1,4 +1,3 @@
-// app/admin/rekapterja/page.jsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -35,7 +34,6 @@ export default function RekapLaporanKerjaPage() {
     getBulanLabel
   } = useFilters();
 
-  // Load data ketika bulan/tahun berubah
   const { 
     kinerjaData,
     rekapData,
@@ -62,21 +60,18 @@ export default function RekapLaporanKerjaPage() {
     handlePrint
   } = useExport();
 
-  // Load data ketika bulan/tahun filter berubah
   useEffect(() => {
     if (bulanFilter && tahunFilter) {
       loadData(bulanFilter, tahunFilter);
     }
   }, [bulanFilter, tahunFilter, loadData]);
 
-  // Process rekap ketika data atau filter berubah
   useEffect(() => {
     if (rekapData && bulanFilter && tahunFilter) {
       processRekap();
     }
   }, [bulanFilter, tahunFilter, wilayahFilter, search, rekapData, processRekap]);
 
-  // Set initial filter to current month
   useEffect(() => {
     const now = new Date();
     const currentBulan = (now.getMonth() + 1).toString();

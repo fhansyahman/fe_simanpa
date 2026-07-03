@@ -1,4 +1,3 @@
-// app/admin/rekapterja/components/StatistikTab.jsx
 "use client";
 
 import { CalendarDays, ArrowLeft, TrendingUp, Ruler, Users, FileText, Download, BarChart3, PieChart } from "lucide-react";
@@ -21,7 +20,6 @@ export function StatistikTab({
 
   return (
     <div className="space-y-6">
-      {/* Informasi Periode - Modern Card */}
       <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border border-indigo-100 rounded-2xl p-5 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -61,10 +59,7 @@ export function StatistikTab({
         </div>
       </div>
 
-      {/* Summary Cards */}
       <StatCards statistik={statistikBulanan} />
-
-      {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DistributionChart statistik={statistikBulanan} />
         <SummaryStats 

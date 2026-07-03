@@ -44,7 +44,6 @@ export function BelumLaporList({
           </span>
         </div>
         
-        {/* Info yang sudah lapor */}
         {sudahLaporData && sudahLaporData.length > 0 && (
           <div className="mt-3 pt-3 border-t border-gray-100">
             <div className="flex items-center justify-between text-sm">

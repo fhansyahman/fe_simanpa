@@ -102,7 +102,6 @@ export function PengajuanForm({ editData, onSuccess, onCancel }) {
           />
         </div>
 
-        {/* Dokumen yang sudah ada (saat edit) */}
         {existingDokumen && (
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -131,7 +130,6 @@ export function PengajuanForm({ editData, onSuccess, onCancel }) {
           </div>
         )}
 
-        {/* File Uploader */}
         <FileUploader
           fileInputRef={fileInputRef}
           uploadedFiles={uploadedFiles}

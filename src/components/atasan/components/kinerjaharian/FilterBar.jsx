@@ -13,7 +13,7 @@ export function FilterBar({
   onPreviousDay,
   onNextDay,
   onToday,
-  userWilayah // Props baru untuk menampilkan wilayah user
+  userWilayah
 }) {
   const wilayahOptions = [
     { value: "", label: "Semua Wilayah" },
@@ -23,7 +23,6 @@ export function FilterBar({
     { value: "Klabang", label: "Klabang" },
   ];
 
-  // Format tanggal untuk display
   const formatDateDisplay = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -35,7 +34,6 @@ export function FilterBar({
     });
   };
 
-  // Cari label wilayah berdasarkan value
   const getWilayahLabel = (value) => {
     const option = wilayahOptions.find(opt => opt.value === value);
     return option ? option.label : value;
@@ -43,9 +41,7 @@ export function FilterBar({
 
   return (
     <div className="flex flex-col gap-3 text-black">
-      {/* Filter Controls - Gabungan baris pertama */}
       <div className="flex flex-col md:flex-row gap-3">
-        {/* Wilayah Filter - DISABLED / READ ONLY */}
         <div className="flex-1">
           <div className="relative">
             <label className="absolute -top-2 left-2 px-1 bg-white text-xs text-gray-500 z-10">
@@ -70,7 +66,6 @@ export function FilterBar({
           </div>
         </div>
 
-        {/* Date Navigation yang lebih kompak */}
         <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-1">
           <button
             onClick={onPreviousDay}
@@ -106,7 +101,6 @@ export function FilterBar({
           </button>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-2">
           <button
             onClick={onRefresh}
@@ -128,7 +122,6 @@ export function FilterBar({
         </div>
       </div>
       
-      {/* Display selected date - lebih terintegrasi */}
       <div className="flex items-center justify-between text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
         <span className="flex items-center gap-2">
           <Calendar size={14} className="text-gray-400" />
@@ -136,7 +129,6 @@ export function FilterBar({
           <span className="font-semibold text-gray-800">{formatDateDisplay(selectedDate)}</span>
         </span>
         
-        {/* Tampilkan wilayah yang sedang aktif */}
         <span className="flex items-center gap-2">
           <span className="text-gray-400">|</span>
           <span>Wilayah: </span>

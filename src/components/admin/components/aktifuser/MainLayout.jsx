@@ -11,7 +11,6 @@ export function MainLayout({ children }) {
     <div className="flex h-screen bg-gray-50">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Overlay for mobile */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
@@ -19,7 +18,6 @@ export function MainLayout({ children }) {
         />
       )}
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         

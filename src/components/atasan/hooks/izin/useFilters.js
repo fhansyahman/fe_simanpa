@@ -11,15 +11,13 @@ export function useFilters(onFilterChange) {
   const [tanggalFilter, setTanggalFilter] = useState("");
   const [wilayahFilter, setWilayahFilter] = useState("");
 
-  // Set default tanggal ke hari ini
   useEffect(() => {
     if (!tanggalFilter) {
       const today = new Date().toISOString().split('T')[0];
       setTanggalFilter(today);
     }
-  }, []); // Hapus dependency tanggalFilter
+  }, []);
 
-  // Set filter wilayah berdasarkan user yang login dan trigger initial load
   useEffect(() => {
     if (user?.wilayah_penugasan) {
       console.log('Setting wilayah filter:', user.wilayah_penugasan);
@@ -27,13 +25,10 @@ export function useFilters(onFilterChange) {
     }
   }, [user]);
 
-  // Load data saat filter berubah atau pertama kali user tersedia
   useEffect(() => {
-    // Pastikan user sudah ada dan tanggal filter sudah diset
     if (user && tanggalFilter) {
       const filters = {};
       
-      // Prioritaskan wilayahFilter, fallback ke user.wilayah_penugasan
       if (wilayahFilter) {
         filters.wilayah = wilayahFilter;
       } else if (user?.wilayah_penugasan) {
@@ -53,7 +48,6 @@ export function useFilters(onFilterChange) {
     setStatusFilter('');
     setJenisFilter('');
     
-    // Reset ke wilayah user
     if (user?.wilayah_penugasan) {
       setWilayahFilter(user.wilayah_penugasan);
     } else {
@@ -68,7 +62,6 @@ export function useFilters(onFilterChange) {
   const handleRefresh = useCallback(() => {
     const filters = {};
     
-    // Prioritaskan wilayahFilter, fallback ke user.wilayah_penugasan
     if (wilayahFilter) {
       filters.wilayah = wilayahFilter;
     } else if (user?.wilayah_penugasan) {

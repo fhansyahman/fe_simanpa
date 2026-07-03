@@ -13,7 +13,6 @@ export function useFilters() {
   });
   const [initialized, setInitialized] = useState(false);
 
-  // Set default tanggal dan wilayah setelah user tersedia
   useEffect(() => {
     if (!authLoading && user && !initialized) {
       const today = new Date().toISOString().split('T')[0];
@@ -26,7 +25,6 @@ export function useFilters() {
           tanggal: today 
         };
         
-        // Set wilayah dari user jika ada
         if (user?.wilayah_penugasan) {
           newFilters.wilayah = user.wilayah_penugasan;
           console.log('📍 Set default wilayah:', user.wilayah_penugasan);
@@ -50,7 +48,6 @@ export function useFilters() {
         tanggal: today
       };
       
-      // Reset ke wilayah user jika ada
       if (user?.wilayah_penugasan) {
         newFilters.wilayah = user.wilayah_penugasan;
       } else {
@@ -62,13 +59,11 @@ export function useFilters() {
     });
   }, [user]);
 
-  // Hitung active filters
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (filters.search && filters.search.trim() !== '') count++;
     if (filters.status && filters.status !== '') count++;
     
-    // Hitung wilayah jika berbeda dari default user
     const defaultWilayah = user?.wilayah_penugasan || '';
     if (filters.wilayah && filters.wilayah !== defaultWilayah) count++;
     
@@ -78,7 +73,6 @@ export function useFilters() {
     return count;
   }, [filters, user]);
 
-  // Update filter
   const updateFilter = useCallback((key, value) => {
     console.log(`🎯 Update filter ${key}:`, value);
     setFilters(prev => {

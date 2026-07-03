@@ -62,7 +62,6 @@ export function DataIzinList({
         </div>
       </div>
 
-      {/* Filter Info */}
       {isFilterActive && (
         <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">

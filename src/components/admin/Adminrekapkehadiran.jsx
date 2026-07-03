@@ -17,7 +17,6 @@ export default function RekapKehadiranBulanan() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('rekap');
   
-  // Custom hooks
   const { 
     presensiData, 
     loading, 
@@ -56,19 +55,16 @@ export default function RekapKehadiranBulanan() {
     handlePrint
   } = useExport();
 
-  // Load data on mount
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  // Process rekap when filters or data change
   useEffect(() => {
     if (presensiData && presensiData.length > 0 && bulanFilter && tahunFilter) {
       processRekap();
     }
   }, [bulanFilter, tahunFilter, wilayahFilter, search, presensiData, processRekap]);
 
-  // Pastikan nilai selalu array/object dengan default
   const safeRekapBulanan = Array.isArray(rekapBulanan) ? rekapBulanan : [];
   const safeStatistikBulanan = statistikBulanan || {
     totalPegawai: 0,
@@ -120,7 +116,6 @@ export default function RekapKehadiranBulanan() {
         setSidebarOpen={setSidebarOpen} 
       />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         <Header 
           sidebarOpen={sidebarOpen}
@@ -129,7 +124,6 @@ export default function RekapKehadiranBulanan() {
         />
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
-          {/* Filter Section */}
           <FilterBar
             search={search}
             onSearchChange={setSearch}
@@ -162,14 +156,12 @@ export default function RekapKehadiranBulanan() {
             )}
           />
 
-          {/* Tab Navigation */}
           <TabNavigation 
             activeTab={activeTab}
             onTabChange={setActiveTab}
             rekapCount={safeRekapBulanan.length}
           />
 
-          {/* Tab Content */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
             <div className="p-4 md:p-6">
               {activeTab === 'rekap' ? (

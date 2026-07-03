@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { adminKinerjaAPI, hariAPI, usersAPI } from "@/lib/api";
 import Swal from "sweetalert2";
 
-// Helper: Nama bulan
 const getNamaBulan = (month) => {
   const bulan = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -13,7 +12,6 @@ const getNamaBulan = (month) => {
   return bulan[month - 1] || '';
 };
 
-// Helper: Hitung hari kerja manual (Senin-Jumat)
 const countWorkDaysManual = (tahun, bulan) => {
   const daysInMonth = new Date(tahun, bulan, 0).getDate();
   let kerjaCount = 0;
@@ -26,49 +24,41 @@ const countWorkDaysManual = (tahun, bulan) => {
 };
 
 export function useKpiMobility(initialMonth, initialYear) {
-  // ==================== STATE ====================
   const [selectedMonth, setSelectedMonth] = useState(initialMonth || new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(initialYear || new Date().getFullYear());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
-  // Data KPI utama
   const [kpiData, setKpiData] = useState({
-    // Periode
     bulan: null,
     tahun: null,
-    hariKerja: 0,           // total hari kerja dalam bulan (target: 22)
-    targetPerPegawai: 0,    // target per pegawai (50m × hariKerja)
-    targetKolektif: 0,      // target semua pegawai
+    hariKerja: 0,
+    targetPerPegawai: 0,
+    targetKolektif: 0,
     
-    // Realisasi
-    totalPanjang: 0,        // total realisasi jarak semua pegawai (meter)
-    totalPegawai: 0,        // total pegawai aktif
-    totalSudahLapor: 0,     // jumlah pegawai yang sudah lapor
-    totalBelumLapor: 0,     // jumlah pegawai belum lapor
-    persenKehadiran: 0,     // persentase kehadiran lapor
+    totalPanjang: 0,
+    totalPegawai: 0,
+    totalSudahLapor: 0,
+    totalBelumLapor: 0,
+    persenKehadiran: 0,
     
-    // Status Capaian
     statusCounts: {
-      tercapai_target: 0,   // ≥100%
-      hampir_tercapai: 0,   // 80-99%
-      sedang: 0,            // 50-79%
-      tidak_tercapai: 0,    // <50%
-      tidak_ada_laporan: 0  // belum lapor
+      tercapai_target: 0,
+      hampir_tercapai: 0,
+      sedang: 0,
+      tidak_tercapai: 0,
+      tidak_ada_laporan: 0
     },
     
-    // Rata-rata
-    rataPencapaian: 0,      // rata-rata % pencapaian
-    rataPanjang: 0,         // rata-rata jarak per pegawai yang lapor
-    rataKR: 0,              // rata-rata KR
-    rataKN: 0,              // rata-rata KN
+    rataPencapaian: 0,
+    rataPanjang: 0,
+    rataKR: 0,
+    rataKN: 0,
     
-    // Detail Data
-    pegawaiDetails: [],     // array detail per pegawai
-    statistikWilayah: []    // array statistik per wilayah
+    pegawaiDetails: [],
+    statistikWilayah: []
   });
   
-  // State untuk simulasi progresif
   const [simulationMode, setSimulationMode] = useState(false);
   const [simulatedDays, setSimulatedDays] = useState(0);
   const [originalData, setOriginalData] = useState(null);
@@ -77,13 +67,11 @@ export function useKpiMobility(initialMonth, initialYear) {
   const isProcessing = useRef(false);
   const lastParams = useRef({ bulan: null, tahun: null });
 
-  // ==================== FUNGSI UTAMA ====================
   
   /**
    * Proses raw data dari API menjadi format KPI dashboard
    */
   const processRawData = useCallback((rawKinerja, rawHariKerja, rawPegawai, hariKerjaFromApi, targetFromApi) => {
-    // Hitung hari kerja
     let hariKerja = hariKerjaFromApi;
     if (!hariKerja || hariKerja === 0) {
       if (rawHariKerja && rawHariKerja.length > 0) {
@@ -93,22 +81,18 @@ export function useKpiMobility(initialMonth, initialYear) {
       }
     }
     
-    // Target per pegawai (50m per hari kerja)
     const targetPerPegawai = targetFromApi || (50 * hariKerja);
     
-    // Filter pegawai aktif
     const aktifPegawai = rawPegawai.filter(user => 
       (user.jabatan?.toLowerCase() === 'pegawai' || user.role === 'pegawai') &&
       user.status?.toLowerCase() === 'aktif'
     );
     
-    // Map data kinerja by user_id/nama
     const kinerjaMap = new Map();
     rawKinerja.forEach(kinerja => {
       kinerjaMap.set(kinerja.user_id || kinerja.id || kinerja.nama, kinerja);
     });
     
-    // Proses setiap pegawai
     let totalPanjang = 0;
     let totalKR = 0;
     let totalKN = 0;
@@ -124,7 +108,6 @@ export function useKpiMobility(initialMonth, initialYear) {
     const pegawaiDetails = [];
     const processedNames = new Set();
     
-    // Proses pegawai yang sudah ada di kinerja
     rawKinerja.forEach(kinerja => {
       const nama = kinerja.nama;
       processedNames.add(nama);
@@ -137,7 +120,6 @@ export function useKpiMobility(initialMonth, initialYear) {
       let pencapaian = target > 0 ? (panjang / target) * 100 : 0;
       let status = kinerja.status;
       
-      // Hitung status jika tidak ada dari API
       if (!status) {
         if (pencapaian >= 100) status = 'tercapai_target';
         else if (pencapaian >= 80) status = 'hampir_tercapai';
@@ -166,7 +148,7 @@ export function useKpiMobility(initialMonth, initialYear) {
         totalKR: kr,
         totalKN: kn,
         target: target,
-        pencapaian: Math.min(pencapaian, 200), // batasi 200%
+        pencapaian: Math.min(pencapaian, 200),
         status: status,
         rataHarianKR: kinerja.rata_harian_kr || 0,
         rataHarianKN: kinerja.rata_harian_kn || 0,
@@ -174,7 +156,6 @@ export function useKpiMobility(initialMonth, initialYear) {
       });
     });
     
-    // Tambahkan pegawai yang belum pernah lapor
     aktifPegawai.forEach(pegawai => {
       if (!processedNames.has(pegawai.nama)) {
         pegawaiDetails.push({
@@ -206,7 +187,6 @@ export function useKpiMobility(initialMonth, initialYear) {
     const rataKNPerPegawai = totalSudahLapor > 0 ? totalKN / totalSudahLapor : 0;
     const persenKehadiran = totalPegawai > 0 ? (totalSudahLapor / totalPegawai) * 100 : 0;
     
-    // Proses statistik per wilayah
     const wilayahMap = new Map();
     pegawaiDetails.forEach(pegawai => {
       const wilayah = pegawai.wilayah;
@@ -291,7 +271,6 @@ export function useKpiMobility(initialMonth, initialYear) {
     try {
       console.log('📡 Loading KPI data for:', bulan, tahun);
       
-      // Parallel API calls
       const [hariRes, kinerjaRes, usersRes] = await Promise.all([
         hariAPI.getAllHariKerja({ bulan, tahun }),
         adminKinerjaAPI.getPerBulan({ bulan, tahun }),
@@ -304,11 +283,9 @@ export function useKpiMobility(initialMonth, initialYear) {
       const periodeInfo = apiData.periode || {};
       const allUsers = usersRes.data?.data || [];
       
-      // Extract values from API
       const hariKerjaFromApi = periodeInfo.total_hari_kerja || 0;
       const targetFromApi = periodeInfo.target_bulanan || 0;
       
-      // Process data
       const processed = processRawData(
         pegawaiKinerja,
         hariKerjaData,
@@ -338,7 +315,6 @@ export function useKpiMobility(initialMonth, initialYear) {
           statistikWilayah: processed.statistikWilayah
         });
         
-        // Save original data for simulation reset
         setOriginalData(processed);
         lastParams.current = { bulan, tahun };
       }
@@ -367,7 +343,6 @@ export function useKpiMobility(initialMonth, initialYear) {
     loadKpiData();
   }, [loadKpiData]);
   
-  // ==================== FUNGSI SIMULASI ====================
   
   /**
    * Simulasi progresif per hari (untuk demo/presentasi)
@@ -389,7 +364,6 @@ export function useKpiMobility(initialMonth, initialYear) {
     
     const progressFactor = newDays / originalData.periode.hariKerja;
     
-    // Simulasi progres pegawai
     const simulatedPegawai = originalData.pegawaiDetails.map(pegawai => ({
       ...pegawai,
       hadir: Math.min(Math.floor(pegawai.hadir * progressFactor), pegawai.hadir),
@@ -445,7 +419,6 @@ export function useKpiMobility(initialMonth, initialYear) {
     });
   }, [originalData]);
   
-  // ==================== FUNGSI FILTER & SORT ====================
   
   /**
    * Filter pegawai berdasarkan status
@@ -471,7 +444,6 @@ export function useKpiMobility(initialMonth, initialYear) {
     return sorted;
   }, [kpiData.pegawaiDetails]);
   
-  // ==================== FUNGSI EKSPORT ====================
   
   /**
    * Export data ke CSV
@@ -553,7 +525,6 @@ export function useKpiMobility(initialMonth, initialYear) {
     return exportToCSV(exportData, filename);
   }, [kpiData, selectedMonth, selectedYear, exportToCSV]);
   
-  // ==================== HELPER FUNCTIONS ====================
   
   const formatNumber = useCallback((num) => {
     if (num === undefined || num === null) return '0';
@@ -582,7 +553,6 @@ export function useKpiMobility(initialMonth, initialYear) {
     return colors[status] || 'bg-gray-100 text-gray-500';
   }, []);
   
-  // ==================== EFFECTS ====================
   
   useEffect(() => {
     isMounted.current = true;
@@ -596,9 +566,7 @@ export function useKpiMobility(initialMonth, initialYear) {
     loadKpiData();
   }, [selectedMonth, selectedYear, loadKpiData]);
   
-  // ==================== RETURN ====================
   return {
-    // State
     loading,
     error,
     kpiData,
@@ -607,28 +575,22 @@ export function useKpiMobility(initialMonth, initialYear) {
     simulationMode,
     simulatedDays,
     
-    // Setters
     setSelectedMonth,
     setSelectedYear,
     
-    // Actions
     refreshData,
     loadKpiData,
     
-    // Simulation
     simulateDay,
     resetSimulation,
     
-    // Filter & Sort
     filterPegawaiByStatus,
     sortPegawai,
     
-    // Export
     exportPegawaiData,
     exportWilayahData,
     exportToCSV,
     
-    // Helpers
     formatNumber,
     getStatusLabel,
     getStatusColor,

@@ -9,7 +9,6 @@ import Swal from "sweetalert2";
 export function StatistikTab({ statistik, izinList, tanggalFilter, onResetToToday }) {
   const total = statistik.total_pengajuan || 0;
 
-  // Hitung ulang statistik untuk jenis yang baru
   const sakitCount = izinList.filter(i => i.jenis === 'Sakit').length;
   const izinCount = izinList.filter(i => i.jenis === 'Izin').length;
   const dinasLuarCount = izinList.filter(i => i.jenis === 'Dinas Luar').length;
@@ -48,7 +47,6 @@ export function StatistikTab({ statistik, izinList, tanggalFilter, onResetToToda
 
   return (
     <div className="space-y-6">
-      {/* Informasi Periode */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -60,7 +58,6 @@ export function StatistikTab({ statistik, izinList, tanggalFilter, onResetToToda
         </div>
       </div>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <SummaryCard
           title="Total Pengajuan"
@@ -95,9 +92,7 @@ export function StatistikTab({ statistik, izinList, tanggalFilter, onResetToToda
         />
       </div>
 
-      {/* Detail Statistik */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Distribusi Status */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -146,7 +141,6 @@ export function StatistikTab({ statistik, izinList, tanggalFilter, onResetToToda
           </div>
         </div>
 
-        {/* Jenis Izin Terpopuler */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -227,7 +221,6 @@ function SummaryCard({ title, value, percentage, icon, bgColor, textColor = "tex
 }
 
 function StatusProgress({ label, value, percentage, color }) {
-  // Mapping warna untuk Tailwind
   const colorMap = {
     emerald: {
       bg: "bg-emerald-500",
@@ -273,7 +266,6 @@ function StatusProgress({ label, value, percentage, color }) {
 function JenisItem({ icon, label, value, total, color }) {
   const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
   
-  // Mapping warna untuk Tailwind
   const colorMap = {
     orange: "orange",
     purple: "purple",

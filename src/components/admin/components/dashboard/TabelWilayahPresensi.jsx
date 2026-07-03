@@ -102,7 +102,6 @@ export function TabelWilayahPresensi({ wilayahStatistik, statistik }) {
                 );
               })}
             
-            {/* Total Row */}
             <tr className="bg-gray-50 font-bold text-black">
               <td className="py-3 px-4">TOTAL</td>
               <td className="py-3 px-4 text-emerald-600">{statistik.totalHadir}</td>

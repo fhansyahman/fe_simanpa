@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-// Components
 import UserHeader from "@/components/pegawai/dashboard/UserHeader";
 import PresenceCamera from "@/components/pegawai/dashboard/PresenceCamera";
 import ActionButton from "@/components/pegawai/dashboard/ActionButton";
@@ -21,17 +20,14 @@ import StatusBadge from "@/components/pegawai/dashboard/StatusBadge";
 import BottomNavigation from "@/components/pegawai/dashboard/BottomNavigation";
 import { LocationCheckModal } from "@/components/pegawai/dashboard/LocationCheckModal";
 
-// Hooks
 import { useUser } from "@/components/pegawai/dashboard/hooks/useUser";
 import { usePresensi } from "@/components/pegawai/dashboard/hooks/usePresensi";
 
-// Utils
 import { formatDate, formatTime } from "@/components/pegawai/dashboard/utils/date";
 
 export default function PresensiPage() {
   const router = useRouter();
   
-  // Custom hooks
   const { user, loading: loadingUser } = useUser();
   const { 
     presensiHariIni, 
@@ -41,7 +37,6 @@ export default function PresensiPage() {
     refreshPresensi 
   } = usePresensi(user);
   
-  // Local state
   const [currentTime, setCurrentTime] = useState("");
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
@@ -50,7 +45,6 @@ export default function PresensiPage() {
   const [foto, setFoto] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Waktu realtime
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(formatTime());
@@ -130,7 +124,6 @@ export default function PresensiPage() {
     setVerifiedLocation(null);
   };
 
-  // Loading state
   if (loadingUser) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -164,8 +157,6 @@ export default function PresensiPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center font-sans relative pb-20">
       <UserHeader user={user} />
-
-      {/* Card Presensi */}
       <div className="bg-white shadow-lg rounded-xl p-6 w-[90%] absolute top-36 border border-slate-200">
         <div className="text-center mb-4">
           <h3 className="text-slate-700 font-semibold text-lg">{today}</h3>
@@ -192,7 +183,7 @@ export default function PresensiPage() {
         </div>
       </div>
 
-      {/* Quick Actions Grid */}
+
       <div className="mt-48 w-[90%] mb-8">
         <h3 className="text-slate-700 font-semibold text-lg mb-4">Quick Actions</h3>
         <div className="grid grid-cols-2 gap-4">
@@ -237,7 +228,6 @@ export default function PresensiPage() {
         </div>
       </div>
 
-      {/* Today's Summary */}
       <div className="w-[90%] mb-4">
         <h4 className="text-slate-700 font-semibold mb-3">Ringkasan Hari Ini</h4>
         <div className="grid grid-cols-2 gap-3">
@@ -255,7 +245,6 @@ export default function PresensiPage() {
             </div>
           </div>
           
-          {/* Lokasi terakhir jika sudah absen */}
           {presensiHariIni.masuk && (
             <div className="bg-white rounded-xl shadow-sm p-4 border border-slate-200">
               <div className="flex items-center gap-3">
@@ -276,7 +265,6 @@ export default function PresensiPage() {
 
       <BottomNavigation />
 
-      {/* Location Check Modal - Info Penugasan ada di dalam modal ini */}
       <LocationCheckModal
         isOpen={showLocationModal}
         onClose={() => setShowLocationModal(false)}
@@ -285,7 +273,6 @@ export default function PresensiPage() {
         type={currentType}
       />
 
-      {/* Camera Modal */}
       {showCamera && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md relative">

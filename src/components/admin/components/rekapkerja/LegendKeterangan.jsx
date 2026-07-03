@@ -1,4 +1,3 @@
-// app/admin/rekapterja/components/LegendKeterangan.jsx
 "use client";
 
 import { CheckCircle, XCircle, Ruler, TrendingUp } from "lucide-react";

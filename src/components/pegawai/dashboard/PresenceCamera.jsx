@@ -618,7 +618,6 @@ export default function PresenceCamera({
               </div>
             )}
 
-            {/* Indikator loading map */}
             {locationData?.coords && !isMapReady && !cameraError && isVideoReady && (
               <div className="absolute bottom-2 right-2 bg-black/70 rounded-lg px-2 py-1">
                 <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white inline-block mr-1"></div>

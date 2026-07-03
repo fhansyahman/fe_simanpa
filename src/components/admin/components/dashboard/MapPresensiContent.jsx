@@ -369,7 +369,6 @@ export function MapPresensiContent() {
 
   return (
     <div className="space-y-4">
-      {/* Filter Bar */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
@@ -433,7 +432,6 @@ export function MapPresensiContent() {
           </div>
         </div>
 
-        {/* Statistik */}
         <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-gray-100">
           <span className="text-sm text-gray-600 flex items-center gap-1">
             <Users size={14} /> Total: {stats.total}
@@ -455,7 +453,6 @@ export function MapPresensiContent() {
           </span>
         </div>
 
-        {/* Filter Wilayah */}
         {wilayahList.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-4">
             <span className="text-xs text-gray-500">Filter Wilayah:</span>
@@ -486,14 +483,12 @@ export function MapPresensiContent() {
         )}
       </div>
 
-      {/* Error Message */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <p className="text-red-700 text-sm">{error}</p>
         </div>
       )}
 
-      {/* Map Container */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {!isMapReady ? (
           <div className="h-[600px] flex items-center justify-center">
@@ -503,14 +498,12 @@ export function MapPresensiContent() {
           <div className="relative h-[600px]">
             <div ref={mapRef} className="w-full h-full" />
 
-            {/* Info Panel */}
             <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-3">
               <p className="text-sm font-medium">
                 {filteredPresensi.length} Lokasi Ditampilkan
               </p>
             </div>
 
-            {/* Legend */}
             <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3">
               <div className="flex flex-wrap gap-3 text-xs">
                 <div className="flex items-center gap-1">
@@ -532,7 +525,6 @@ export function MapPresensiContent() {
               </div>
             </div>
 
-            {/* Selected Info */}
             {selectedPresensi && (
               <div className="absolute bottom-4 right-4 bg-white rounded-lg shadow-xl p-4 w-80">
                 <div className="flex items-start justify-between mb-2">
@@ -556,7 +548,6 @@ export function MapPresensiContent() {
         )}
       </div>
 
-      {/* Daftar Pegawai (Mobile) */}
       <div className="lg:hidden bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <h3 className="font-semibold mb-3">Daftar Pegawai</h3>
         <div className="space-y-2 max-h-60 overflow-y-auto">

@@ -16,7 +16,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
     }));
   };
 
-  // Filter data berdasarkan pencarian dan wilayah
   const filteredData = dataWilayah.filter(item => {
     const matchesSearch = item.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.nip?.includes(searchTerm) ||
@@ -27,7 +26,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
     return matchesSearch && matchesWilayah;
   });
 
-  // Group by wilayah
   const groupedByWilayah = filteredData.reduce((acc, item) => {
     const wilayah = item.wilayah_penugasan || 'Tanpa Wilayah';
     if (!acc[wilayah]) {
@@ -39,7 +37,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
 
   const wilayahList = Object.keys(groupedByWilayah).sort();
 
-  // Hitung statistik per wilayah
   const getWilayahStats = (wilayah) => {
     const pegawai = groupedByWilayah[wilayah];
     const total = pegawai.length;
@@ -54,7 +51,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-      {/* Header */}
       <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -67,7 +63,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
             </div>
           </div>
 
-          {/* Search and Filter */}
           <div className="flex gap-3">
             <div className="relative">
               <input
@@ -94,7 +89,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
         </div>
       </div>
 
-      {/* Wilayah List */}
       <div className="divide-y divide-gray-200">
         {wilayahList.length === 0 ? (
           <div className="p-8 text-center">
@@ -109,7 +103,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
 
             return (
               <div key={wilayah} className="hover:bg-gray-50 transition-colors">
-                {/* Wilayah Header */}
                 <div 
                   className="p-4 flex items-center justify-between cursor-pointer"
                   onClick={() => toggleWilayah(wilayah)}
@@ -123,7 +116,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
                       </span>
                     </div>
                     
-                    {/* Statistik Mini */}
                     <div className="flex items-center gap-4 ml-8">
                       <div className="flex items-center gap-1">
                         <div className="w-2 h-2 rounded-full bg-green-500"></div>
@@ -149,7 +141,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
                   </button>
                 </div>
 
-                {/* Expanded Detail */}
                 {isExpanded && (
                   <div className="p-4 bg-gray-50 border-t border-gray-200">
                     <table className="w-full">
@@ -206,7 +197,6 @@ export function TabelWilayahPekerja({ dataWilayah, onViewDetail }) {
         )}
       </div>
 
-      {/* Footer Summary */}
       <div className="p-4 bg-gray-50 border-t border-gray-200">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="text-center">
