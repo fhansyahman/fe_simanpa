@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useKpiMobility } from "../../hooks/dashboard/useKpiMobility";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, RadialBarChart, RadialBar, ComposedChart, Line
 } from 'recharts';
-import {MapPin, TrendingUp, Users, Target, Activity,Download, Filter, RefreshCw} from 'lucide-react';
+import {MapPin, TrendingUp, Users, Target, Activity, Download, Filter, RefreshCw} from 'lucide-react';
 
 const getNamaBulan = (month) => {
   const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -32,6 +32,7 @@ const STATUS_LABELS = {
 
 export function KpiMobilityDashboard() {
   const [selectedWilayah, setSelectedWilayah] = useState('all');
+  const [forceRender, setForceRender] = useState(0);
   
   const {
     loading,
@@ -47,6 +48,18 @@ export function KpiMobilityDashboard() {
     getStatusColor
   } = useKpiMobility();
 
+  useEffect(() => {
+    console.log('🔄 Dashboard: kpiData updated', {
+      totalPegawai: kpiData.pegawaiDetails?.length,
+      pegawaiWithData: kpiData.pegawaiDetails?.filter(p => p.hadir > 0).map(p => ({
+        nama: p.nama,
+        hadir: p.hadir,
+        panjang: p.totalPanjang,
+        pencapaian: p.pencapaian
+      }))
+    });
+  }, [kpiData]);
+
   const wilayahList = useMemo(() => {
     const wilayahSet = new Set();
     kpiData.pegawaiDetails?.forEach(pegawai => {
@@ -58,12 +71,13 @@ export function KpiMobilityDashboard() {
   }, [kpiData.pegawaiDetails]);
 
   const filteredPegawai = useMemo(() => {
-    if (selectedWilayah === 'all') {
-      return kpiData.pegawaiDetails || [];
+    let data = kpiData.pegawaiDetails || [];
+    
+    if (selectedWilayah !== 'all') {
+      data = data.filter(pegawai => pegawai.wilayah === selectedWilayah);
     }
-    return (kpiData.pegawaiDetails || []).filter(
-      pegawai => pegawai.wilayah === selectedWilayah
-    );
+    
+    return data;
   }, [kpiData.pegawaiDetails, selectedWilayah]);
 
   const chartStats = useMemo(() => {
@@ -71,8 +85,9 @@ export function KpiMobilityDashboard() {
     const totalSudahLapor = filteredPegawai.filter(p => p.hadir > 0).length;
     const totalPanjang = filteredPegawai.reduce((sum, p) => sum + p.totalPanjang, 0);
     const totalTarget = filteredPegawai.reduce((sum, p) => sum + p.target, 0);
-    const rataPencapaian = totalSudahLapor > 0 
-      ? filteredPegawai.filter(p => p.hadir > 0).reduce((sum, p) => sum + p.pencapaian, 0) / totalSudahLapor 
+    const pegawaiLapor = filteredPegawai.filter(p => p.hadir > 0);
+    const rataPencapaian = pegawaiLapor.length > 0 
+      ? pegawaiLapor.reduce((sum, p) => sum + p.pencapaian, 0) / pegawaiLapor.length 
       : 0;
     
     const statusCounts = {
@@ -89,7 +104,7 @@ export function KpiMobilityDashboard() {
       totalBelumLapor: totalPegawai - totalSudahLapor,
       totalPanjang,
       totalTarget,
-      rataPencapaian,
+      rataPencapaian: Math.round(rataPencapaian * 10) / 10, 
       statusCounts
     };
   }, [filteredPegawai]);
@@ -101,32 +116,38 @@ export function KpiMobilityDashboard() {
       .slice(0, 10)
       .map(p => ({
         name: p.nama.length > 15 ? p.nama.substring(0, 12) + '...' : p.nama,
-        pencapaian: p.pencapaian,
-        totalPanjang: p.totalPanjang,
-        target: p.target
+        pencapaian: Math.round(p.pencapaian * 10) / 10,
+        totalPanjang: Math.round(p.totalPanjang),
+        target: Math.round(p.target)
       }));
   }, [filteredPegawai]);
 
   const pieData = useMemo(() => {
-    return Object.entries(chartStats.statusCounts)
+    const data = Object.entries(chartStats.statusCounts)
       .filter(([_, value]) => value > 0)
       .map(([key, value]) => ({
         name: STATUS_LABELS[key],
         value: value,
-        status: key
+        status: key,
+        percentage: chartStats.totalPegawai > 0 
+          ? Math.round((value / chartStats.totalPegawai) * 100) 
+          : 0
       }));
-  }, [chartStats.statusCounts]);
+    
+    return data;
+  }, [chartStats.statusCounts, chartStats.totalPegawai]);
 
   const allPegawaiData = useMemo(() => {
     return [...filteredPegawai]
       .sort((a, b) => b.pencapaian - a.pencapaian)
       .map(p => ({
         name: p.nama.length > 20 ? p.nama.substring(0, 17) + '...' : p.nama,
-        pencapaian: p.pencapaian,
-        totalPanjang: p.totalPanjang,
-        target: p.target,
+        pencapaian: Math.round(p.pencapaian * 10) / 10,
+        totalPanjang: Math.round(p.totalPanjang),
+        target: Math.round(p.target),
         hadir: p.hadir,
-        status: p.status
+        status: p.status,
+        wilayah: p.wilayah
       }));
   }, [filteredPegawai]);
 
@@ -157,10 +178,19 @@ export function KpiMobilityDashboard() {
     });
     
     wilayahMap.forEach(w => {
+      const rataPencapaian = w.totalTarget > 0 
+        ? (w.totalPanjang / w.totalTarget) * 100 
+        : 0;
+      const persenKehadiran = w.totalPegawai > 0 
+        ? (w.totalSudahLapor / w.totalPegawai) * 100 
+        : 0;
+      
       stats.push({
         ...w,
-        rataPencapaian: w.totalTarget > 0 ? (w.totalPanjang / w.totalTarget) * 100 : 0,
-        persenKehadiran: w.totalPegawai > 0 ? (w.totalSudahLapor / w.totalPegawai) * 100 : 0
+        totalPanjang: Math.round(w.totalPanjang),
+        totalTarget: Math.round(w.totalTarget),
+        rataPencapaian: Math.round(rataPencapaian * 10) / 10,
+        persenKehadiran: Math.round(persenKehadiran * 10) / 10
       });
     });
     
@@ -169,21 +199,37 @@ export function KpiMobilityDashboard() {
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+      const data = payload[0]?.payload;
       return (
         <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
           <p className="font-semibold text-gray-800">{label}</p>
           <p className="text-sm text-emerald-600">
-            Pencapaian: {payload[0]?.value?.toFixed(1)}%
+            Pencapaian: {data?.pencapaian?.toFixed(1) || 0}%
           </p>
-          {payload[0]?.payload?.totalPanjang && (
+          {data?.totalPanjang !== undefined && (
             <p className="text-xs text-gray-500">
-              Total: {formatNumber(payload[0].payload.totalPanjang)} m
+              Total: {formatNumber(data.totalPanjang)} m
+            </p>
+          )}
+          {data?.target !== undefined && (
+            <p className="text-xs text-gray-500">
+              Target: {formatNumber(data.target)} m
             </p>
           )}
         </div>
       );
     }
     return null;
+  };
+
+  const renderPieLabel = ({ name, percent }) => {
+    return `${(percent * 100).toFixed(0)}%`;
+  };
+
+  const handleRefresh = () => {
+    console.log('🔄 Manual refresh clicked');
+    setForceRender(prev => prev + 1);
+    refreshData();
   };
 
   if (loading) {
@@ -196,74 +242,77 @@ export function KpiMobilityDashboard() {
   }
 
   return (
-    <div className="space-y-6 text-black">
+    <div className="space-y-6 text-black" key={forceRender}>
+      {/* Filter Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-5 shadow-sm">
-  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
-    <div>
-      <p className="text-sm text-gray-600">Pilih periode dan wilayah untuk analisis kinerja</p>
-    </div>
-    
-    
-  </div>
-  
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Bulan</label>
-      <select
-        value={selectedMonth}
-        onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-        disabled={loading}
-      >
-        {[1,2,3,4,5,6,7,8,9,10,11,12].map(month => (
-          <option key={month} value={month}>{getNamaBulan(month)}</option>
-        ))}
-      </select>
-    </div>
-    
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Tahun</label>
-      <select
-        value={selectedYear}
-        onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-        disabled={loading}
-      >
-        {[2024, 2025, 2026].map(year => (
-          <option key={year} value={year}>{year}</option>
-        ))}
-      </select>
-    </div>
-    
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Wilayah</label>
-      <select
-        value={selectedWilayah}
-        onChange={(e) => setSelectedWilayah(e.target.value)}
-        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-        disabled={loading}
-      >
-        <option value="all">Semua Wilayah</option>
-        {wilayahList.filter(w => w !== 'all').map(wilayah => (
-          <option key={wilayah} value={wilayah}>{wilayah}</option>
-        ))}
-      </select>
-    </div>
-    
-    <div className="flex items-end">
-      <button
-        onClick={refreshData}
-        disabled={loading}
-        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50"
-      >
-        <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-        <span>Refresh</span>
-      </button>
-    </div>
-  </div>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
+          <div>
+            <p className="text-sm text-gray-600">Pilih periode dan wilayah untuk analisis kinerja</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Total pegawai: {kpiData.pegawaiDetails?.length || 0} | 
+              Sudah lapor: {kpiData.pegawaiDetails?.filter(p => p.hadir > 0).length || 0}
+            </p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Bulan</label>
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              disabled={loading}
+            >
+              {[1,2,3,4,5,6,7,8,9,10,11,12].map(month => (
+                <option key={month} value={month}>{getNamaBulan(month)}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tahun</label>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              disabled={loading}
+            >
+              {[2024, 2025, 2026].map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Wilayah</label>
+            <select
+              value={selectedWilayah}
+              onChange={(e) => setSelectedWilayah(e.target.value)}
+              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              disabled={loading}
+            >
+              <option value="all">Semua Wilayah</option>
+              {wilayahList.filter(w => w !== 'all').map(wilayah => (
+                <option key={wilayah} value={wilayah}>{wilayah}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="flex items-end">
+            <button
+              onClick={handleRefresh}
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50"
+            >
+              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+              <span>Refresh</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
-</div>
-
+      {/* Stats Cards - FIX: Format angka lebih rapi */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <div className="flex items-center gap-2 text-blue-600 mb-2">
@@ -313,14 +362,15 @@ export function KpiMobilityDashboard() {
             {chartStats.statusCounts.tercapai_target}
           </div>
           <div className="text-xs text-gray-500 mt-1">
-             ≥100% pencapaian
+            ≥100% pencapaian
           </div>
         </div>
       </div>
 
+      {/* Progress Bar - FIX: Tampilkan persentase dengan 1 desimal */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <div className="flex justify-between text-sm text-gray-600 mb-2">
-          <span> Progress Capaian Tim</span>
+          <span>Progress Capaian Tim</span>
           <span>{chartStats.rataPencapaian.toFixed(1)}%</span>
         </div>
         <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
@@ -353,86 +403,124 @@ export function KpiMobilityDashboard() {
         </div>
       </div>
 
+      {/* Top 10 Chart - FIX: Label dengan 1 desimal */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h3 className="font-semibold text-gray-800"> Top 10 Pegawai Terbaik</h3>
+          <h3 className="font-semibold text-gray-800">Top 10 Pegawai Terbaik</h3>
           <p className="text-sm text-gray-500">Berdasarkan persentase pencapaian target</p>
         </div>
         <div className="p-6">
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={topPegawaiData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis 
-                dataKey="name" 
-                angle={-45} 
-                textAnchor="end" 
-                height={60}
-                tick={{ fontSize: 11, fill: '#6b7280' }}
-              />
-              <YAxis 
-                label={{ value: 'Pencapaian (%)', angle: -90, position: 'insideLeft', style: { fontSize: 12, fill: '#6b7280' } }}
-                domain={[0, 120]}
-                tick={{ fontSize: 11, fill: '#6b7280' }}
-              />
-              <Tooltip content={CustomTooltip} />
-              <Legend verticalAlign="top" height={36} />
-              <Bar dataKey="pencapaian" name="Pencapaian (%)" fill="#10b981" radius={[4, 4, 0, 0]} />
-              <Line 
-                type="monotone" 
-                dataKey="pencapaian" 
-                stroke="#ef4444" 
-                strokeDasharray="5 5" 
-                dot={false}
-                name="Garis Referensi"
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          {topPegawaiData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={topPegawaiData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis 
+                  dataKey="name" 
+                  angle={-45} 
+                  textAnchor="end" 
+                  height={60}
+                  tick={{ fontSize: 11, fill: '#6b7280' }}
+                />
+                <YAxis 
+                  label={{ value: 'Pencapaian (%)', angle: -90, position: 'insideLeft', style: { fontSize: 12, fill: '#6b7280' } }}
+                  domain={[0, 120]}
+                  tick={{ fontSize: 11, fill: '#6b7280' }}
+                  tickFormatter={(value) => `${value.toFixed(0)}%`}
+                />
+                <Tooltip content={CustomTooltip} />
+                <Legend verticalAlign="top" height={36} />
+                <Bar 
+                  dataKey="pencapaian" 
+                  name="Pencapaian (%)" 
+                  fill="#10b981" 
+                  radius={[4, 4, 0, 0]}
+                  label={{ 
+                    position: 'top', 
+                    formatter: (value) => `${value.toFixed(1)}%`,
+                    fontSize: 10,
+                    fill: '#6b7280'
+                  }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="pencapaian" 
+                  stroke="#ef4444" 
+                  strokeDasharray="5 5" 
+                  dot={false}
+                  name="Garis Referensi 100%"
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="text-center py-10 text-gray-500">
+              Belum ada data pegawai yang mencapai target
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Pie Chart - FIX: Label persentase */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
           <h3 className="font-semibold text-gray-800">Distribusi Status Pencapaian</h3>
           <p className="text-sm text-gray-500">Status pencapaian target per pegawai</p>
         </div>
         <div className="p-6">
-          <ResponsiveContainer width="100%" height={350}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={2}
-                dataKey="value"
-                label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
-                labelLine={{ stroke: '#9ca3af', strokeWidth: 1 }}
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[entry.status] || '#9ca3af'} />
-                ))}
-              </Pie>
-              <Tooltip content={CustomTooltip} />
-              <Legend 
-                verticalAlign="bottom" 
-                align="center"
-                layout="horizontal"
-                formatter={(value) => <span className="text-sm text-gray-600">{value}</span>}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+          {pieData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={350}>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={2}
+                  dataKey="value"
+                  label={({ name, percent }) => {
+                    const pct = (percent * 100).toFixed(0);
+                    return pct > 5 ? `${pct}%` : '';
+                  }}
+                  labelLine={{ stroke: '#9ca3af', strokeWidth: 1 }}
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[entry.status] || '#9ca3af'} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  formatter={(value, name, props) => {
+                    const pct = props.payload.percentage;
+                    return [`${value} pegawai (${pct}%)`, name];
+                  }}
+                  contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                />
+                <Legend 
+                  verticalAlign="bottom" 
+                  align="center"
+                  layout="horizontal"
+                  formatter={(value) => <span className="text-sm text-gray-600">{value}</span>}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="text-center py-10 text-gray-500">
+              Belum ada data status pencapaian
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Detail Table - FIX: Format dengan 1 desimal */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center flex-wrap gap-3">
           <div>
-            <h3 className="font-semibold text-gray-800"> Detail Kinerja Pegawai</h3>
+            <h3 className="font-semibold text-gray-800">Detail Kinerja Pegawai</h3>
             <p className="text-sm text-gray-500">
               {selectedWilayah === 'all' ? 'Semua Wilayah' : `Wilayah: ${selectedWilayah}`} · 
               {filteredPegawai.length} pegawai
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => setSelectedWilayah('all')}
               className={`px-3 py-1.5 rounded-lg text-sm transition ${
@@ -462,26 +550,26 @@ export function KpiMobilityDashboard() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left">Pegawai</th>
-                <th className="px-4 py-3 text-left">Wilayah</th>
-                <th className="px-4 py-3 text-center">Hadir</th>
-                <th className="px-4 py-3 text-right">Total Jarak</th>
-                <th className="px-4 py-3 text-right">Target</th>
-                <th className="px-4 py-3 text-right">Pencapaian</th>
-                <th className="px-4 py-3 text-center">Status</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">Pegawai</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">Wilayah</th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700">Hadir</th>
+                <th className="px-4 py-3 text-right font-semibold text-gray-700">Total Jarak</th>
+                <th className="px-4 py-3 text-right font-semibold text-gray-700">Target</th>
+                <th className="px-4 py-3 text-right font-semibold text-gray-700">Pencapaian</th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {allPegawaiData.map((pegawai, idx) => (
                 <tr key={idx} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium">{pegawai.name}</td>
+                  <td className="px-4 py-3 font-medium text-gray-800">{pegawai.name}</td>
                   <td className="px-4 py-3 text-gray-600">
-                    {filteredPegawai[idx]?.wilayah || '-'}
+                    {pegawai.wilayah || '-'}
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-4 py-3 text-center text-gray-600">
                     {pegawai.hadir}/{kpiData.hariKerja}
                   </td>
-                  <td className="px-4 py-3 text-right">{formatNumber(pegawai.totalPanjang)} m</td>
+                  <td className="px-4 py-3 text-right text-gray-600">{formatNumber(pegawai.totalPanjang)} m</td>
                   <td className="px-4 py-3 text-right text-gray-500">{formatNumber(pegawai.target)} m</td>
                   <td className="px-4 py-3 text-right font-semibold">
                     <span className={
@@ -493,8 +581,8 @@ export function KpiMobilityDashboard() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(filteredPegawai[idx]?.status)}`}>
-                      {getStatusLabel(filteredPegawai[idx]?.status)}
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(pegawai.status)}`}>
+                      {getStatusLabel(pegawai.status)}
                     </span>
                   </td>
                 </tr>
@@ -504,15 +592,13 @@ export function KpiMobilityDashboard() {
         </div>
       </div>
 
+      {/* Wilayah Stats - FIX: Format dengan 1 desimal */}
       {wilayahStats.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
             <h3 className="font-semibold text-gray-800">Statistik per Wilayah</h3>
             <p className="text-sm text-gray-500">Perbandingan kinerja antar wilayah kerja</p>
           </div>
-      {wilayahStats.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-
           <div className="p-6">
             <ResponsiveContainer width="100%" height={400}>
               <BarChart
@@ -539,11 +625,11 @@ export function KpiMobilityDashboard() {
                   label={{ value: 'Pencapaian (%)', angle: 90, position: 'insideRight', style: { fontSize: 12, fill: '#6b7280' } }}
                   tick={{ fontSize: 11, fill: '#6b7280' }}
                   domain={[0, 100]}
-                  tickFormatter={(value) => `${value}%`}
+                  tickFormatter={(value) => `${value.toFixed(0)}%`}
                 />
                 <Tooltip 
                   formatter={(value, name) => {
-                    if (name === 'Pencapaian') return `${value.toFixed(1)}%`;
+                    if (name === 'Pencapaian') return `${Number(value).toFixed(1)}%`;
                     if (name === 'Total Jarak' || name === 'Target') return `${formatNumber(value)} m`;
                     if (name === 'Pegawai Lapor') return `${value} orang`;
                     return value;
@@ -575,23 +661,27 @@ export function KpiMobilityDashboard() {
                   stroke="#ef4444"
                   strokeWidth={3}
                   dot={{ r: 6, fill: '#ef4444' }}
+                  label={{ 
+                    position: 'top', 
+                    formatter: (value) => `${value.toFixed(1)}%`,
+                    fontSize: 10,
+                    fill: '#6b7280'
+                  }}
                 />
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
-      )}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left">Wilayah</th>
-                  <th className="px-4 py-3 text-center">Pegawai</th>
-                  <th className="px-4 py-3 text-center">Sudah Lapor</th>
-                  <th className="px-4 py-3 text-right">Total Jarak</th>
-                  <th className="px-4 py-3 text-right">Target</th>
-                  <th className="px-4 py-3 text-right">Pencapaian</th>
-                  <th className="px-4 py-3 text-center">Tercapai Target</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Wilayah</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Pegawai</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Sudah Lapor</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">Total Jarak</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">Target</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">Pencapaian</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Tercapai Target</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -603,14 +693,14 @@ export function KpiMobilityDashboard() {
                         {wilayah.wilayah}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-center">{wilayah.totalPegawai}</td>
+                    <td className="px-4 py-3 text-center text-gray-600">{wilayah.totalPegawai}</td>
                     <td className="px-4 py-3 text-center">
-                      {wilayah.totalSudahLapor}
+                      <span className="text-gray-600">{wilayah.totalSudahLapor}</span>
                       <span className="text-xs text-gray-400 ml-1">
                         ({wilayah.persenKehadiran.toFixed(0)}%)
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right">{formatNumber(wilayah.totalPanjang)} m</td>
+                    <td className="px-4 py-3 text-right text-gray-600">{formatNumber(wilayah.totalPanjang)} m</td>
                     <td className="px-4 py-3 text-right text-gray-500">{formatNumber(wilayah.totalTarget)} m</td>
                     <td className="px-4 py-3 text-right font-semibold">
                       <span className={
@@ -638,7 +728,7 @@ export function KpiMobilityDashboard() {
         <p className="text-sm text-blue-800">
           <strong>Insight:</strong> Target 50m/hari × {kpiData.hariKerja} hari = {formatNumber(kpiData.targetPerPegawai)} m/bulan per pegawai.
           Total target kolektif: {formatNumber(kpiData.targetKolektif)} m dari {kpiData.totalPegawai} pegawai.
-          {chartStats.rataPencapaian < 80 && ' Rata-rata capaian masih di bawah target 80%, perlu evaluasi.'}
+          {chartStats.rataPencapaian < 80 && ` Rata-rata capaian ${chartStats.rataPencapaian.toFixed(1)}% masih di bawah target 80%, perlu evaluasi.`}
           {selectedWilayah !== 'all' && ` Untuk wilayah ${selectedWilayah}, capaian: ${chartStats.rataPencapaian.toFixed(1)}%.`}
         </p>
       </div>
