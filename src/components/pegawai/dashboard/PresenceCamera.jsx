@@ -1,4 +1,4 @@
-// components/pegawai/dashboard/PresenceCamera.js (DENGAN MAP SATELIT - FIXED ZOOM OUT)
+// components/pegawai/dashboard/PresenceCamera.js (DENGAN MAP SATELIT - FIXED)
 
 "use client";
 
@@ -11,9 +11,7 @@ export default function PresenceCamera({
   isOpen, 
   type,
   isSubmitting = false,
-  locationData,
-  onConfirm,
-  showConfirm = false
+  locationData 
 }) {
   const [stream, setStream] = useState(null);
   const [foto, setFoto] = useState(null);
@@ -22,9 +20,11 @@ export default function PresenceCamera({
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [fotoOriginalSize, setFotoOriginalSize] = useState(null); // State untuk ukuran asli
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const playPromiseRef = useRef(null);
   const isMounted = useRef(true);
@@ -35,6 +35,7 @@ export default function PresenceCamera({
     
     const loadLeaflet = async () => {
       try {
+        // Load CSS Leaflet
         if (!document.querySelector('link[href*="leaflet.css"]')) {
           const link = document.createElement('link');
           link.rel = 'stylesheet';
@@ -42,6 +43,7 @@ export default function PresenceCamera({
           document.head.appendChild(link);
         }
 
+        // Load Leaflet JS
         if (!window.L) {
           await new Promise((resolve, reject) => {
             const script = document.createElement('script');
@@ -52,6 +54,7 @@ export default function PresenceCamera({
           });
         }
 
+        // Load leaflet-image
         if (!window.leafletImage) {
           await new Promise((resolve, reject) => {
             const script = document.createElement('script');
@@ -89,6 +92,7 @@ export default function PresenceCamera({
     if (!isOpen) {
       stopCamera();
       setFoto(null);
+      setFotoOriginalSize(null);
       setCameraError(null);
       setIsVideoReady(false);
       setIsMapReady(false);
@@ -115,6 +119,7 @@ export default function PresenceCamera({
   // Inisialisasi peta saat lokasi tersedia dan Leaflet sudah load
   useEffect(() => {
     if (isOpen && locationData?.coords?.lat && locationData?.coords?.lon && window.L) {
+      // Tunggu sebentar agar DOM siap
       const timer = setTimeout(() => {
         if (isMounted.current) {
           initMap(locationData.coords.lat, locationData.coords.lon);
@@ -194,8 +199,8 @@ export default function PresenceCamera({
       
       const constraints = {
         video: { 
-          width: { ideal: 640 },
-          height: { ideal: 480 },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
           facingMode: { exact: "user" }
         },
         audio: false
@@ -225,8 +230,8 @@ export default function PresenceCamera({
         try {
           const fallbackConstraints = {
             video: { 
-              width: { ideal: 640 },
-              height: { ideal: 480 },
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
               facingMode: "user"
             },
             audio: false
@@ -260,20 +265,24 @@ export default function PresenceCamera({
     }
   };
 
+  // Inisialisasi peta Leaflet
   const initMap = (lat, lon) => {
     if (!window.L || mapInstanceRef.current) return;
     
     try {
+      // Hapus map lama jika ada
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
 
+      // Hapus container lama
       const oldContainer = document.getElementById('hidden-map-container');
       if (oldContainer) {
         oldContainer.remove();
       }
       
+      // Buat container peta baru (hidden)
       const mapDiv = document.createElement('div');
       mapDiv.id = 'hidden-map-container';
       mapDiv.style.width = '300px';
@@ -284,21 +293,25 @@ export default function PresenceCamera({
       mapDiv.style.visibility = 'hidden';
       document.body.appendChild(mapDiv);
       
+      // Buat map
       const map = window.L.map(mapDiv, { 
         attributionControl: false, 
         zoomControl: false 
-      }).setView([lat, lon], 17); // Zoom sedikit lebih jauh
+      }).setView([lat, lon], 18);
       
+      // Tambah tile layer satelit (Google Satellite)
       window.L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         maxZoom: 20,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: 'Google Satellite'
       }).addTo(map);
       
+      // Tambah marker
       window.L.marker([lat, lon]).addTo(map);
       
       mapInstanceRef.current = map;
       
+      // Tunggu map selesai render
       setTimeout(() => {
         if (isMounted.current) {
           setIsMapReady(true);
@@ -308,13 +321,16 @@ export default function PresenceCamera({
       
     } catch (error) {
       console.error('Error init map:', error);
+      // Jika map gagal, tetap set ready agar foto tetap bisa diambil (tanpa map)
       setIsMapReady(true);
     }
   };
 
+  // Render map ke canvas
   const renderMapToCanvas = () => {
     return new Promise((resolve) => {
       if (!mapInstanceRef.current || !window.leafletImage) {
+        console.log('Map or leafletImage not ready, skipping map overlay');
         resolve(null);
         return;
       }
@@ -335,6 +351,7 @@ export default function PresenceCamera({
     });
   };
 
+  // Ekstrak detail lokasi dari alamat (jika ada)
   const extractLocationDetails = (alamatArray) => {
     if (!alamatArray || alamatArray.length === 0) {
       return {
@@ -397,21 +414,27 @@ export default function PresenceCamera({
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
       
-      // Ukuran canvas yang lebih proporsional - 4:3
-      canvas.width = 480;
-      canvas.height = 360;
+      // Set ukuran canvas ke ukuran asli video
+      const videoWidth = video.videoWidth || 640;
+      const videoHeight = video.videoHeight || 480;
       
-      // Gambar video dengan ukuran yang sesuai
+      // Simpan ukuran asli untuk referensi
+      setFotoOriginalSize({ width: videoWidth, height: videoHeight });
+      
+      canvas.width = videoWidth;
+      canvas.height = videoHeight;
+      
+      // Gambar video dengan ukuran asli
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // Render peta (jika siap) - ukuran lebih kecil dan proporsional
+      // Render peta (jika siap)
       const mapCanvas = await renderMapToCanvas();
       
       if (mapCanvas && isMapReady) {
-        // Ukuran peta lebih kecil agar tidak menutupi wajah
-        const mapSize = 100;
-        const rightMargin = 10;
-        const bottomMargin = 10;
+        // Tempelkan peta di pojok kanan bawah
+        const mapSize = Math.min(140, Math.floor(videoWidth * 0.15));
+        const rightMargin = 15;
+        const bottomMargin = 15;
         
         ctx.drawImage(
           mapCanvas, 
@@ -421,9 +444,9 @@ export default function PresenceCamera({
           mapSize
         );
         
-        // Border putih tipis
-        ctx.strokeStyle = "rgba(255,255,255,0.8)";
-        ctx.lineWidth = 2;
+        // Border putih
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 3;
         ctx.strokeRect(
           canvas.width - mapSize - rightMargin, 
           canvas.height - mapSize - bottomMargin, 
@@ -433,10 +456,12 @@ export default function PresenceCamera({
       }
 
       // ===== OVERLAY TEKS DI KIRI BAWAH =====
+      // Gunakan alamat dari locationData jika ada
       const locationDetails = locationData.alamat 
         ? extractLocationDetails(locationData.alamat)
         : { kecamatan: "-", kabupaten: "-", provinsi: "-", negara: "-", jalan: "-", koordinat: "-" };
       
+      // Waktu
       const now = new Date();
       const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       const dayName = days[now.getDay()];
@@ -451,53 +476,46 @@ export default function PresenceCamera({
       const ampm = hour >= 12 ? 'PM' : 'AM';
       hour = hour % 12 || 12;
       
-      // Background semi-transparan untuk teks
-      const textBgHeight = 75;
-      const textBgWidth = canvas.width - 20;
-      ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-      ctx.roundRect(10, canvas.height - textBgHeight - 10, textBgWidth, textBgHeight, 5);
-      ctx.fill();
-      
-      // Teks di atas background
-      const leftMargin = 20;
-      let yPos = canvas.height - textBgHeight + 5;
-      
-      // Baris 1: Lokasi
+      // Shadow untuk teks
       ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
-      ctx.shadowBlur = 2;
+      ctx.shadowBlur = 4;
       ctx.shadowOffsetX = 1;
       ctx.shadowOffsetY = 1;
       
-      ctx.font = "bold 11px Arial, sans-serif";
+      const leftMargin = 15;
+      let yPos = canvas.height - 85;
+      
+      // Baris 1: Lokasi
+      ctx.font = "bold 13px Arial, sans-serif";
       ctx.fillStyle = "#FFFFFF";
       
       let locationText = "";
       if (locationDetails.kecamatan !== "-") {
         locationText = `${locationDetails.kecamatan}, ${locationDetails.kabupaten}`;
       } else if (locationData.alamat && locationData.alamat.length > 0) {
-        locationText = locationData.alamat[0]?.substring(0, 30) || "Indonesia";
+        locationText = locationData.alamat[0]?.substring(0, 40) || "Indonesia";
       } else {
         locationText = `${locationData.coords.lat.toFixed(6)}°, ${locationData.coords.lon.toFixed(6)}°`;
       }
       ctx.fillText(locationText, leftMargin, yPos);
       
       // Baris 2: Koordinat
-      yPos += 15;
-      ctx.font = "9px Arial, sans-serif";
+      yPos += 18;
+      ctx.font = "11px Arial, sans-serif";
       ctx.fillStyle = "#FFD700";
       const coordText = `${locationData.coords.lat.toFixed(6)}°, ${locationData.coords.lon.toFixed(6)}°`;
       ctx.fillText(coordText, leftMargin, yPos);
       
       // Baris 3: Tanggal dan Waktu
-      yPos += 14;
-      ctx.font = "bold 9px Arial, sans-serif";
+      yPos += 18;
+      ctx.font = "bold 11px Arial, sans-serif";
       ctx.fillStyle = "#4CAF50";
       const waktuFormat = `${dayName}, ${date}/${month}/${year} ${hour}:${minute}:${second} ${ampm}`;
       ctx.fillText(waktuFormat, leftMargin, yPos);
       
       // Baris 4: Status
-      yPos += 14;
-      ctx.font = "bold 10px Arial, sans-serif";
+      yPos += 18;
+      ctx.font = "bold 12px Arial, sans-serif";
       ctx.fillStyle = type === "masuk" ? "#4CAF50" : "#FF9800";
       const statusText = `${type === "masuk" ? "CHECK IN" : "CHECK OUT"} - ${locationData.user?.nama || "Karyawan"}`;
       ctx.fillText(statusText, leftMargin, yPos);
@@ -524,28 +542,9 @@ export default function PresenceCamera({
     }
   };
 
-  // Polyfill roundRect untuk browser yang tidak support
-  if (!CanvasRenderingContext2D.prototype.roundRect) {
-    CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-      if (r > w/2) r = w/2;
-      if (r > h/2) r = h/2;
-      this.beginPath();
-      this.moveTo(x + r, y);
-      this.lineTo(x + w - r, y);
-      this.quadraticCurveTo(x + w, y, x + w, y + r);
-      this.lineTo(x + w, y + h - r);
-      this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      this.lineTo(x + r, y + h);
-      this.quadraticCurveTo(x, y + h, x, y + h - r);
-      this.lineTo(x, y + r);
-      this.quadraticCurveTo(x, y, x + r, y);
-      this.closePath();
-      return this;
-    };
-  }
-
   const handleRetake = () => {
     setFoto(null);
+    setFotoOriginalSize(null);
     setCameraError(null);
     setIsVideoReady(false);
     
@@ -560,23 +559,17 @@ export default function PresenceCamera({
     }, 100);
   };
 
-  const handleConfirm = () => {
-    if (onConfirm && foto) {
-      onConfirm();
-    }
-  };
-
   if (!isOpen) return null;
 
   const canTakePhoto = isVideoReady && !isLoading && !cameraError && locationData?.coords;
 
   return (
-    <div className="bg-white rounded-xl p-3 w-full max-w-xs mx-auto">
-      <div className="text-center mb-2">
-        <h3 className="text-sm font-semibold text-slate-700">
+    <div className="bg-white rounded-xl p-6 w-full max-w-md">
+      <div className="text-center mb-4">
+        <h3 className="text-lg font-semibold text-slate-700">
           {type === "masuk" ? "Check In" : "Check Out"}
         </h3>
-        <p className="text-[10px] text-slate-500">
+        <p className="text-sm text-slate-500">
           {new Date().toLocaleDateString("id-ID", {
             weekday: "long",
             day: "numeric",
@@ -585,30 +578,35 @@ export default function PresenceCamera({
           })}
         </p>
         {locationData?.coords && (
-          <p className="text-[9px] text-green-600 mt-0.5 flex items-center justify-center gap-1">
-            <span>📍 Lokasi terverifikasi</span>
-            {isMapReady && <span className="text-blue-500">· Peta siap</span>}
+          <p className="text-xs text-green-600 mt-1 flex items-center justify-center gap-1">
+            <span>✅ Lokasi terverifikasi</span>
+            {isMapReady && <span className="text-blue-500">• Peta siap</span>}
           </p>
         )}
       </div>
 
       {!foto ? (
         <>
-          <div className="relative bg-slate-100 rounded-lg overflow-hidden" style={{ maxHeight: '320px' }}>
+          <div className="text-center mb-3">
+            <div className="text-sm text-slate-600 bg-blue-50 inline-block px-3 py-1 rounded-full">
+              Foto Selfie
+            </div>
+          </div>
+
+          <div className="relative bg-slate-100 rounded-lg overflow-hidden">
             <video 
               ref={videoRef} 
               autoPlay 
               playsInline 
               muted
-              className="w-full h-auto object-cover"
-              style={{ maxHeight: '320px' }}
+              className="w-full aspect-[3/4] object-cover"
             />
             
             {(isLoading || !isVideoReady) && !cameraError && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                 <div className="text-white text-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto mb-1"></div>
-                  <p className="text-[10px]">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+                  <p className="text-sm">
                     {isLoading ? "Menyiapkan kamera..." : "Memuat video..."}
                   </p>
                 </div>
@@ -617,11 +615,11 @@ export default function PresenceCamera({
             
             {cameraError && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                <div className="text-white text-center p-3">
-                  <p className="text-[10px] mb-1.5">{cameraError}</p>
+                <div className="text-white text-center p-4">
+                  <p className="text-sm mb-2">{cameraError}</p>
                   <button
                     onClick={startCamera}
-                    className="px-2.5 py-1 bg-blue-600 text-white text-[10px] rounded-lg"
+                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded-lg"
                   >
                     Coba Lagi
                   </button>
@@ -630,58 +628,63 @@ export default function PresenceCamera({
             )}
 
             {locationData?.coords && !isMapReady && !cameraError && isVideoReady && (
-              <div className="absolute bottom-1.5 right-1.5 bg-black/70 rounded px-1.5 py-0.5">
-                <div className="animate-spin rounded-full h-1.5 w-1.5 border-b border-white inline-block mr-1"></div>
-                <span className="text-white text-[8px]">Memuat peta...</span>
+              <div className="absolute bottom-2 right-2 bg-black/70 rounded-lg px-2 py-1">
+                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white inline-block mr-1"></div>
+                <span className="text-white text-xs">Memuat peta...</span>
               </div>
             )}
           </div>
 
           <canvas ref={canvasRef} className="hidden" />
           
-          <div className="mt-2.5 flex justify-center">
+          <div className="mt-4 flex justify-center">
             <button
               onClick={ambilFotoDenganLokasi}
               disabled={!canTakePhoto || isCapturing}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs text-white font-medium ${
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm text-white font-medium ${
                 canTakePhoto && !isCapturing
                   ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" 
                   : "bg-slate-400 cursor-not-allowed"
               }`}
             >
-              <Camera size={14} /> 
+              <Camera size={18} /> 
               {isCapturing ? "Memproses..." : "Ambil Foto"}
             </button>
           </div>
 
           {!isMapReady && locationData?.coords && isVideoReady && (
-            <p className="text-[8px] text-center text-amber-600 mt-1">
-              ⏳ Peta sedang dimuat, foto tetap bisa diambil
+            <p className="text-xs text-center text-amber-600 mt-2">
+              ⏳ Peta sedang dimuat, foto akan tetap bisa diambil
             </p>
           )}
         </>
       ) : (
         <>
-          <div className="relative bg-slate-100 rounded-lg overflow-hidden" style={{ maxHeight: '320px' }}>
+          <div className="relative bg-slate-100 rounded-lg overflow-hidden">
             <img 
               src={foto} 
               alt="Preview" 
-              className="w-full h-auto object-cover"
-              style={{ maxHeight: '320px' }}
+              className="w-full aspect-[3/4] object-contain bg-black" // Changed to object-contain
+              style={{ maxHeight: '400px' }} // Batasi tinggi maksimum
             />
+            {fotoOriginalSize && (
+              <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                {fotoOriginalSize.width} x {fotoOriginalSize.height}
+              </div>
+            )}
           </div>
           
-          <p className="mt-1.5 text-[10px] text-center text-green-600">
-            📍 Foto dengan peta berhasil diambil
+          <p className="mt-2 text-xs text-center text-green-600">
+            ✅ Foto dengan lokasi berhasil diambil 
           </p>
         </>
       )}
 
-      <div className="mt-3 flex justify-between gap-2">
+      <div className="mt-6 flex justify-between gap-3">
         <button
           onClick={onClose}
           disabled={isSubmitting}
-          className="flex-1 px-2.5 py-1.5 text-[10px] bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium"
+          className="flex-1 px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium"
         >
           Batal
         </button>
@@ -690,32 +693,12 @@ export default function PresenceCamera({
           <button
             onClick={handleRetake}
             disabled={isSubmitting}
-            className="flex-1 px-2.5 py-1.5 text-[10px] bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium"
+            className="flex-1 px-4 py-2 text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium"
           >
             Ambil Ulang
           </button>
         )}
       </div>
-
-      {/* Tombol Konfirmasi */}
-      {showConfirm && foto && (
-        <div className="mt-2.5">
-          <button
-            onClick={handleConfirm}
-            disabled={isSubmitting}
-            className="w-full px-3 py-2 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-colors"
-          >
-            {isSubmitting ? (
-              <span className="flex items-center justify-center gap-2">
-                <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white"></div>
-                Memproses...
-              </span>
-            ) : (
-              `Konfirmasi ${type === "masuk" ? "Check In" : "Check Out"}`
-            )}
-          </button>
-        </div>
-      )}
     </div>
   );
 }
