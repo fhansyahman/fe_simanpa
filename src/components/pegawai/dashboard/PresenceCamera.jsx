@@ -1,4 +1,3 @@
-// components/pegawai/dashboard/PresenceCamera.js (DENGAN MAP SATELIT - FIXED)
 
 "use client";
 
@@ -21,7 +20,6 @@ export default function PresenceCamera({
   const [isMapReady, setIsMapReady] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [fotoOriginalSize, setFotoOriginalSize] = useState(null); // State untuk ukuran asli
-
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const mapContainerRef = useRef(null);
@@ -29,13 +27,11 @@ export default function PresenceCamera({
   const playPromiseRef = useRef(null);
   const isMounted = useRef(true);
 
-  // Load Leaflet dan leaflet-image
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
     const loadLeaflet = async () => {
       try {
-        // Load CSS Leaflet
         if (!document.querySelector('link[href*="leaflet.css"]')) {
           const link = document.createElement('link');
           link.rel = 'stylesheet';
@@ -43,7 +39,6 @@ export default function PresenceCamera({
           document.head.appendChild(link);
         }
 
-        // Load Leaflet JS
         if (!window.L) {
           await new Promise((resolve, reject) => {
             const script = document.createElement('script');
@@ -54,7 +49,6 @@ export default function PresenceCamera({
           });
         }
 
-        // Load leaflet-image
         if (!window.leafletImage) {
           await new Promise((resolve, reject) => {
             const script = document.createElement('script');
@@ -74,7 +68,6 @@ export default function PresenceCamera({
     loadLeaflet();
   }, []);
 
-  // Cleanup on unmount
   useEffect(() => {
     isMounted.current = true;
     return () => {
@@ -87,7 +80,6 @@ export default function PresenceCamera({
     };
   }, []);
 
-  // Hentikan kamera saat modal ditutup
   useEffect(() => {
     if (!isOpen) {
       stopCamera();
@@ -103,7 +95,6 @@ export default function PresenceCamera({
     }
   }, [isOpen]);
 
-  // Mulai kamera saat modal dibuka
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => {
@@ -116,10 +107,8 @@ export default function PresenceCamera({
     }
   }, [isOpen]);
 
-  // Inisialisasi peta saat lokasi tersedia dan Leaflet sudah load
   useEffect(() => {
     if (isOpen && locationData?.coords?.lat && locationData?.coords?.lon && window.L) {
-      // Tunggu sebentar agar DOM siap
       const timer = setTimeout(() => {
         if (isMounted.current) {
           initMap(locationData.coords.lat, locationData.coords.lon);
@@ -265,24 +254,20 @@ export default function PresenceCamera({
     }
   };
 
-  // Inisialisasi peta Leaflet
   const initMap = (lat, lon) => {
     if (!window.L || mapInstanceRef.current) return;
     
     try {
-      // Hapus map lama jika ada
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
 
-      // Hapus container lama
       const oldContainer = document.getElementById('hidden-map-container');
       if (oldContainer) {
         oldContainer.remove();
       }
       
-      // Buat container peta baru (hidden)
       const mapDiv = document.createElement('div');
       mapDiv.id = 'hidden-map-container';
       mapDiv.style.width = '300px';
@@ -292,26 +277,18 @@ export default function PresenceCamera({
       mapDiv.style.left = '-9999px';
       mapDiv.style.visibility = 'hidden';
       document.body.appendChild(mapDiv);
-      
-      // Buat map
+
       const map = window.L.map(mapDiv, { 
         attributionControl: false, 
         zoomControl: false 
       }).setView([lat, lon], 18);
-      
-      // Tambah tile layer satelit (Google Satellite)
       window.L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         maxZoom: 20,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: 'Google Satellite'
       }).addTo(map);
-      
-      // Tambah marker
       window.L.marker([lat, lon]).addTo(map);
-      
       mapInstanceRef.current = map;
-      
-      // Tunggu map selesai render
       setTimeout(() => {
         if (isMounted.current) {
           setIsMapReady(true);
@@ -321,12 +298,10 @@ export default function PresenceCamera({
       
     } catch (error) {
       console.error('Error init map:', error);
-      // Jika map gagal, tetap set ready agar foto tetap bisa diambil (tanpa map)
       setIsMapReady(true);
     }
   };
 
-  // Render map ke canvas
   const renderMapToCanvas = () => {
     return new Promise((resolve) => {
       if (!mapInstanceRef.current || !window.leafletImage) {
@@ -351,7 +326,6 @@ export default function PresenceCamera({
     });
   };
 
-  // Ekstrak detail lokasi dari alamat (jika ada)
   const extractLocationDetails = (alamatArray) => {
     if (!alamatArray || alamatArray.length === 0) {
       return {
@@ -390,7 +364,6 @@ export default function PresenceCamera({
     return { kecamatan, kabupaten, provinsi, negara, jalan, koordinat };
   };
 
-  // Ambil foto dengan map satelit
   const ambilFotoDenganLokasi = async () => {
     if (!videoRef.current || !canvasRef.current) {
       alert("Kamera tidak tersedia");
@@ -413,29 +386,18 @@ export default function PresenceCamera({
       const video = videoRef.current;
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
-      
-      // Set ukuran canvas ke ukuran asli video
       const videoWidth = video.videoWidth || 640;
       const videoHeight = video.videoHeight || 480;
-      
-      // Simpan ukuran asli untuk referensi
       setFotoOriginalSize({ width: videoWidth, height: videoHeight });
-      
       canvas.width = videoWidth;
       canvas.height = videoHeight;
-      
-      // Gambar video dengan ukuran asli
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // Render peta (jika siap)
       const mapCanvas = await renderMapToCanvas();
-      
       if (mapCanvas && isMapReady) {
-        // Tempelkan peta di pojok kanan bawah
         const mapSize = Math.min(140, Math.floor(videoWidth * 0.15));
         const rightMargin = 15;
         const bottomMargin = 15;
-        
         ctx.drawImage(
           mapCanvas, 
           canvas.width - mapSize - rightMargin, 
@@ -443,8 +405,6 @@ export default function PresenceCamera({
           mapSize, 
           mapSize
         );
-        
-        // Border putih
         ctx.strokeStyle = "white";
         ctx.lineWidth = 3;
         ctx.strokeRect(
@@ -454,38 +414,26 @@ export default function PresenceCamera({
           mapSize
         );
       }
-
-      // ===== OVERLAY TEKS DI KIRI BAWAH =====
-      // Gunakan alamat dari locationData jika ada
       const locationDetails = locationData.alamat 
         ? extractLocationDetails(locationData.alamat)
         : { kecamatan: "-", kabupaten: "-", provinsi: "-", negara: "-", jalan: "-", koordinat: "-" };
-      
-      // Waktu
       const now = new Date();
       const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
       const dayName = days[now.getDay()];
-      
       const date = now.getDate().toString().padStart(2, '0');
       const month = (now.getMonth() + 1).toString().padStart(2, '0');
       const year = now.getFullYear();
-      
       let hour = now.getHours();
       const minute = now.getMinutes().toString().padStart(2, '0');
       const second = now.getSeconds().toString().padStart(2, '0');
       const ampm = hour >= 12 ? 'PM' : 'AM';
       hour = hour % 12 || 12;
-      
-      // Shadow untuk teks
       ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
       ctx.shadowBlur = 4;
       ctx.shadowOffsetX = 1;
       ctx.shadowOffsetY = 1;
-      
       const leftMargin = 15;
       let yPos = canvas.height - 85;
-      
-      // Baris 1: Lokasi
       ctx.font = "bold 13px Arial, sans-serif";
       ctx.fillStyle = "#FFFFFF";
       
@@ -498,33 +446,23 @@ export default function PresenceCamera({
         locationText = `${locationData.coords.lat.toFixed(6)}°, ${locationData.coords.lon.toFixed(6)}°`;
       }
       ctx.fillText(locationText, leftMargin, yPos);
-      
-      // Baris 2: Koordinat
       yPos += 18;
       ctx.font = "11px Arial, sans-serif";
       ctx.fillStyle = "#FFD700";
       const coordText = `${locationData.coords.lat.toFixed(6)}°, ${locationData.coords.lon.toFixed(6)}°`;
       ctx.fillText(coordText, leftMargin, yPos);
-      
-      // Baris 3: Tanggal dan Waktu
       yPos += 18;
       ctx.font = "bold 11px Arial, sans-serif";
       ctx.fillStyle = "#4CAF50";
       const waktuFormat = `${dayName}, ${date}/${month}/${year} ${hour}:${minute}:${second} ${ampm}`;
       ctx.fillText(waktuFormat, leftMargin, yPos);
-      
-      // Baris 4: Status
       yPos += 18;
       ctx.font = "bold 12px Arial, sans-serif";
       ctx.fillStyle = type === "masuk" ? "#4CAF50" : "#FF9800";
       const statusText = `${type === "masuk" ? "CHECK IN" : "CHECK OUT"} - ${locationData.user?.nama || "Karyawan"}`;
       ctx.fillText(statusText, leftMargin, yPos);
-      
-      // Hapus shadow
       ctx.shadowColor = "transparent";
       ctx.shadowBlur = 0;
-      
-      // Konversi ke data URL dengan kualitas tinggi
       const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
       setFoto(dataUrl);
       
@@ -664,14 +602,10 @@ export default function PresenceCamera({
             <img 
               src={foto} 
               alt="Preview" 
-              className="w-full aspect-[3/4] object-contain bg-black" // Changed to object-contain
-              style={{ maxHeight: '400px' }} // Batasi tinggi maksimum
+              className="w-full aspect-[3/4] object-contain bg-black" 
+              style={{ maxHeight: '400px' }}
             />
-            {fotoOriginalSize && (
-              <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                {fotoOriginalSize.width} x {fotoOriginalSize.height}
-              </div>
-            )}
+
           </div>
           
           <p className="mt-2 text-xs text-center text-green-600">
