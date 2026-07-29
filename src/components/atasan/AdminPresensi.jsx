@@ -48,7 +48,7 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
   const [filterWilayah, setFilterWilayah] = useState(userWilayah || "");
   const [filterTanggal, setFilterTanggal] = useState(tanggal);
   const [isMapReady, setIsMapReady] = useState(false);
-  const [mapCenter] = useState([-7.919021, 113.820801]);
+  const [mapCenter] = useState([-7.802334435127249, 113.97669509779567]);
   const [mapZoom] = useState(11);
   const [showSidebar, setShowSidebar] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
@@ -331,7 +331,7 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
         popupAnchor: [0, -40]
       });
 
-      L.marker([-7.919021, 113.820801], { icon: defaultIcon })
+      L.marker([-7.802334435127249, 113.97669509779567], { icon: defaultIcon })
         .bindPopup('Pusat Wilayah')
         .addTo(markerLayerRef.current);
       return;
@@ -407,8 +407,8 @@ function MapPresensiContent({ tanggal, userWilayah, onOpenDetailModal }) {
   const resetView = () => {
     const map = mapInstanceRef.current;
     if (map) {
-      map.setView([-7.919021, 113.820801], 11);
-    }
+      map.setView([-7.802334435127249, 113.97669509779567], 11);
+    }s
     setSelectedPresensi(null);
     setShowSidebar(false);
   };

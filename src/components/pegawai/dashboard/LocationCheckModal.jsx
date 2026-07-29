@@ -1,4 +1,3 @@
-// components/pegawai/dashboard/LocationCheckModal.js
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,7 +5,6 @@ import { X, MapPin, Navigation, AlertCircle, CheckCircle, Camera, Loader } from 
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 
-// Dynamic imports for Leaflet
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
@@ -20,7 +18,7 @@ export const LocationCheckModal = ({
   penugasan,
   type 
 }) => {
-  const [locationStatus, setLocationStatus] = useState('checking'); // checking, valid, invalid
+  const [locationStatus, setLocationStatus] = useState('checking'); 
   const [distance, setDistance] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [address, setAddress] = useState('');
@@ -29,10 +27,9 @@ export const LocationCheckModal = ({
   const [markerIcon, setMarkerIcon] = useState(null);
   const [userMarkerIcon, setUserMarkerIcon] = useState(null);
   const [watchId, setWatchId] = useState(null);
-  const [hasValidated, setHasValidated] = useState(false); // ✅ Tambah state untuk cek manual
+  const [hasValidated, setHasValidated] = useState(false); 
 
   useEffect(() => {
-    // Load Leaflet icons
     import('leaflet').then((leaflet) => {
       setL(leaflet.default);
       setMarkerIcon(leaflet.default.icon({
@@ -115,7 +112,7 @@ export const LocationCheckModal = ({
   const startLocationTracking = () => {
     setIsLoading(true);
     setLocationStatus('checking');
-    setHasValidated(false); // ✅ Reset status manual saat refresh
+    setHasValidated(false); 
 
     if (!navigator.geolocation) {
       setLocationStatus('invalid');
@@ -123,7 +120,6 @@ export const LocationCheckModal = ({
       return;
     }
 
-    // Get current position
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const lat = position.coords.latitude;
@@ -147,7 +143,6 @@ export const LocationCheckModal = ({
       { enableHighAccuracy: true, timeout: 10000 }
     );
 
-    // Watch position for real-time updates
     if (watchId) {
       navigator.geolocation.clearWatch(watchId);
     }
@@ -180,7 +175,6 @@ export const LocationCheckModal = ({
     };
   }, [isOpen]);
 
-  // ✅ Fungsi manual untuk lanjut ke kamera
   const handleManualContinue = () => {
     if (locationStatus === 'valid' && userLocation && !hasValidated) {
       setHasValidated(true);
@@ -378,8 +372,8 @@ export const LocationCheckModal = ({
               Batal
             </button>
             <button
-              onClick={handleManualContinue} // ✅ Panggil fungsi manual
-              disabled={locationStatus !== 'valid' || hasValidated} // ✅ Disable jika sudah divalidasi
+              onClick={handleManualContinue} 
+              disabled={locationStatus !== 'valid' || hasValidated} 
               className={`flex-1 px-4 py-2 rounded-xl font-medium transition-all flex items-center justify-center gap-2 ${
                 locationStatus === 'valid' && !hasValidated
                   ? 'bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 cursor-pointer'

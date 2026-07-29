@@ -3,7 +3,6 @@
 import { useCallback } from "react";
 
 export function useFileHandler() {
-  // MODIFIKASI: Khusus untuk menangani PDF - TIDAK PERLU API URL
   const handleViewDocument = useCallback((dokumenPendukung) => {
     if (!dokumenPendukung) {
       alert('Tidak ada dokumen pendukung');
@@ -11,23 +10,18 @@ export function useFileHandler() {
     }
 
     try {
-      // Handle file dari server (path) - PAKAI PROXY
       if (!dokumenPendukung.startsWith('data:') && !dokumenPendukung.startsWith('http')) {
-        // ✅ PERBAIKAN: Pake proxy, bukan langsung ke backend
         const fileUrl = `/api/uploads/izin/${dokumenPendukung}`;
         window.open(fileUrl, '_blank');
         return;
       }
 
-      // Handle base64 data
       if (dokumenPendukung.startsWith('data:')) {
-        // Pastikan file adalah PDF
         if (!dokumenPendukung.includes('application/pdf')) {
           alert('Hanya file PDF yang didukung untuk dilihat');
           return;
         }
 
-        // Buka PDF di tab baru
         const pdfWindow = window.open();
         if (pdfWindow) {
           pdfWindow.document.write(`
@@ -60,7 +54,6 @@ export function useFileHandler() {
     }
   }, []);
 
-  // MODIFIKASI: Nama file default untuk PDF
   const getFileName = useCallback((dokumenPendukung) => {
     if (!dokumenPendukung) return 'Dokumen.pdf';
     
@@ -73,7 +66,6 @@ export function useFileHandler() {
         return dokumenPendukung;
       }
       
-      // Cek apakah string mengandung ekstensi .pdf
       if (dokumenPendukung.toLowerCase().endsWith('.pdf')) {
         return dokumenPendukung;
       }
@@ -90,7 +82,6 @@ export function useFileHandler() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }, []);
 
-  // Fungsi tambahan untuk download PDF
   const downloadPDF = useCallback((dokumenPendukung, filename = 'dokumen.pdf') => {
     if (!dokumenPendukung) {
       alert('Tidak ada dokumen untuk diunduh');
@@ -108,7 +99,6 @@ export function useFileHandler() {
         link.click();
         document.body.removeChild(link);
       } else if (!dokumenPendukung.startsWith('http')) {
-        // ✅ PERBAIKAN: Pake proxy
         const fileUrl = `/api/uploads/izin/${dokumenPendukung}`;
         window.open(fileUrl, '_blank');
       } else {

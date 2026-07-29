@@ -39,31 +39,19 @@ export function useCanvasDrawing() {
     const totalHeight = sections.reduce((sum, s) => sum + s.height, 0);
 
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    
-    // Background
     ctx.fillStyle = "#f8fafc";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    
-    // Border utama
     ctx.strokeStyle = "#334155";
     ctx.lineWidth = 2;
     ctx.strokeRect(startX, startY, width, totalHeight);
-
-    // Gambar sections dengan warna yang bisa diubah
     let y = startY;
     for (let i = 0; i < sections.length; i++) {
       const h = sections[i].height;
-      
-      // Fill warna section dari currentColors
       ctx.fillStyle = currentColors[i];
       ctx.fillRect(startX, y, width, h);
-      
-      // Border section
       ctx.strokeStyle = "#64748b";
       ctx.lineWidth = 1;
       ctx.strokeRect(startX, y, width, h);
-      
-      // Label
       if (h >= 25) {
         ctx.fillStyle = "#334155";
         ctx.font = isMobile ? "8px system-ui" : "10px system-ui";
@@ -80,7 +68,7 @@ export function useCanvasDrawing() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const y = e.clientY - rect.top - 10; // kurangi startY
+    const y = e.clientY - rect.top - 10; 
     
     let accumulatedHeight = 0;
     for (let i = 0; i < sections.length; i++) {
@@ -109,7 +97,7 @@ export function useCanvasDrawing() {
   const getSketImage = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return "";
-    drawTemplate(); // Pastikan canvas ter-update
+    drawTemplate(); 
     return canvas.toDataURL("image/png");
   }, [drawTemplate]);
 

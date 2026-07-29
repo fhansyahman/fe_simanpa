@@ -115,7 +115,6 @@ export default function ModalPresensi({
 
       alert(response.data?.data?.message || "Absen berhasil");
       
-      // Update presensi lokal
       const jam = new Date().toLocaleTimeString("id-ID", { 
         hour: "2-digit", 
         minute: "2-digit" 

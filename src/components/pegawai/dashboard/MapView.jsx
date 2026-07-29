@@ -1,4 +1,3 @@
-// components/pegawai/dashboard/GoogleMapEmbed.jsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -14,8 +13,6 @@ export default function GoogleMapEmbed({ locationData, className = "" }) {
     }
 
     const { lat, lon } = locationData.coords;
-    
-    // Menggunakan Google Maps embed URL - tidak memerlukan API key
     const url = `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
     
     setMapUrl(url);

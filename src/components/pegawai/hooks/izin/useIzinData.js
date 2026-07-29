@@ -15,7 +15,6 @@ export function useIzinData() {
   const [stats, setStats] = useState(null);
   const [totalData, setTotalData] = useState(0);
 
-  // Load user info
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
@@ -50,16 +49,13 @@ export function useIzinData() {
     loadUserInfo();
   }, []);
 
-  // Load izin data per bulan dari backend
   const loadIzinPerBulan = useCallback(async (bulan, tahun) => {
     try {
       setLoading(true);
       
-      // Gunakan bulan dan tahun yang dipilih, atau default ke current
       const targetBulan = bulan || selectedMonth;
       const targetTahun = tahun || selectedYear;
       
-      // Jika tidak ada filter, gunakan bulan/tahun saat ini
       let finalBulan = targetBulan;
       let finalTahun = targetTahun;
       
@@ -76,14 +72,12 @@ export function useIzinData() {
       if (response.data.success) {
         const data = response.data.data;
         
-        // Set data dari API
         setIzinList(data.izin || []);
         setFilteredIzinList(data.izin || []);
         setStats(data.stats);
         setPeriodeInfo(data.periode);
         setTotalData(data.izin?.length || 0);
         
-        // Update selected month/year state
         if (data.periode) {
           setSelectedMonth(data.periode.bulan.toString().padStart(2, '0'));
           setSelectedYear(data.periode.tahun.toString());
@@ -104,14 +98,12 @@ export function useIzinData() {
     }
   }, [selectedMonth, selectedYear]);
 
-  // Initial load - bulan/tahun saat ini
   useEffect(() => {
     const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
     const currentYear = new Date().getFullYear().toString();
     loadIzinPerBulan(currentMonth, currentYear);
   }, []);
 
-  // Handle month change
   const handleMonthChange = useCallback((month) => {
     setSelectedMonth(month);
     if (month && selectedYear) {
@@ -121,7 +113,6 @@ export function useIzinData() {
     }
   }, [selectedYear, loadIzinPerBulan]);
 
-  // Handle year change
   const handleYearChange = useCallback((year) => {
     setSelectedYear(year);
     if (year && selectedMonth) {
@@ -131,7 +122,6 @@ export function useIzinData() {
     }
   }, [selectedMonth, loadIzinPerBulan]);
 
-  // Apply filter
   const applyFilter = useCallback(() => {
     if (selectedMonth || selectedYear) {
       const bulan = selectedMonth || (new Date().getMonth() + 1).toString().padStart(2, '0');
@@ -141,7 +131,6 @@ export function useIzinData() {
     setShowFilter(false);
   }, [selectedMonth, selectedYear, loadIzinPerBulan]);
 
-  // Reset filter
   const resetFilter = useCallback(() => {
     const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
     const currentYear = new Date().getFullYear().toString();
@@ -151,7 +140,6 @@ export function useIzinData() {
     setShowFilter(false);
   }, [loadIzinPerBulan]);
 
-  // Set to current month
   const setToCurrentMonth = useCallback(() => {
     const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
     const currentYear = new Date().getFullYear().toString();
@@ -160,7 +148,6 @@ export function useIzinData() {
     loadIzinPerBulan(currentMonth, currentYear);
   }, [loadIzinPerBulan]);
 
-  // Go to previous month
   const goToPreviousMonth = useCallback(() => {
     let newMonth = parseInt(selectedMonth) - 1;
     let newYear = parseInt(selectedYear);
@@ -178,7 +165,6 @@ export function useIzinData() {
     loadIzinPerBulan(newMonthStr, newYearStr);
   }, [selectedMonth, selectedYear, loadIzinPerBulan]);
 
-  // Go to next month
   const goToNextMonth = useCallback(() => {
     let newMonth = parseInt(selectedMonth) + 1;
     let newYear = parseInt(selectedYear);
@@ -196,20 +182,15 @@ export function useIzinData() {
     loadIzinPerBulan(newMonthStr, newYearStr);
   }, [selectedMonth, selectedYear, loadIzinPerBulan]);
 
-  // Toggle filter
   const toggleFilter = useCallback(() => {
     setShowFilter(prev => !prev);
   }, []);
 
-  // Get available months from API response (or generate from data)
   const getAvailableMonths = useCallback(() => {
-    // Return static months since backend handles filtering
     return ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
   }, []);
 
-  // Get available years from API response
   const getAvailableYears = useCallback(() => {
-    // Return available years from stats or generate recent years
     const currentYear = new Date().getFullYear();
     return [currentYear.toString(), (currentYear - 1).toString(), (currentYear - 2).toString()];
   }, []);

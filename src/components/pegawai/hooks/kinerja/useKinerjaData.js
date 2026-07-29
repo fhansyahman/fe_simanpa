@@ -37,7 +37,6 @@ export function useKinerjaData() {
         setPeriodeInfo(data.periode);
         setChartData(data.charts);
         
-        // Extract available years
         if (data.kinerja && data.kinerja.length > 0) {
           const years = new Set();
           data.kinerja.forEach(item => {
@@ -134,7 +133,6 @@ export function useKinerjaData() {
     return stats.presentase_kehadiran || 0;
   }, [stats.presentase_kehadiran]);
 
-  // Navigasi bulan
   const goToPreviousMonth = useCallback(() => {
     let newMonth = parseInt(selectedMonth) - 1;
     let newYear = parseInt(selectedYear);

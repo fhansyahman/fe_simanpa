@@ -1,4 +1,3 @@
-// hooks/kinerja/useKinerjaForm.js
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -9,8 +8,8 @@ export function useKinerjaForm(editData, onSuccess) {
   tanggal: new Date().toISOString().split('T')[0],
   ruas_jalan: "",
   kegiatan: "",
-  panjang_kr: 0,        // ← Ubah dari "" menjadi 0
-  panjang_kn: 0,        // ← Ubah dari "" menjadi 0
+  panjang_kr: 0,       
+  panjang_kn: 0,        
   sket_image: "",
   foto_0: "",
   foto_50: "",
@@ -23,10 +22,7 @@ export function useKinerjaForm(editData, onSuccess) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
-  // Ref untuk melacak apakah form sudah diinisialisasi dengan data edit
   const initializedRef = useRef(false);
-  // Ref untuk menyimpan ID editData sebelumnya
   const prevEditIdRef = useRef(null);
 
   const daftarKegiatan = [

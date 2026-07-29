@@ -44,7 +44,7 @@ export function useIzinForm(editData, onSuccess) {
   };
 
   const adjustDateForServer = (dateString) => {
-    return dateString; // Backend akan handle timezone
+    return dateString; 
   };
 
   const fileToBase64 = (file) => {
@@ -61,7 +61,6 @@ export function useIzinForm(editData, onSuccess) {
     setFormData(prev => ({ ...prev, [name]: value }));
   }, []);
 
-  // MODIFIKASI: Hanya menerima file PDF
   const handleFileUpload = useCallback((files) => {
     const validFiles = Array.from(files).filter(file => {
       if (file.size > 5 * 1024 * 1024) {
@@ -69,7 +68,6 @@ export function useIzinForm(editData, onSuccess) {
         return false;
       }
       
-      // HANYAKAN MENERIMA PDF
       const allowedTypes = ['application/pdf'];
       if (!allowedTypes.includes(file.type)) {
         alert(`File ${file.name} harus berupa PDF!`);

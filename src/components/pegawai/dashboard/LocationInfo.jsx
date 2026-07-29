@@ -1,4 +1,4 @@
-// components/pegawai/dashboard/LocationInfo.js (update)
+
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -84,7 +84,6 @@ export const useLocationWithRadius = (penugasan, onLocationValid, onLocationInva
       return Promise.resolve(null);
     }
 
-    // Stop existing watch if any
     if (watchIdRef.current) {
       navigator.geolocation.clearWatch(watchIdRef.current);
     }
@@ -93,7 +92,6 @@ export const useLocationWithRadius = (penugasan, onLocationValid, onLocationInva
       setIsLoading(true);
       setStatus("📡 Mengambil lokasi...");
       
-      // Get current position
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
           if (!isMounted.current) {
@@ -149,7 +147,6 @@ export const useLocationWithRadius = (penugasan, onLocationValid, onLocationInva
         { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
       );
 
-      // Start watching position for real-time updates
       watchIdRef.current = navigator.geolocation.watchPosition(
         (pos) => {
           if (!isMounted.current) return;
@@ -173,7 +170,6 @@ export const useLocationWithRadius = (penugasan, onLocationValid, onLocationInva
     });
   };
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       isMounted.current = false;

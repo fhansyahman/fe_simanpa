@@ -16,16 +16,11 @@ export function usePresensiData() {
   const [availableYears, setAvailableYears] = useState([]);
   const [expandedDays, setExpandedDays] = useState({});
   const [periodeInfo, setPeriodeInfo] = useState(null);
-  
   const router = useRouter();
-
-  // Fetch data presensi berdasarkan bulan dan tahun dari endpoint /perbulan
   const fetchDataPresensi = useCallback(async (bulan, tahun) => {
     try {
       setLoading(true);
       setError('');
-      
-      // Gunakan endpoint baru /perbulan
       const targetBulan = bulan || selectedMonth || (new Date().getMonth() + 1).toString().padStart(2, '0');
       const targetTahun = tahun || selectedYear || new Date().getFullYear().toString();
       
@@ -36,17 +31,12 @@ export function usePresensiData() {
       
       if (response.data.success) {
         const data = response.data.data;
-        
-        // Data dari API sudah sesuai dengan bulan yang dipilih
         setFilteredData(data.presensi || []);
         setCurrentMonthStats(data.stats);
         setPeriodeInfo(data.periode);
-        
-        // Set available years untuk filter (dari API)
         if (data.filters?.years) {
           setAvailableYears(data.filters.years);
         } else {
-          // Fallback years
           const currentYear = new Date().getFullYear();
           setAvailableYears([
             { value: "", label: "Semua Tahun" },
@@ -55,7 +45,6 @@ export function usePresensiData() {
           ]);
         }
         
-        // Set available months (static)
         const monthsData = [
           { value: "01", label: "Januari" },
           { value: "02", label: "Februari" },
@@ -71,13 +60,8 @@ export function usePresensiData() {
           { value: "12", label: "Desember" }
         ];
         setAvailableMonths(monthsData);
-        
-        // Update selected month/year state
         setSelectedMonth(targetBulan);
         setSelectedYear(targetTahun);
-        
-        // Konversi allPresensi untuk kompatibilitas dengan komponen lain
-        // (untuk keperluan filter dan statistik)
         setAllPresensi(data.presensi || []);
         
       } else {
@@ -96,21 +80,20 @@ export function usePresensiData() {
     }
   }, [router, selectedMonth, selectedYear]);
 
-  // Initial fetch - bulan/tahun saat ini
   useEffect(() => {
     const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
     const currentYear = new Date().getFullYear().toString();
     fetchDataPresensi(currentMonth, currentYear);
-  }, []); // Hanya sekali saat mount
+  }, []); 
 
-  // Fetch ulang ketika bulan atau tahun berubah
+
   useEffect(() => {
     if (selectedMonth && selectedYear) {
       fetchDataPresensi(selectedMonth, selectedYear);
     }
-  }, [selectedMonth, selectedYear]); // Re-fetch ketika filter berubah
+  }, [selectedMonth, selectedYear]); 
 
-  // Fungsi untuk menentukan status akhir (jika tidak ada dari API)
+
   const getStatusAkhir = useCallback((presensi) => {
     if (presensi.status_akhir) return presensi.status_akhir;
     
@@ -136,14 +119,11 @@ export function usePresensiData() {
     return 'Tidak Diketahui';
   }, []);
 
-  // Statistik sudah dari API, tapi kita tetap hitung ulang untuk konsistensi
   const calculateStats = useCallback(() => {
-    // Jika ada currentMonthStats dari API, gunakan itu
     if (currentMonthStats && Object.keys(currentMonthStats).length > 0) {
       return currentMonthStats;
     }
     
-    // Fallback: hitung manual
     const stats = {
       total_hari_kerja: 0,
       total_presensi: filteredData.length,
@@ -211,7 +191,6 @@ export function usePresensiData() {
     [stats.presentase_kehadiran]
   );
 
-  // Utility functions
   const getStatusColor = useCallback((status) => {
     switch (status) {
       case "Hadir": return "bg-green-100 text-green-700 border-green-200";
@@ -325,7 +304,6 @@ export function usePresensiData() {
     setSelectedYear(newYear.toString());
   }, [selectedMonth, selectedYear]);
 
-  // Generate months list
   const months = useMemo(() => 
     availableMonths.length > 0 ? availableMonths : [
       { value: "01", label: "Januari" },

@@ -16,15 +16,12 @@ export function useUserData() {
         const response = await authAPI.getProfile();
         console.log("✅ Response user di akun page:", response);
         
-        // PERBAIKAN: Ambil data dari response.data.data
         if (response.data && response.data.data) {
           const userData = response.data.data;
           console.log("👤 Data user di akun page:", userData);
           setUserData(userData);
-          // Simpan ke localStorage untuk konsistensi
           localStorage.setItem('user', JSON.stringify(userData));
         } else if (response.data) {
-          // Fallback jika struktur berbeda
           console.log("⚠️ Struktur data berbeda di akun page, menggunakan response.data langsung");
           setUserData(response.data);
           localStorage.setItem('user', JSON.stringify(response.data));
@@ -32,7 +29,6 @@ export function useUserData() {
       } catch (error) {
         console.error("❌ Error fetching user data di akun page:", error);
         
-        // Fallback ke localStorage
         if (typeof window !== 'undefined') {
           const userData = localStorage.getItem('user');
           if (userData) {

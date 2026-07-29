@@ -48,7 +48,6 @@ export function useKinerjaData(setSelectedImage, setImageModalOpen) {
 
   const canvasRef = useRef(null);
 
-  // Initialize canvas
   useEffect(() => {
     const initCanvas = () => {
       if (canvasRef.current) {
@@ -58,7 +57,6 @@ export function useKinerjaData(setSelectedImage, setImageModalOpen) {
     initCanvas();
   }, [currentColors]);
 
-  // Filter data based on search term
   useEffect(() => {
     const filtered = kinerjaList.filter(kinerja => {
       return kinerja.ruas_jalan?.toLowerCase().includes(searchTerm.toLowerCase()) ||

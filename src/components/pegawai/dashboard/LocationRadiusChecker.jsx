@@ -1,14 +1,10 @@
-// components/pegawai/dashboard/LocationRadiusChecker.js
 'use client';
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { MapPin, Circle as LucideCircle, Navigation, AlertCircle, CheckCircle } from 'lucide-react';
-
-// Import Leaflet CSS
 import 'leaflet/dist/leaflet.css';
 
-// Dynamic import untuk Leaflet components
 const MapContainer = dynamic(
   () => import('react-leaflet').then((mod) => mod.MapContainer),
   { ssr: false }
@@ -41,8 +37,6 @@ export const LocationRadiusChecker = ({
   const [userIcon, setUserIcon] = useState(null);
   const [isInRadius, setIsInRadius] = useState(null);
   const [distance, setDistance] = useState(null);
-
-  // Hitung jarak antara user dan lokasi penugasan
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -55,11 +49,8 @@ export const LocationRadiusChecker = ({
   };
 
   useEffect(() => {
-    // Import Leaflet untuk icon
     import('leaflet').then((leaflet) => {
       setL(leaflet.default);
-      
-      // Icon untuk lokasi penugasan
       setDefaultIcon(leaflet.default.icon({
         iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -70,7 +61,6 @@ export const LocationRadiusChecker = ({
         shadowSize: [41, 41]
       }));
 
-      // Icon untuk lokasi user (warna biru)
       setUserIcon(leaflet.default.icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
         shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
@@ -82,7 +72,6 @@ export const LocationRadiusChecker = ({
     });
   }, []);
 
-  // Cek radius ketika userLocation berubah
   useEffect(() => {
     if (userLocation && penugasan && penugasan.latitude && penugasan.longitude) {
       const dist = calculateDistance(
@@ -120,8 +109,6 @@ export const LocationRadiusChecker = ({
 
   const center = [parseFloat(penugasan.latitude), parseFloat(penugasan.longitude)];
   const radiusInMeters = penugasan.radius || 100;
-
-  // Tentukan warna berdasarkan status
   const getStatusColor = () => {
     if (isInRadius === null) return 'text-gray-500';
     return isInRadius ? 'text-green-600' : 'text-red-600';
