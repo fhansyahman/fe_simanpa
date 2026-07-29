@@ -184,7 +184,7 @@ export default function PresensiPage() {
           <ArrowLeft size={24} />
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-white">Rekap Kehadiran</h1>
+          <h1 className="text-xl font-bold text-white">Grafik Kehadiran</h1>
           <p className="text-white text-xs mt-1">Monitoring kehadiran pegawai</p>
         </div>
       </div>
@@ -309,9 +309,6 @@ export default function PresensiPage() {
           <div className="flex overflow-x-auto no-scrollbar border-b border-gray-100">
             {[
               { id: "overview", label: "Ringkasan", icon: <BarChart3 size={14} /> },
-              { id: "wilayah", label: "Wilayah", icon: <Building2 size={14} /> },
-              { id: "detail", label: "Pegawai", icon: <Users size={14} /> },
-              { id: "trend", label: "Trend", icon: <TrendingUp size={14} /> },
             ].map((tab) => (
               <button
                 key={tab.id}
